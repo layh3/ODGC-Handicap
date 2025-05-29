@@ -1,0 +1,1721 @@
+  NEW ROUND   rnd no.    1
+
+
+  rnd no.    1  rnd_upperFilter     57.1306  rnd score =    0  HC =    -1
+ after round  1 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    2
+
+
+  rnd no.    2  rnd_upperFilter     62.8469  rnd score =    0  HC =    -1
+ after round  2 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    3
+
+
+  rnd no.    3  rnd_upperFilter     54.4426  rnd score =    0  HC =    -1
+ after round  3 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    4
+
+
+  rnd no.    4  rnd_upperFilter     53.0917  rnd score =    0  HC =    -1
+ after round  4 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    5
+
+
+  rnd no.    5  rnd_upperFilter     47.6308  rnd score =    0  HC =    -1
+ diff::round no. =  5 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  5 player =  Bluthner_Lucas in =  2 dfk[in] =  12.04 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  5 player =  Bluthner_Lucas in =  3 dfk[in] =  12.04 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  5 player =  Bluthner_Lucas in =  4 dfk[in] =  12.04 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  5 player =  Bluthner_Lucas in =  5 dfk[in] =  12.04 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  5 player =  Bluthner_Lucas in =  6 dfk[in] =  12.04 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  5 player =  Bluthner_Lucas in =  7 dfk[in] =  12.04 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  5 player =  Bluthner_Lucas in =  8 dfk[in] =  14.5033 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  5 player =  Bluthner_Lucas in =  9 dfk[in] =  14.7159 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  5 player =  Bluthner_Lucas in =  10 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  11 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  12 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  13 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  14 dfk[in] =  0 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  15 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  16 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  17 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  18 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  19 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Bluthner_Lucas in =  20 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  5 player =  Darcovich_Ken rnd score =  50  rnd_scratch = 43.2807 diff[k][rnd_count[k]] = 7.66177 No. plyr's rds::rnd_count[k]  = 8 rd year  = 24
+ after round  5 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    6
+
+
+  rnd no.    6  rnd_upperFilter     52.4771  rnd score =    0  HC =    -1
+ after round  6 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    7
+
+
+  rnd no.    7  rnd_upperFilter     45.9692  rnd score =    0  HC =    -1
+ after round  7 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    8
+
+
+  rnd no.    8  rnd_upperFilter     56.424  rnd score =    0  HC =    -1
+ after round  8 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    9
+
+
+  rnd no.    9  rnd_upperFilter     52.0185  rnd score =    0  HC =    -1
+ after round  9 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    10
+
+
+  rnd no.    10  rnd_upperFilter     53.0374  rnd score =    0  HC =    -1
+ diff::round no. =  10 player =  Darcovich_Ken rnd score =  55  rnd_scratch = 47.5038 diff[k][rnd_count[k]] = 8.76075 No. plyr's rds::rnd_count[k]  = 9 rd year  = 24
+ after round  10 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    11
+
+
+  rnd no.    11  rnd_upperFilter     57.2732  rnd score =    0  HC =    -1
+ after round  11 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    12
+
+
+  rnd no.    12  rnd_upperFilter     54.0121  rnd score =    0  HC =    -1
+ after round  12 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    13
+
+
+  rnd no.    13  rnd_upperFilter     57.1187  rnd score =    0  HC =    -1
+ diff::round no. =  13 player =  Darcovich_Ken rnd score =  56  rnd_scratch = 50.758 diff[k][rnd_count[k]] = 5.7419 No. plyr's rds::rnd_count[k]  = 10 rd year  = 24
+ after round  13 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    14
+
+
+  rnd no.    14  rnd_upperFilter     49.052  rnd score =    0  HC =    -1
+ diff::round no. =  14 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  3 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  14 player =  Bluthner_Lucas in =  4 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  14 player =  Bluthner_Lucas in =  5 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  14 player =  Bluthner_Lucas in =  6 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  14 player =  Bluthner_Lucas in =  7 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  14 player =  Bluthner_Lucas in =  8 dfk[in] =  14.7317 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  9 dfk[in] =  15.9045 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  10 dfk[in] =  13.3631 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  11 dfk[in] =  16.3164 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  12 dfk[in] =  12.2668 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  13 dfk[in] =  14.5047 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  14 dfk[in] =  26.5497 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  15 dfk[in] =  21.0769 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  14 player =  Bluthner_Lucas in =  16 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  14 player =  Bluthner_Lucas in =  17 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  14 player =  Bluthner_Lucas in =  18 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  14 player =  Bluthner_Lucas in =  19 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  14 player =  Bluthner_Lucas in =  20 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ after round  14 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    15
+
+
+  rnd no.    15  rnd_upperFilter     57.7194  rnd score =    0  HC =    -1
+ diff::round no. =  15 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  4 dfk[in] =  18.9772 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  5 dfk[in] =  17.437 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  6 dfk[in] =  19.4 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  15 player =  Bluthner_Lucas in =  7 dfk[in] =  19.4 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  15 player =  Bluthner_Lucas in =  8 dfk[in] =  21.3449 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  9 dfk[in] =  19.2188 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  10 dfk[in] =  20.3076 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  11 dfk[in] =  22.2184 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  12 dfk[in] =  12.0263 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  13 dfk[in] =  11.1246 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  14 dfk[in] =  26.5497 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  15 dfk[in] =  21.0769 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  15 player =  Bluthner_Lucas in =  16 dfk[in] =  0 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  15 player =  Bluthner_Lucas in =  17 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  15 player =  Bluthner_Lucas in =  18 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  15 player =  Bluthner_Lucas in =  19 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  15 player =  Bluthner_Lucas in =  20 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ after round  15 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    16
+
+
+  rnd no.    16  rnd_upperFilter     43.9956  rnd score =    0  HC =    -1
+ diff::round no. =  16 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  4 dfk[in] =  9.89674 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.89674 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  5 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  16 player =  Bluthner_Lucas in =  6 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  16 player =  Bluthner_Lucas in =  7 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  16 player =  Bluthner_Lucas in =  8 dfk[in] =  14.7317 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  9 dfk[in] =  15.0977 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  10 dfk[in] =  7.66177 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  11 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  12 dfk[in] =  12.0263 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  13 dfk[in] =  15.6971 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  14 dfk[in] =  5.02737 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  15 dfk[in] =  21.0769 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  16 player =  Bluthner_Lucas in =  16 dfk[in] =  0 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  16 player =  Bluthner_Lucas in =  17 dfk[in] =  0 diff[player_pt[j]][in_last20] =  9.89674 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  16 player =  Bluthner_Lucas in =  18 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  16 player =  Bluthner_Lucas in =  19 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ diff::round no. =  16 player =  Bluthner_Lucas in =  20 dfk[in] =  0 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 0
+ after round  16 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    17
+
+
+  rnd no.    17  rnd_upperFilter     -nan(ind)  rnd score =    0  HC =    -1
+ after round  17 lowest HC  = 1.4 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    18
+
+
+  rnd no.    18  rnd_upperFilter     56.2648  rnd score =    0  HC =    -1
+ after round  18 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    19
+
+
+  rnd no.    19  rnd_upperFilter     60.0536  rnd score =    0  HC =    -1
+ after round  19 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    20
+
+
+  rnd no.    20  rnd_upperFilter     54.5391  rnd score =    0  HC =    -1
+ after round  20 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    21
+
+
+  rnd no.    21  rnd_upperFilter     64.6811  rnd score =    0  HC =    -1
+ after round  21 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    22
+
+
+  rnd no.    22  rnd_upperFilter     62.5368  rnd score =    0  HC =    -1
+ after round  22 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    23
+
+
+  rnd no.    23  rnd_upperFilter     52.9654  rnd score =    0  HC =    -1
+ after round  23 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    24
+
+
+  rnd no.    24  rnd_upperFilter     63.9386  rnd score =    0  HC =    -1
+ after round  24 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    25
+
+
+  rnd no.    25  rnd_upperFilter     40.8931  rnd score =    0  HC =    -1
+ after round  25 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    26
+
+
+  rnd no.    26  rnd_upperFilter     56.7225  rnd score =    0  HC =    -1
+ after round  26 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    27
+
+
+  rnd no.    27  rnd_upperFilter     52.1993  rnd score =    0  HC =    -1
+ diff::round no. =  27 player =  Darcovich_Ken rnd score =  52  rnd_scratch = 47.0681 diff[k][rnd_count[k]] = 5.86203 No. plyr's rds::rnd_count[k]  = 11 rd year  = 24
+ diff::round no. =  27 player =  Donovan_Justin old hc =  -1  updated HC = -1
+ after round  27 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    28
+
+
+  rnd no.    28  rnd_upperFilter     55.4283  rnd score =    0  HC =    -1
+ after round  28 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    29
+
+
+  rnd no.    29  rnd_upperFilter     50.2791  rnd score =    0  HC =    -1
+ after round  29 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    30
+
+
+  rnd no.    30  rnd_upperFilter     51.9585  rnd score =    0  HC =    -1
+ diff::round no. =  30 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  4 dfk[in] =  9.89674 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.89674 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  5 dfk[in] =  11.7515 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.7515 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  6 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  30 player =  Bluthner_Lucas in =  7 dfk[in] =  17.97 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 20
+ diff::round no. =  30 player =  Bluthner_Lucas in =  8 dfk[in] =  14.7317 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  9 dfk[in] =  15.0977 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  10 dfk[in] =  15.2575 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  11 dfk[in] =  22.2184 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  12 dfk[in] =  12.0263 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  13 dfk[in] =  15.6971 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  14 dfk[in] =  19.5104 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  15 dfk[in] =  26.454 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  16 dfk[in] =  15.7567 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  17 dfk[in] =  15.8401 diff[player_pt[j]][in_last20] =  9.89674 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  18 dfk[in] =  19.7892 diff[player_pt[j]][in_last20] =  11.7515 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  19 dfk[in] =  26.0681 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  30 player =  Bluthner_Lucas in =  20 dfk[in] =  24.0769 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ after round  30 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    31
+
+
+  rnd no.    31  rnd_upperFilter     45.3703  rnd score =    0  HC =    -1
+ diff::round no. =  31 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  4 dfk[in] =  9.89674 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.89674 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  5 dfk[in] =  11.7515 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.7515 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  6 dfk[in] =  11.3209 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.3209 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  7 dfk[in] =  15.0977 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  8 dfk[in] =  15.4294 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  9 dfk[in] =  17.5904 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  10 dfk[in] =  14.0889 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  11 dfk[in] =  22.2184 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  12 dfk[in] =  12.0263 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  13 dfk[in] =  15.6971 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  14 dfk[in] =  19.5104 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  15 dfk[in] =  26.454 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  16 dfk[in] =  21.101 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  17 dfk[in] =  15.8401 diff[player_pt[j]][in_last20] =  9.89674 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  18 dfk[in] =  19.7892 diff[player_pt[j]][in_last20] =  11.7515 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  19 dfk[in] =  26.0681 diff[player_pt[j]][in_last20] =  11.3209 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  31 player =  Bluthner_Lucas in =  20 dfk[in] =  24.0769 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ after round  31 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    32
+
+
+  rnd no.    32  rnd_upperFilter     53.7243  rnd score =    0  HC =    -1
+ diff::round no. =  32 player =  Darcovich_Ken rnd score =  55  rnd_scratch = 48.1469 diff[k][rnd_count[k]] = 7.88864 No. plyr's rds::rnd_count[k]  = 12 rd year  = 24
+ diff::round no. =  32 player =  Donovan_Justin old hc =  -1  updated HC = -1
+ after round  32 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    33
+
+
+  rnd no.    33  rnd_upperFilter     59.4677  rnd score =    0  HC =    -1
+ after round  33 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    34
+
+
+  rnd no.    34  rnd_upperFilter     50.9896  rnd score =    0  HC =    -1
+ after round  34 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    35
+
+
+  rnd no.    35  rnd_upperFilter     60.9111  rnd score =    0  HC =    -1
+ diff::round no. =  35 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  4 dfk[in] =  9.89674 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.89674 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  5 dfk[in] =  11.7515 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.7515 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  6 dfk[in] =  11.3209 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.3209 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  7 dfk[in] =  10.0094 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.0094 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  8 dfk[in] =  18.6526 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  9 dfk[in] =  27.8306 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  10 dfk[in] =  11.463 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  11 dfk[in] =  15.6053 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  12 dfk[in] =  26.5497 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  13 dfk[in] =  21.0769 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  14 dfk[in] =  25.4534 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  15 dfk[in] =  15.8401 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  16 dfk[in] =  19.7892 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  17 dfk[in] =  26.0681 diff[player_pt[j]][in_last20] =  9.89674 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  18 dfk[in] =  24.0769 diff[player_pt[j]][in_last20] =  11.7515 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  19 dfk[in] =  30.9107 diff[player_pt[j]][in_last20] =  11.3209 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Bluthner_Lucas in =  20 dfk[in] =  21.8187 diff[player_pt[j]][in_last20] =  10.0094 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  35 player =  Darcovich_Ken rnd score =  62  rnd_scratch = 54.6189 diff[k][rnd_count[k]] = 7.87545 No. plyr's rds::rnd_count[k]  = 13 rd year  = 24
+ after round  35 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    36
+
+
+  rnd no.    36  rnd_upperFilter     61.2033  rnd score =    0  HC =    -1
+ diff::round no. =  36 player =  Darcovich_Ken rnd score =  58  rnd_scratch = 55.4601 diff[k][rnd_count[k]] = 2.70995 No. plyr's rds::rnd_count[k]  = 14 rd year  = 24
+ after round  36 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    37
+
+
+  rnd no.    37  rnd_upperFilter     56.3661  rnd score =    0  HC =    -1
+ after round  37 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    38
+
+
+  rnd no.    38  rnd_upperFilter     53.4259  rnd score =    0  HC =    -1
+ diff::round no. =  38 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  4 dfk[in] =  9.89674 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.89674 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  5 dfk[in] =  11.7515 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.7515 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  6 dfk[in] =  11.3209 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.3209 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  7 dfk[in] =  10.0094 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.0094 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  8 dfk[in] =  13.0311 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  13.0311 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  9 dfk[in] =  15.0977 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  10 dfk[in] =  15.2575 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  11 dfk[in] =  11.6269 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  12 dfk[in] =  18.8746 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  13 dfk[in] =  10.5828 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  14 dfk[in] =  4.81977 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  15 dfk[in] =  6.95214 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  16 dfk[in] =  26.0681 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  17 dfk[in] =  24.0769 diff[player_pt[j]][in_last20] =  9.89674 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  18 dfk[in] =  30.9107 diff[player_pt[j]][in_last20] =  11.7515 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  19 dfk[in] =  21.8187 diff[player_pt[j]][in_last20] =  11.3209 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  38 player =  Bluthner_Lucas in =  20 dfk[in] =  26.82 diff[player_pt[j]][in_last20] =  10.0094 diff[player_pt[j]][in] =  0 ry = 24
+ after round  38 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    39
+
+
+  rnd no.    39  rnd_upperFilter     47.099  rnd score =    0  HC =    -1
+ after round  39 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    40
+
+
+  rnd no.    40  rnd_upperFilter     65.8649  rnd score =    0  HC =    -1
+ after round  40 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    41
+
+
+  rnd no.    41  rnd_upperFilter     59.8403  rnd score =    0  HC =    -1
+ diff::round no. =  41 player =  Darcovich_Ken rnd score =  63  rnd_scratch = 53.1455 diff[k][rnd_count[k]] = 10.5145 No. plyr's rds::rnd_count[k]  = 15 rd year  = 24
+ after round  41 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    42
+
+
+  rnd no.    42  rnd_upperFilter     55.6584  rnd score =    0  HC =    -1
+ diff::round no. =  42 player =  Darcovich_Ken rnd score =  56  rnd_scratch = 48.3778 diff[k][rnd_count[k]] = 8.07366 No. plyr's rds::rnd_count[k]  = 16 rd year  = 24
+ after round  42 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    43
+
+
+  rnd no.    43  rnd_upperFilter     55.4719  rnd score =    0  HC =    -1
+ after round  43 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    44
+
+
+  rnd no.    44  rnd_upperFilter     49.557  rnd score =    0  HC =    -1
+ after round  44 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    45
+
+
+  rnd no.    45  rnd_upperFilter     56.6876  rnd score =    0  HC =    -1
+ diff::round no. =  45 player =  Darcovich_Ken rnd score =  52  rnd_scratch = 49.673 diff[k][rnd_count[k]] = 2.59189 No. plyr's rds::rnd_count[k]  = 17 rd year  = 24
+ after round  45 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    46
+
+
+  rnd no.    46  rnd_upperFilter     47.8377  rnd score =    0  HC =    -1
+ diff::round no. =  46 player =  Darcovich_Ken rnd score =  44  rnd_scratch = 41.6357 diff[k][rnd_count[k]] = 2.98937 No. plyr's rds::rnd_count[k]  = 18 rd year  = 24
+ after round  46 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    47
+
+
+  rnd no.    47  rnd_upperFilter     58.1461  rnd score =    0  HC =    -1
+ diff::round no. =  47 player =  Bluthner_Lucas in =  1 dfk[in] =  8.80204 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  8.80204 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  2 dfk[in] =  7.51748 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.51748 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  3 dfk[in] =  9.29525 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.29525 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  4 dfk[in] =  9.89674 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.89674 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  5 dfk[in] =  11.7515 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.7515 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  6 dfk[in] =  11.3209 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.3209 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  7 dfk[in] =  10.0094 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.0094 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  8 dfk[in] =  13.0311 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  13.0311 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  9 dfk[in] =  4.20431 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  4.20431 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  10 dfk[in] =  15.2575 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  11 dfk[in] =  11.6269 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  12 dfk[in] =  18.8746 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  13 dfk[in] =  8.8791 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  14 dfk[in] =  14.369 diff[player_pt[j]][in_last20] =  8.80204 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  15 dfk[in] =  0.70913 diff[player_pt[j]][in_last20] =  7.51748 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  16 dfk[in] =  11.6781 diff[player_pt[j]][in_last20] =  9.29525 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  17 dfk[in] =  1.7003 diff[player_pt[j]][in_last20] =  9.89674 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  18 dfk[in] =  1.58302 diff[player_pt[j]][in_last20] =  11.7515 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  19 dfk[in] =  3.70573 diff[player_pt[j]][in_last20] =  11.3209 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  47 player =  Bluthner_Lucas in =  20 dfk[in] =  5.51818 diff[player_pt[j]][in_last20] =  10.0094 diff[player_pt[j]][in] =  0 ry = 24
+ after round  47 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    48
+
+
+  rnd no.    48  rnd_upperFilter     59.1724  rnd score =    0  HC =    -1
+ after round  48 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    49
+
+
+  rnd no.    49  rnd_upperFilter     57.5935  rnd score =    0  HC =    -1
+ after round  49 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    50
+
+
+  rnd no.    50  rnd_upperFilter     57.8822  rnd score =    0  HC =    -1
+ after round  50 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    51
+
+
+  rnd no.    51  rnd_upperFilter     58.9166  rnd score =    0  HC =    -1
+ after round  51 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    52
+
+
+  rnd no.    52  rnd_upperFilter     53.9571  rnd score =    0  HC =    -1
+ after round  52 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    53
+
+
+  rnd no.    53  rnd_upperFilter     50.5115  rnd score =    0  HC =    -1
+ after round  53 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    54
+
+
+  rnd no.    54  rnd_upperFilter     43.8129  rnd score =    0  HC =    -1
+ diff::round no. =  54 player =  Darcovich_Ken rnd score =  43  rnd_scratch = 40.4357 diff[k][rnd_count[k]] = 3.41156 No. plyr's rds::rnd_count[k]  = 19 rd year  = 24
+ diff::round no. =  54 player =  Donovan_Justin old hc =  -1  updated HC = 23.0439
+ after round  54 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    55
+
+
+  rnd no.    55  rnd_upperFilter     60.1485  rnd score =    0  HC =    -1
+ after round  55 lowest HC  = 1.4016 diff-corr  = 0  player  = Vinet_Eric  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    56
+
+
+  rnd no.    56  rnd_upperFilter     56.6387  rnd score =    0  HC =    -1
+ after round  56 lowest HC  = 1.08192 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    57
+
+
+  rnd no.    57  rnd_upperFilter     54.0484  rnd score =    0  HC =    -1
+ after round  57 lowest HC  = 1.08192 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    58
+
+
+  rnd no.    58  rnd_upperFilter     83.1498  rnd score =    0  HC =    -1
+ diff::round no. =  58 player =  Darcovich_Ken rnd score =  78  rnd_scratch = 73.141 diff[k][rnd_count[k]] = 4.04273 No. plyr's rds::rnd_count[k]  = 20 rd year  = 24
+ after round  58 lowest HC  = 0.788528 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    59
+
+
+  rnd no.    59  rnd_upperFilter     56.9356  rnd score =    0  HC =    -1
+ diff::round no. =  59 player =  Darcovich_Ken rnd score =  62  rnd_scratch = 51.9758 diff[k][rnd_count[k]] = 9.95203 No. plyr's rds::rnd_count[k]  = 21 rd year  = 24
+ after round  59 lowest HC  = 0.788528 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    60
+
+
+  rnd no.    60  rnd_upperFilter     58.8901  rnd score =    0  HC =    -1
+ after round  60 lowest HC  = 0.788528 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    61
+
+
+  rnd no.    61  rnd_upperFilter     56.0866  rnd score =    0  HC =    -1
+ after round  61 lowest HC  = 0.600536 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    62
+
+
+  rnd no.    62  rnd_upperFilter     51.0489  rnd score =    0  HC =    -1
+ after round  62 lowest HC  = 0.600536 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    63
+
+
+  rnd no.    63  rnd_upperFilter     66.8756  rnd score =    0  HC =    -1
+ diff::round no. =  63 player =  Darcovich_Ken rnd score =  60  rnd_scratch = 56.4537 diff[k][rnd_count[k]] = 3.44714 No. plyr's rds::rnd_count[k]  = 22 rd year  = 24
+ after round  63 lowest HC  = 0.600536 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    64
+
+
+  rnd no.    64  rnd_upperFilter     58.2959  rnd score =    0  HC =    -1
+ diff::round no. =  64 player =  Darcovich_Ken rnd score =  64  rnd_scratch = 54.6739 diff[k][rnd_count[k]] = 8.75333 No. plyr's rds::rnd_count[k]  = 23 rd year  = 24
+ after round  64 lowest HC  = -0.019097 diff-corr  = -0.00596781  player  = Dowdell_Brock  i_zero_flag  = 1
+
+
+  NEW ROUND   rnd no.    65
+
+
+  rnd no.    65  rnd_upperFilter     56.9756  rnd score =    0  HC =    -1
+ after round  65 lowest HC  = 0 diff-corr  = 0  player  = Dowdell_Brock  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    66
+
+
+  rnd no.    66  rnd_upperFilter     51.941  rnd score =    0  HC =    -1
+ after round  66 lowest HC  = 0 diff-corr  = 0  player  = Dowdell_Brock  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    67
+
+
+  rnd no.    67  rnd_upperFilter     58.1622  rnd score =    0  HC =    -1
+ after round  67 lowest HC  = 0.165787 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    68
+
+
+  rnd no.    68  rnd_upperFilter     49.8948  rnd score =    0  HC =    -1
+ diff::round no. =  68 player =  Darcovich_Ken rnd score =  50  rnd_scratch = 44.5326 diff[k][rnd_count[k]] = 5.69479 No. plyr's rds::rnd_count[k]  = 24 rd year  = 24
+ diff::round no. =  68 player =  Donovan_Justin old hc =  23.0497  updated HC = 16.4662
+ after round  68 lowest HC  = 0.165787 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    69
+
+
+  rnd no.    69  rnd_upperFilter     56.5689  rnd score =    0  HC =    -1
+ after round  69 lowest HC  = 0.165787 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    70
+
+
+  rnd no.    70  rnd_upperFilter     47.838  rnd score =    0  HC =    -1
+ after round  70 lowest HC  = 0.165787 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    71
+
+
+  rnd no.    71  rnd_upperFilter     60.1675  rnd score =    0  HC =    -1
+ after round  71 lowest HC  = 0.165787 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    72
+
+
+  rnd no.    72  rnd_upperFilter     63.9337  rnd score =    0  HC =    -1
+ after round  72 lowest HC  = -0.281516 diff-corr  = -0.293246  player  = Milks_Dave  i_zero_flag  = 1
+
+
+  NEW ROUND   rnd no.    73
+
+
+  rnd no.    73  rnd_upperFilter     61.6243  rnd score =    0  HC =    -1
+ after round  73 lowest HC  = -0.00329667 diff-corr  = -0.00343403  player  = Milks_Dave  i_zero_flag  = 1
+
+
+  NEW ROUND   rnd no.    74
+
+
+  rnd no.    74  rnd_upperFilter     56.6971  rnd score =    0  HC =    -1
+ after round  74 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    75
+
+
+  rnd no.    75  rnd_upperFilter     62.7935  rnd score =    0  HC =    -1
+ after round  75 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    76
+
+
+  rnd no.    76  rnd_upperFilter     61.896  rnd score =    0  HC =    -1
+ after round  76 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    77
+
+
+  rnd no.    77  rnd_upperFilter     54.0361  rnd score =    0  HC =    -1
+ diff::round no. =  77 player =  Darcovich_Ken rnd score =  62  rnd_scratch = 47.9196 diff[k][rnd_count[k]] = 15.5396 No. plyr's rds::rnd_count[k]  = 25 rd year  = 24
+ diff::round no. =  77 player =  Donovan_Justin old hc =  16.751  updated HC = 16.751
+ after round  77 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    78
+
+
+  rnd no.    78  rnd_upperFilter     63.2851  rnd score =    0  HC =    -1
+ after round  78 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    79
+
+
+  rnd no.    79  rnd_upperFilter     57.7844  rnd score =    0  HC =    -1
+ after round  79 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    80
+
+
+  rnd no.    80  rnd_upperFilter     52.8208  rnd score =    0  HC =    -1
+ diff::round no. =  80 player =  Darcovich_Ken rnd score =  53  rnd_scratch = 49.5497 diff[k][rnd_count[k]] = 3.52969 No. plyr's rds::rnd_count[k]  = 26 rd year  = 24
+ after round  80 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    81
+
+
+  rnd no.    81  rnd_upperFilter     59.7285  rnd score =    0  HC =    -1
+ after round  81 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    82
+
+
+  rnd no.    82  rnd_upperFilter     43.193  rnd score =    0  HC =    -1
+ after round  82 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    83
+
+
+  rnd no.    83  rnd_upperFilter     55.6292  rnd score =    0  HC =    -1
+ after round  83 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    84
+
+
+  rnd no.    84  rnd_upperFilter     63.0928  rnd score =    0  HC =    -1
+ diff::round no. =  84 player =  Darcovich_Ken rnd score =  63  rnd_scratch = 59.2946 diff[k][rnd_count[k]] = 3.79695 No. plyr's rds::rnd_count[k]  = 27 rd year  = 24
+ diff::round no. =  84 player =  Donovan_Justin old hc =  16.751  updated HC = 18.4833
+ after round  84 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    85
+
+
+  rnd no.    85  rnd_upperFilter     59.1371  rnd score =    0  HC =    -1
+ after round  85 lowest HC  = -1.27898e-16 diff-corr  = -1.33227e-16  player  = Milks_Dave  i_zero_flag  = 1
+
+
+  NEW ROUND   rnd no.    86
+
+
+  rnd no.    86  rnd_upperFilter     67.0693  rnd score =    0  HC =    -1
+ after round  86 lowest HC  = 0.0280146 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    87
+
+
+  rnd no.    87  rnd_upperFilter     67.7394  rnd score =    0  HC =    -1
+ after round  87 lowest HC  = 0.0280146 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    88
+
+
+  rnd no.    88  rnd_upperFilter     59.5748  rnd score =    0  HC =    -1
+ after round  88 lowest HC  = 0.0280146 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    89
+
+
+  rnd no.    89  rnd_upperFilter     59.1698  rnd score =    0  HC =    -1
+ after round  89 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    90
+
+
+  rnd no.    90  rnd_upperFilter     61.987  rnd score =    0  HC =    -1
+ after round  90 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    91
+
+
+  rnd no.    91  rnd_upperFilter     53.8049  rnd score =    0  HC =    -1
+ after round  91 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    92
+
+
+  rnd no.    92  rnd_upperFilter     63.291  rnd score =    0  HC =    -1
+ after round  92 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    93
+
+
+  rnd no.    93  rnd_upperFilter     48.6019  rnd score =    0  HC =    -1
+ diff::round no. =  93 player =  Darcovich_Ken rnd score =  54  rnd_scratch = 42.834 diff[k][rnd_count[k]] = 14.658 No. plyr's rds::rnd_count[k]  = 28 rd year  = 24
+ after round  93 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    94
+
+
+  rnd no.    94  rnd_upperFilter     66.652  rnd score =    0  HC =    -1
+ diff::round no. =  94 player =  Darcovich_Ken rnd score =  61  rnd_scratch = 60.0349 diff[k][rnd_count[k]] = 1.0325 No. plyr's rds::rnd_count[k]  = 29 rd year  = 24
+ after round  94 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    95
+
+
+  rnd no.    95  rnd_upperFilter     61.0558  rnd score =    0  HC =    -1
+ diff::round no. =  95 player =  Darcovich_Ken rnd score =  64  rnd_scratch = 54.5969 diff[k][rnd_count[k]] = 9.61035 No. plyr's rds::rnd_count[k]  = 30 rd year  = 24
+ after round  95 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    96
+
+
+  rnd no.    96  rnd_upperFilter     50.0314  rnd score =    0  HC =    -1
+ after round  96 lowest HC  = 0.123167 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    97
+
+
+  rnd no.    97  rnd_upperFilter     63.651  rnd score =    59  HC =    -1
+ diff::round no. =  97 player =  Bluthner_Lucas in =  1 dfk[in] =  9.10468 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.10468 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  2 dfk[in] =  7.82013 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.82013 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  3 dfk[in] =  9.59789 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.59789 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  4 dfk[in] =  10.1994 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.1994 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  5 dfk[in] =  12.0541 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  12.0541 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  6 dfk[in] =  11.6236 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.6236 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  7 dfk[in] =  10.312 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.312 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  8 dfk[in] =  13.3337 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  13.3337 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  9 dfk[in] =  4.50696 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  4.50696 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  10 dfk[in] =  4.57493 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  4.57493 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  11 dfk[in] =  4.34538 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  12 dfk[in] =  8.45508 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  13 dfk[in] =  0.991158 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  14 dfk[in] =  4.90451 diff[player_pt[j]][in_last20] =  9.10468 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  15 dfk[in] =  11.7306 diff[player_pt[j]][in_last20] =  7.82013 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  16 dfk[in] =  3.42322 diff[player_pt[j]][in_last20] =  9.59789 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  17 dfk[in] =  4.57493 diff[player_pt[j]][in_last20] =  10.1994 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  18 dfk[in] =  9.591 diff[player_pt[j]][in_last20] =  12.0541 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  19 dfk[in] =  8.58831 diff[player_pt[j]][in_last20] =  11.6236 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  97 player =  Bluthner_Lucas in =  20 dfk[in] =  7.26772 diff[player_pt[j]][in_last20] =  10.312 diff[player_pt[j]][in] =  0 ry = 24
+ after round  97 lowest HC  = 0.168786 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    98
+
+
+  rnd no.    98  rnd_upperFilter     63.9548  rnd score =    0  HC =    -1
+ after round  98 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    99
+
+
+  rnd no.    99  rnd_upperFilter     61.7742  rnd score =    0  HC =    -1
+ rejtest::round no. =  99 player =  Antle_Dennis rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 60.5177
+ rejtest::round no. =  99 player =  Beck_David rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 56.9947
+ rejtest::round no. =  99 player =  Brown_Lance rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 62.9159
+ rejtest::round no. =  99 player =  Chyzyk_Kasia rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 50.0809
+ rejtest::round no. =  99 player =  Cole_Scott rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 53.0053
+ rejtest::round no. =  99 player =  Colford_Adam rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 65.2601
+ rejtest::round no. =  99 player =  Cox_Brenda rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 59.1263
+ rejtest::round no. =  99 player =  Dorion_John rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 55.2775
+ rejtest::round no. =  99 player =  Dotto_Karen rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 52.2225
+ rejtest::round no. =  99 player =  Dowdell_Brock rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 59.8971
+ rejtest::round no. =  99 player =  Dowdell_Dwayne rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 49.0003
+ rejtest::round no. =  99 player =  Fortin_Vivianne rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 59.4097
+ rejtest::round no. =  99 player =  Gozdowski_Troy rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 51.5311
+ rejtest::round no. =  99 player =  Gyre_Pier-Luc rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 55.9062
+ rejtest::round no. =  99 player =  Kaarid_Tristan rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 52.6137
+ rejtest::round no. =  99 player =  Kilbride_Kyle rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 61.0948
+ rejtest::round no. =  99 player =  MacDonald_Adam rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 61.7071
+ rejtest::round no. =  99 player =  MacGillivary_Brian rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 47.9319
+ rejtest::round no. =  99 player =  Malenfant_Frank rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 59.0572
+ rejtest::round no. =  99 player =  Maria_Adam rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 47.1987
+ rejtest::round no. =  99 player =  Martel_Sebastien rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 56.7925
+ rejtest::round no. =  99 player =  McCormick_Mike rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 54.8011
+ rejtest::round no. =  99 player =  McLeod_David rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 53.8918
+ rejtest::round no. =  99 player =  Mussell_Ryan rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 49.9334
+ rejtest::round no. =  99 player =  O'Neil_Colin rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 51.6839
+ rejtest::round no. =  99 player =  Oosterhoff_Jacob rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 49.9154
+ rejtest::round no. =  99 player =  Pengelly_Arthur rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 51.8985
+ rejtest::round no. =  99 player =  Pengelly_Dawn rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 49.1063
+ rejtest::round no. =  99 player =  Robinson_Jim rnd_upperFilter =  61.7742  rnd_adj_sc[j] = 52.8507
+ after round  99 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    100
+
+
+  rnd no.    100  rnd_upperFilter     58.7208  rnd score =    56  HC =    -1
+ rejtest::round no. =  100 player =  Alexander_Ken rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 52.0368
+ rejtest::round no. =  100 player =  Bluthner_Lucas rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 51.1266
+ rejtest::round no. =  100 player =  Brown_Lance rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 47.495
+ rejtest::round no. =  100 player =  Colford_Adam rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 50.5844
+ rejtest::round no. =  100 player =  Dicerni_AJ rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 52.4017
+ rejtest::round no. =  100 player =  Dotto_Laurie rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 52.2986
+ rejtest::round no. =  100 player =  Dowdell_Brock rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 51.5874
+ rejtest::round no. =  100 player =  Dowdell_Dwayne rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 52.9824
+ rejtest::round no. =  100 player =  Fortin_Vivianne rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 53.6242
+ rejtest::round no. =  100 player =  Gillard_Logan rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 58.5209
+ rejtest::round no. =  100 player =  Holden_Robbie rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 53.7424
+ rejtest::round no. =  100 player =  Hosmar_Chris rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 57.9062
+ rejtest::round no. =  100 player =  Ide_Tetsuro rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 53.379
+ rejtest::round no. =  100 player =  Kaarid_Tristan rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 55.5951
+ rejtest::round no. =  100 player =  Linthorne_Jarred rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 54.7071
+ rejtest::round no. =  100 player =  MacGillivary_Brian rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 63.8713
+ rejtest::round no. =  100 player =  Maria_Adam rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 51.0932
+ rejtest::round no. =  100 player =  Martel_Sebastien rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 53.4347
+ rejtest::round no. =  100 player =  McCardle_Alex rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 52.8011
+ rejtest::round no. =  100 player =  McCormick_Mike rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 54.9825
+ rejtest::round no. =  100 player =  McLeod_David rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 43.2976
+ rejtest::round no. =  100 player =  O'Neil_Colin rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 54.1067
+ rejtest::round no. =  100 player =  Oosterhoff_Jacob rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 49.2215
+ rejtest::round no. =  100 player =  Pengelly_Arthur rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 54.7164
+ rejtest::round no. =  100 player =  Rowland_Geoff rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 51.7369
+ rejtest::round no. =  100 player =  Sider_Dietrich rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 54.8507
+ rejtest::round no. =  100 player =  Starchuk_Trevor rnd_upperFilter =  58.7208  rnd_adj_sc[j] = 58.6731
+ diff::round no. =  100 player =  Bluthner_Lucas in =  1 dfk[in] =  9.10468 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.10468 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  2 dfk[in] =  7.82013 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  7.82013 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  3 dfk[in] =  9.59789 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  9.59789 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  4 dfk[in] =  10.1994 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.1994 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  5 dfk[in] =  12.0541 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  12.0541 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  6 dfk[in] =  11.6236 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  11.6236 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  7 dfk[in] =  10.312 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  10.312 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  8 dfk[in] =  13.3337 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  13.3337 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  9 dfk[in] =  4.50696 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  4.50696 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  10 dfk[in] =  4.57493 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  4.57493 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  11 dfk[in] =  4.42767 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  4.42767 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  12 dfk[in] =  8.45508 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  13 dfk[in] =  0.991158 diff[player_pt[j]][in_last20] =  0 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  14 dfk[in] =  4.90451 diff[player_pt[j]][in_last20] =  9.10468 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  15 dfk[in] =  11.7306 diff[player_pt[j]][in_last20] =  7.82013 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  16 dfk[in] =  3.42322 diff[player_pt[j]][in_last20] =  9.59789 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  17 dfk[in] =  4.57493 diff[player_pt[j]][in_last20] =  10.1994 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  18 dfk[in] =  3.33232 diff[player_pt[j]][in_last20] =  12.0541 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  19 dfk[in] =  7.26772 diff[player_pt[j]][in_last20] =  11.6236 diff[player_pt[j]][in] =  0 ry = 24
+ diff::round no. =  100 player =  Bluthner_Lucas in =  20 dfk[in] =  8.54189 diff[player_pt[j]][in_last20] =  10.312 diff[player_pt[j]][in] =  0 ry = 24
+ after round  100 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    101
+
+
+  rnd no.    101  rnd_upperFilter     57.6717  rnd score =    0  HC =    -1
+ rejtest::round no. =  101 player =  Antle_Dennis rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 52.5888
+ rejtest::round no. =  101 player =  Beck_David rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 55.999
+ rejtest::round no. =  101 player =  Chyzyk_Kasia rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 47.6638
+ rejtest::round no. =  101 player =  Cole_Scott rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 48.2984
+ rejtest::round no. =  101 player =  Cox_Brenda rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 49.0527
+ rejtest::round no. =  101 player =  Dorion_John rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 41.6637
+ rejtest::round no. =  101 player =  Dotto_Karen rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 53.8114
+ rejtest::round no. =  101 player =  Gozdowski_Troy rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 54.4817
+ rejtest::round no. =  101 player =  Gyre_Pier-Luc rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 46.3229
+ rejtest::round no. =  101 player =  Hurlburt_Tammy rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 52.5877
+ rejtest::round no. =  101 player =  Kilbride_Kyle rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 60.0943
+ rejtest::round no. =  101 player =  MacDonald_Adam rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 51.837
+ rejtest::round no. =  101 player =  MacDonald_Emily rnd_upperFilter =  57.6717  rnd_adj_sc[j] = 46.0371
+ after round  101 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    102
+
+
+  rnd no.    102  rnd_upperFilter     64.656  rnd score =    0  HC =    -1
+ rejtest::round no. =  102 player =  Alexander_Ken rnd_upperFilter =  64.656  rnd_adj_sc[j] = 54.6029
+ rejtest::round no. =  102 player =  Major_Phil rnd_upperFilter =  64.656  rnd_adj_sc[j] = 58.3635
+ rejtest::round no. =  102 player =  Pytel_John rnd_upperFilter =  64.656  rnd_adj_sc[j] = 61.1466
+ rejtest::round no. =  102 player =  Villeneuve_Pat rnd_upperFilter =  64.656  rnd_adj_sc[j] = 62.5729
+ rejtest::round no. =  102 player =  Vinet_Eric rnd_upperFilter =  64.656  rnd_adj_sc[j] = 62.6633
+ after round  102 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    103
+
+
+  rnd no.    103  rnd_upperFilter     64.7806  rnd score =    0  HC =    -1
+ rejtest::round no. =  103 player =  Houle_Mario rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 59.1751
+ rejtest::round no. =  103 player =  Munoz_Manny rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 59.2093
+ rejtest::round no. =  103 player =  Noseworthy_Jordan rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 63.5147
+ rejtest::round no. =  103 player =  Pytel_John rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 51.7504
+ rejtest::round no. =  103 player =  Silianu_Daniel rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 50.6075
+ rejtest::round no. =  103 player =  Villeneuve_Pat rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 58.3411
+ rejtest::round no. =  103 player =  Vinet_Eric rnd_upperFilter =  64.7806  rnd_adj_sc[j] = 62.4299
+ after round  103 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    104
+
+
+  rnd no.    104  rnd_upperFilter     56.3499  rnd score =    0  HC =    -1
+ rejtest::round no. =  104 player =  Corey_Andy rnd_upperFilter =  56.3499  rnd_adj_sc[j] = 54.1881
+ rejtest::round no. =  104 player =  Darcovich_Ken rnd_upperFilter =  56.3499  rnd_adj_sc[j] = 49.9604
+ rejtest::round no. =  104 player =  Houle_Mario rnd_upperFilter =  56.3499  rnd_adj_sc[j] = 45.2681
+ rejtest::round no. =  104 player =  Loiseau_Karl rnd_upperFilter =  56.3499  rnd_adj_sc[j] = 44.8718
+ rejtest::round no. =  104 player =  Munoz_Manny rnd_upperFilter =  56.3499  rnd_adj_sc[j] = 46.4476
+ rejtest::round no. =  104 player =  Noseworthy_Jordan rnd_upperFilter =  56.3499  rnd_adj_sc[j] = 56.4237
+ diff::round no. =  104 player =  Darcovich_Ken rnd score =  58  rnd_scratch = 48.1472 diff[k][rnd_count[k]] = 8.31872 No. plyr's rds::rnd_count[k]  = 31 rd year  = 24
+ after round  104 lowest HC  = 0.129275 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    105
+
+
+  rnd no.    105  rnd_upperFilter     55.4171  rnd score =    0  HC =    -1
+ rejtest::round no. =  105 player =  Gyre_Pier-Luc rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 54.7117
+ rejtest::round no. =  105 player =  Houle_Mario rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 54.1081
+ rejtest::round no. =  105 player =  James_Aaron rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 51.9589
+ rejtest::round no. =  105 player =  Milks_Dave rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 51.8596
+ rejtest::round no. =  105 player =  Noseworthy_Jordan rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 53.4691
+ rejtest::round no. =  105 player =  Silianu_Daniel rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 54.8694
+ rejtest::round no. =  105 player =  Villeneuve_Pat rnd_upperFilter =  55.4171  rnd_adj_sc[j] = 50.3693
+ after round  105 lowest HC  = -0.218219 diff-corr  = -0.227311  player  = Milks_Dave  i_zero_flag  = 1
+
+
+  NEW ROUND   rnd no.    106
+
+
+  rnd no.    106  rnd_upperFilter     53.6703  rnd score =    0  HC =    -1
+ rejtest::round no. =  106 player =  Baird_Drake rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 47.5171
+ rejtest::round no. =  106 player =  Beck_David rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 51.7634
+ rejtest::round no. =  106 player =  Dowdell_Brock rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 53.2231
+ rejtest::round no. =  106 player =  Dowdell_Dwayne rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 51.9766
+ rejtest::round no. =  106 player =  Haggert_Angelica rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 46.3754
+ rejtest::round no. =  106 player =  Joss_Jamie rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 50.6692
+ rejtest::round no. =  106 player =  MacGillivary_Brian rnd_upperFilter =  53.6703  rnd_adj_sc[j] = 46.8836
+ after round  106 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    107
+
+
+  rnd no.    107  rnd_upperFilter     57.2633  rnd score =    0  HC =    -1
+ rejtest::round no. =  107 player =  Baird_Drake rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 50.9403
+ rejtest::round no. =  107 player =  Dorion_John rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 56.9026
+ rejtest::round no. =  107 player =  Joss_Jamie rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 54.2041
+ rejtest::round no. =  107 player =  Kilbride_Kyle rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 47.2895
+ rejtest::round no. =  107 player =  Rowland_Geoff rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 52.6792
+ rejtest::round no. =  107 player =  Starchuk_Trevor rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 53.6157
+ rejtest::round no. =  107 player =  Walker_David rnd_upperFilter =  57.2633  rnd_adj_sc[j] = 54.8753
+ after round  107 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    108
+
+
+  rnd no.    108  rnd_upperFilter     56.344  rnd score =    0  HC =    -1
+ rejtest::round no. =  108 player =  Baird_Drake rnd_upperFilter =  56.344  rnd_adj_sc[j] = 52.0807
+ rejtest::round no. =  108 player =  Beck_David rnd_upperFilter =  56.344  rnd_adj_sc[j] = 55.3549
+ rejtest::round no. =  108 player =  Kudinov_Yuriy rnd_upperFilter =  56.344  rnd_adj_sc[j] = 53.1925
+ rejtest::round no. =  108 player =  Lay_Chris rnd_upperFilter =  56.344  rnd_adj_sc[j] = 54.6415
+ rejtest::round no. =  108 player =  MacGillivary_Brian rnd_upperFilter =  56.344  rnd_adj_sc[j] = 52.3301
+ rejtest::round no. =  108 player =  Starchuk_Trevor rnd_upperFilter =  56.344  rnd_adj_sc[j] = 47.6575
+ after round  108 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    109
+
+
+  rnd no.    109  rnd_upperFilter     62.7463  rnd score =    0  HC =    -1
+ rejtest::round no. =  109 player =  Alexander_Ken rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 57.5844
+ rejtest::round no. =  109 player =  Bourne_Chris rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 58.9372
+ rejtest::round no. =  109 player =  Chisholm_Duncan rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 54.7685
+ rejtest::round no. =  109 player =  Chyzyk_Austen rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 53.5082
+ rejtest::round no. =  109 player =  Darcovich_Ken rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 65.2856
+ rejtest::round no. =  109 player =  Dowdell_Brock rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 63.0549
+ rejtest::round no. =  109 player =  Gillard_Logan rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 58.9159
+ rejtest::round no. =  109 player =  Hosmar_Chris rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 58.0845
+ rejtest::round no. =  109 player =  Houle_Mario rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 53.4173
+ rejtest::round no. =  109 player =  Ide_Tetsuro rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 53.8684
+ rejtest::round no. =  109 player =  Lay_Chris rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 54.7138
+ rejtest::round no. =  109 player =  Lebrun_Jon rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 52.3451
+ rejtest::round no. =  109 player =  Linthorne_Jarred rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 59.4839
+ rejtest::round no. =  109 player =  MacDonald_Adam rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 59.6924
+ rejtest::round no. =  109 player =  Mainville_Jacob rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 56.0865
+ rejtest::round no. =  109 player =  McDonald_Dylan rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 52.2161
+ rejtest::round no. =  109 player =  Meldrum_Jeff rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 58.1668
+ rejtest::round no. =  109 player =  Milks_Dave rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 59
+ rejtest::round no. =  109 player =  Penton_Geoff rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 55.0162
+ rejtest::round no. =  109 player =  Reitlingshoefer_Claus rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 62.2465
+ rejtest::round no. =  109 player =  Silianu_Daniel rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 50.5459
+ rejtest::round no. =  109 player =  Vallee_Andrew rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 62.6732
+ rejtest::round no. =  109 player =  VanderEyken_Michael rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 61.0986
+ rejtest::round no. =  109 player =  Vinet_Eric rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 54.4083
+ rejtest::round no. =  109 player =  Visser_Carl rnd_upperFilter =  62.7463  rnd_adj_sc[j] = 59.1921
+ diff::round no. =  109 player =  Darcovich_Ken rnd score =  69  rnd_scratch = 56.7813 diff[k][rnd_count[k]] = 14.1359 No. plyr's rds::rnd_count[k]  = 32 rd year  = 24
+ after round  109 lowest HC  = 0 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    110
+
+
+  rnd no.    110  rnd_upperFilter     62.9553  rnd score =    0  HC =    -1
+ rejtest::round no. =  110 player =  Alexander_Ken rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 53.4442
+ rejtest::round no. =  110 player =  Bourne_Chris rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 58.8323
+ rejtest::round no. =  110 player =  Chisholm_Duncan rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 51.3313
+ rejtest::round no. =  110 player =  Chyzyk_Austen rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 56.1023
+ rejtest::round no. =  110 player =  Darcovich_Ken rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 63.2856
+ rejtest::round no. =  110 player =  Dowdell_Brock rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 59.8316
+ rejtest::round no. =  110 player =  Gillard_Logan rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 56.9159
+ rejtest::round no. =  110 player =  Hosmar_Chris rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 58.8774
+ rejtest::round no. =  110 player =  Houle_Mario rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 54.0709
+ rejtest::round no. =  110 player =  Ide_Tetsuro rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 49.3841
+ rejtest::round no. =  110 player =  Lay_Chris rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 54.0944
+ rejtest::round no. =  110 player =  Lebrun_Jon rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 51.1118
+ rejtest::round no. =  110 player =  Linthorne_Jarred rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 55.4839
+ rejtest::round no. =  110 player =  MacDonald_Adam rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 61.6924
+ rejtest::round no. =  110 player =  Mainville_Jacob rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 58.5337
+ rejtest::round no. =  110 player =  McDonald_Dylan rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 49.836
+ rejtest::round no. =  110 player =  Meldrum_Jeff rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 55.173
+ rejtest::round no. =  110 player =  Milks_Dave rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 59
+ rejtest::round no. =  110 player =  Penton_Geoff rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 55.2781
+ rejtest::round no. =  110 player =  Reitlingshoefer_Claus rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 57.1052
+ rejtest::round no. =  110 player =  Silianu_Daniel rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 52.3392
+ rejtest::round no. =  110 player =  Vallee_Andrew rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 66.6732
+ rejtest::round no. =  110 player =  VanderEyken_Michael rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 62.7118
+ rejtest::round no. =  110 player =  Vinet_Eric rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 54.6301
+ rejtest::round no. =  110 player =  Visser_Carl rnd_upperFilter =  62.9553  rnd_adj_sc[j] = 62.1921
+ diff::round no. =  110 player =  Darcovich_Ken rnd score =  67  rnd_scratch = 55.9988 diff[k][rnd_count[k]] = 12.7274 No. plyr's rds::rnd_count[k]  = 33 rd year  = 24
+ after round  110 lowest HC  = 0.0613045 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    111
+
+
+  rnd no.    111  rnd_upperFilter     57.4651  rnd score =    0  HC =    -1
+ rejtest::round no. =  111 player =  Abthorpe_Dan rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 53.0323
+ rejtest::round no. =  111 player =  Adams_Mike rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 47.669
+ rejtest::round no. =  111 player =  Atos_Mark rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 49.2478
+ rejtest::round no. =  111 player =  Baird_Drake rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 49.2116
+ rejtest::round no. =  111 player =  Beard_Greg rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.3422
+ rejtest::round no. =  111 player =  Becanic_Corey rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 61.5051
+ rejtest::round no. =  111 player =  Berenbaum_Matt rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.3904
+ rejtest::round no. =  111 player =  Brown_Lance rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 46.9008
+ rejtest::round no. =  111 player =  Chyzyk_Kasia rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 53.7905
+ rejtest::round no. =  111 player =  Clavel_Stephanie rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.1876
+ rejtest::round no. =  111 player =  Colford_Adam rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 42.0521
+ rejtest::round no. =  111 player =  Cooper_Ian rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 51.839
+ rejtest::round no. =  111 player =  Cox_Brenda rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 49.1843
+ rejtest::round no. =  111 player =  Deslauriers_Fran�ois rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.2847
+ rejtest::round no. =  111 player =  Donovan_Justin rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.5955
+ rejtest::round no. =  111 player =  Donovan_Lee rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 51.9541
+ rejtest::round no. =  111 player =  Dotto_Karen rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.0465
+ rejtest::round no. =  111 player =  Dotto_Laurie rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 52.7118
+ rejtest::round no. =  111 player =  Dowdell_Dwayne rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 46.3221
+ rejtest::round no. =  111 player =  Ellis_Adam rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 54.5969
+ rejtest::round no. =  111 player =  Foster_Neil rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 56.6276
+ rejtest::round no. =  111 player =  Gozdowski_Troy rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 49.8568
+ rejtest::round no. =  111 player =  Guthrie_Brian rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 51.4282
+ rejtest::round no. =  111 player =  Henry_Ross rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.5189
+ rejtest::round no. =  111 player =  Ivanchenko_Alexey rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 53.5666
+ rejtest::round no. =  111 player =  Joron_Jacob rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 47.4432
+ rejtest::round no. =  111 player =  Joron_Tavis rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 55.6878
+ rejtest::round no. =  111 player =  Joss_Jamie rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.354
+ rejtest::round no. =  111 player =  Kilbride_Kyle rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 56.0057
+ rejtest::round no. =  111 player =  Kudinov_Yuriy rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 54.6269
+ rejtest::round no. =  111 player =  Landry_Stephanie rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 46.4985
+ rejtest::round no. =  111 player =  Lane_Don rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.1142
+ rejtest::round no. =  111 player =  Lange_Ken rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 56.1671
+ rejtest::round no. =  111 player =  Lebrun_Justan rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 57.3718
+ rejtest::round no. =  111 player =  Lilly_Tom rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 45.1145
+ rejtest::round no. =  111 player =  MacDonald_Emily rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 54.3746
+ rejtest::round no. =  111 player =  MacGillivary_Brian rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.7323
+ rejtest::round no. =  111 player =  MacGillivary_Marie rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 52.8566
+ rejtest::round no. =  111 player =  Martel_Sebastien rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.0485
+ rejtest::round no. =  111 player =  McCormick_Mike rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 47.3656
+ rejtest::round no. =  111 player =  Melan�on_Errol rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 51.9949
+ rejtest::round no. =  111 player =  Munoz_Manny rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 53.2361
+ rejtest::round no. =  111 player =  O'Neil_Colin rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 49.2868
+ rejtest::round no. =  111 player =  Pengelly_Arthur rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.2752
+ rejtest::round no. =  111 player =  Pengelly_Dawn rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 52.5413
+ rejtest::round no. =  111 player =  Pigeon_Markis rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.5276
+ rejtest::round no. =  111 player =  Pytel_John rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 51.9303
+ rejtest::round no. =  111 player =  Robinson_Jim rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 66.4175
+ rejtest::round no. =  111 player =  Rowland_Geoff rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.1676
+ rejtest::round no. =  111 player =  Seguin_Serge rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 61.9431
+ rejtest::round no. =  111 player =  Sivyer_Stacie rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 50.7422
+ rejtest::round no. =  111 player =  Spencer_Lisa rnd_upperFilter =  57.4651  rnd_adj_sc[j] = 48.3604
+ diff::round no. =  111 player =  Donovan_Justin old hc =  18.7015  updated HC = 18.7015
+ after round  111 lowest HC  = 0.0613045 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    112
+
+
+  rnd no.    112  rnd_upperFilter     57.4465  rnd score =    0  HC =    -1
+ rejtest::round no. =  112 player =  Adams_Mike rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 46.2502
+ rejtest::round no. =  112 player =  Atos_Mark rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 49.4754
+ rejtest::round no. =  112 player =  Berenbaum_Matt rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 51.3876
+ rejtest::round no. =  112 player =  Donovan_Justin rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 56.2847
+ rejtest::round no. =  112 player =  Donovan_Lee rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 50.6411
+ rejtest::round no. =  112 player =  Dotto_Laurie rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 52.3254
+ rejtest::round no. =  112 player =  Dowdell_Dwayne rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 49.6436
+ rejtest::round no. =  112 player =  Ellis_Adam rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 46.8294
+ rejtest::round no. =  112 player =  Foster_Neil rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 59.5937
+ rejtest::round no. =  112 player =  Guthrie_Brian rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 53.9403
+ rejtest::round no. =  112 player =  Ivanchenko_Alexey rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 51.4282
+ rejtest::round no. =  112 player =  Joss_Jamie rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 47.8389
+ rejtest::round no. =  112 player =  Kudinov_Yuriy rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 48.6079
+ rejtest::round no. =  112 player =  Lane_Don rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 51.6269
+ rejtest::round no. =  112 player =  Lange_Ken rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 44.9989
+ rejtest::round no. =  112 player =  MacGillivary_Brian rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 54.8742
+ rejtest::round no. =  112 player =  Martel_Sebastien rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 47.1187
+ rejtest::round no. =  112 player =  McCormick_Mike rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 56.3746
+ rejtest::round no. =  112 player =  Melan�on_Errol rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 47.8617
+ rejtest::round no. =  112 player =  Munoz_Manny rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 52.8566
+ rejtest::round no. =  112 player =  O'Neil_Colin rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 52.1587
+ rejtest::round no. =  112 player =  Pengelly_Arthur rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 50.7855
+ rejtest::round no. =  112 player =  Pytel_John rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 47.6292
+ rejtest::round no. =  112 player =  Rowland_Geoff rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 49.2246
+ rejtest::round no. =  112 player =  Seguin_Serge rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 49.5405
+ rejtest::round no. =  112 player =  Svetkoff_Ben rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 65.4199
+ rejtest::round no. =  112 player =  Tremblay_Fran�ois rnd_upperFilter =  57.4465  rnd_adj_sc[j] = 47.2423
+ diff::round no. =  112 player =  Donovan_Justin old hc =  18.7015  updated HC = 18.7015
+ after round  112 lowest HC  = 0.0613045 diff-corr  = 0  player  = Milks_Dave  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    113
+
+
+  Stale HC ! ! .    113  LETS01  Beaudoin_Chris  7
+
+
+  Stale HC ! ! .    113  LETS01  Bourgeois_Paul  7
+
+
+  Stale HC ! ! .    113  LETS01  Briggs_Ryan  7
+
+
+  Stale HC ! ! .    113  LETS01  Dobrev_Stefan  7
+
+
+  Stale HC ! ! .    113  LETS01  Dolliver_Dan  7
+
+
+  Stale HC ! ! .    113  LETS01  Doucette_Claude  7
+
+
+  Stale HC ! ! .    113  LETS01  Guit�_Eric  7
+
+
+  Stale HC ! ! .    113  LETS01  Kauffmann_Andrew  7
+
+
+  Stale HC ! ! .    113  LETS01  Manser_Diane  7
+
+
+  Stale HC ! ! .    113  LETS01  Pegg_Larry  7
+
+
+  Stale HC ! ! .    113  LETS01  Senecal_Gabe  7
+
+
+  Stale HC ! ! .    113  LETS01  Wallace_Kirk  7
+
+
+  Stale HC ! ! .    113  LETS01  Wallace_Ryan  7
+
+
+  rnd no.    113  rnd_upperFilter     59.4879  rnd score =    0  HC =    -1
+ rejtest::round no. =  113 player =  Alexander_Ken rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 52.8987
+ rejtest::round no. =  113 player =  Atos_Mark rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 56.6386
+ rejtest::round no. =  113 player =  Beard_Greg rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 56.7508
+ rejtest::round no. =  113 player =  Becanic_Corey rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 48.5051
+ rejtest::round no. =  113 player =  Colford_Adam rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 56.1425
+ rejtest::round no. =  113 player =  Correia_Justin rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 53.4417
+ rejtest::round no. =  113 player =  Cox_Brenda rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 59.839
+ rejtest::round no. =  113 player =  Demaine_Jeffrey rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 55.3201
+ rejtest::round no. =  113 player =  Deslauriers_Fran�ois rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 49.6411
+ rejtest::round no. =  113 player =  Donovan_Lee rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 50.3665
+ rejtest::round no. =  113 player =  Ellis_Adam rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 54.0515
+ rejtest::round no. =  113 player =  Gillard_Logan rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 44.0639
+ rejtest::round no. =  113 player =  Guit�_Eric rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 47.387
+ rejtest::round no. =  113 player =  Gyre_Pier-Luc rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 51.6506
+ rejtest::round no. =  113 player =  Houle_Mario rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 57.4282
+ rejtest::round no. =  113 player =  Ivanchenko_Alexey rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 55.4783
+ rejtest::round no. =  113 player =  Lay_Chris rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 56.1117
+ rejtest::round no. =  113 player =  L'Esperance_Pat rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 52.592
+ rejtest::round no. =  113 player =  Linthorne_Jarred rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 52.5461
+ rejtest::round no. =  113 player =  Mainville_Jacob rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 48.0937
+ rejtest::round no. =  113 player =  Martel_Sebastien rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 55.3746
+ rejtest::round no. =  113 player =  McCormick_Mike rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 53.6693
+ rejtest::round no. =  113 player =  McDonald_Colin rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 53.0668
+ rejtest::round no. =  113 player =  Melan�on_Errol rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 57.9387
+ rejtest::round no. =  113 player =  Milks_Dave rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 55.2468
+ rejtest::round no. =  113 player =  Munoz_Manny rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 49.5452
+ rejtest::round no. =  113 player =  Nadeau_Gabriel rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 48.5405
+ rejtest::round no. =  113 player =  Penton_Geoff rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 50.4876
+ rejtest::round no. =  113 player =  Schnobb_Gavin rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 66.4199
+ rejtest::round no. =  113 player =  Seguin_Serge rnd_upperFilter =  59.4879  rnd_adj_sc[j] = 48.4632
+ after round  113 lowest HC  = 0.209961 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    114
+
+
+  rnd no.    114  rnd_upperFilter     56.0788  rnd score =    0  HC =    -1
+ rejtest::round no. =  114 player =  Houle_Mario rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 53.5171
+ rejtest::round no. =  114 player =  Mainville_Jacob rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 51.7642
+ rejtest::round no. =  114 player =  Maria_Adam rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 44.9081
+ rejtest::round no. =  114 player =  Milks_Dave rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 52.6875
+ rejtest::round no. =  114 player =  Pigeon_Marc-Andr� rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 48.7818
+ rejtest::round no. =  114 player =  Pytel_John rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 55.303
+ rejtest::round no. =  114 player =  Rowland_Geoff rnd_upperFilter =  56.0788  rnd_adj_sc[j] = 51.9507
+ after round  114 lowest HC  = 0.0624559 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    115
+
+
+  rnd no.    115  rnd_upperFilter     58.9987  rnd score =    0  HC =    -1
+ rejtest::round no. =  115 player =  Antle_Dennis rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 50.9443
+ rejtest::round no. =  115 player =  Kathnelson_Zach rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 54.0557
+ rejtest::round no. =  115 player =  Munoz_Manny rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 58.7967
+ rejtest::round no. =  115 player =  Noseworthy_Jordan rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 46.2837
+ rejtest::round no. =  115 player =  Penny_Brian rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 55.8954
+ rejtest::round no. =  115 player =  Pytel_John rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 47.1366
+ rejtest::round no. =  115 player =  Seguin_Serge rnd_upperFilter =  58.9987  rnd_adj_sc[j] = 54.6255
+ after round  115 lowest HC  = 0.0624559 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    116
+
+
+  rnd no.    116  rnd_upperFilter     43.5217  rnd score =    0  HC =    -1
+ rejtest::round no. =  116 player =  Bailey_Connor rnd_upperFilter =  43.5217  rnd_adj_sc[j] = 43.2989
+ rejtest::round no. =  116 player =  Houle_Mario rnd_upperFilter =  43.5217  rnd_adj_sc[j] = 42.4378
+ rejtest::round no. =  116 player =  Munoz_Manny rnd_upperFilter =  43.5217  rnd_adj_sc[j] = 41.9392
+ after round  116 lowest HC  = 0.0624559 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    117
+
+
+  rnd no.    117  rnd_upperFilter     57.199  rnd score =    0  HC =    -1
+ rejtest::round no. =  117 player =  Antle_Dennis rnd_upperFilter =  57.199  rnd_adj_sc[j] = 55.4281
+ rejtest::round no. =  117 player =  Kathnelson_Zach rnd_upperFilter =  57.199  rnd_adj_sc[j] = 55.5543
+ rejtest::round no. =  117 player =  Pytel_John rnd_upperFilter =  57.199  rnd_adj_sc[j] = 57.1029
+ rejtest::round no. =  117 player =  VanderEyken_Michael rnd_upperFilter =  57.199  rnd_adj_sc[j] = 54.3365
+ after round  117 lowest HC  = 0.0624559 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    118
+
+
+  rnd no.    118  rnd_upperFilter     62.8987  rnd score =    0  HC =    -1
+ rejtest::round no. =  118 player =  Antle_Dennis rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 59.7547
+ rejtest::round no. =  118 player =  Chevalley_Loan rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 59.0031
+ rejtest::round no. =  118 player =  Houle_Mario rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 61.9269
+ rejtest::round no. =  118 player =  James_Aaron rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 58.8693
+ rejtest::round no. =  118 player =  Mainville_Jacob rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 63.3802
+ rejtest::round no. =  118 player =  Maria_Adam rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 61.9616
+ rejtest::round no. =  118 player =  Noseworthy_Jordan rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 58.6323
+ rejtest::round no. =  118 player =  Pigeon_Marc-Andr� rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 58.0303
+ rejtest::round no. =  118 player =  Pytel_John rnd_upperFilter =  62.8987  rnd_adj_sc[j] = 56.3226
+ after round  118 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    119
+
+
+  rnd no.    119  rnd_upperFilter     49.3312  rnd score =    0  HC =    -1
+ rejtest::round no. =  119 player =  Antle_Dennis rnd_upperFilter =  49.3312  rnd_adj_sc[j] = 48.8627
+ rejtest::round no. =  119 player =  Chevalley_Loan rnd_upperFilter =  49.3312  rnd_adj_sc[j] = 46.0613
+ rejtest::round no. =  119 player =  Cote_Pat rnd_upperFilter =  49.3312  rnd_adj_sc[j] = 47.133
+ after round  119 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    120
+
+
+  rnd no.    120  rnd_upperFilter     60.7347  rnd score =    0  HC =    -1
+ rejtest::round no. =  120 player =  Houle_Mario rnd_upperFilter =  60.7347  rnd_adj_sc[j] = 56.282
+ rejtest::round no. =  120 player =  Lay_Chris rnd_upperFilter =  60.7347  rnd_adj_sc[j] = 56.3183
+ rejtest::round no. =  120 player =  Mainville_Jacob rnd_upperFilter =  60.7347  rnd_adj_sc[j] = 60.9011
+ rejtest::round no. =  120 player =  Rothman_Marshall rnd_upperFilter =  60.7347  rnd_adj_sc[j] = 57.1343
+ after round  120 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    121
+
+
+  rnd no.    121  rnd_upperFilter     64.1706  rnd score =    0  HC =    -1
+ rejtest::round no. =  121 player =  Alexander_Ken rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 62.2996
+ rejtest::round no. =  121 player =  Gyre_Pier-Luc rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 60.2047
+ rejtest::round no. =  121 player =  James_Aaron rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 62.5542
+ rejtest::round no. =  121 player =  Kudinov_Yuriy rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 55.8396
+ rejtest::round no. =  121 player =  Lavoie_Donald rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 61.5899
+ rejtest::round no. =  121 player =  Lavoie_Sebastien rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 50.6387
+ rejtest::round no. =  121 player =  Major_Phil rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 57.6114
+ rejtest::round no. =  121 player =  McDonald_Colin rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 49.8975
+ rejtest::round no. =  121 player =  Munoz_Manny rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 56.7101
+ rejtest::round no. =  121 player =  Pytel_John rnd_upperFilter =  64.1706  rnd_adj_sc[j] = 60.3369
+ after round  121 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    122
+
+
+  rnd no.    122  rnd_upperFilter     52.1414  rnd score =    0  HC =    -1
+ rejtest::round no. =  122 player =  James_Aaron rnd_upperFilter =  52.1414  rnd_adj_sc[j] = 49.4119
+ rejtest::round no. =  122 player =  Malenfant_Frank rnd_upperFilter =  52.1414  rnd_adj_sc[j] = 44.493
+ rejtest::round no. =  122 player =  Pigeon_Marc-Andr� rnd_upperFilter =  52.1414  rnd_adj_sc[j] = 50.898
+ rejtest::round no. =  122 player =  Pytel_John rnd_upperFilter =  52.1414  rnd_adj_sc[j] = 43.5764
+ after round  122 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    123
+
+
+  rnd no.    123  rnd_upperFilter     56.6541  rnd score =    0  HC =    -1
+ rejtest::round no. =  123 player =  Beck_David rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 50.9114
+ rejtest::round no. =  123 player =  Dowdell_Dwayne rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 52.0174
+ rejtest::round no. =  123 player =  Hosmar_Chris rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 51.6458
+ rejtest::round no. =  123 player =  Joss_Jamie rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 55.021
+ rejtest::round no. =  123 player =  MacGillivary_Brian rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 52.0123
+ rejtest::round no. =  123 player =  Smyth_Conor rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 54.6321
+ rejtest::round no. =  123 player =  Starchuk_Trevor rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 58.0258
+ rejtest::round no. =  123 player =  Vallee_Andrew rnd_upperFilter =  56.6541  rnd_adj_sc[j] = 51.3177
+ after round  123 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    124
+
+
+  rnd no.    124  rnd_upperFilter     62.6322  rnd score =    0  HC =    -1
+ rejtest::round no. =  124 player =  Chyzyk_Austen rnd_upperFilter =  62.6322  rnd_adj_sc[j] = 54.1377
+ rejtest::round no. =  124 player =  Dowdell_Brock rnd_upperFilter =  62.6322  rnd_adj_sc[j] = 59.46
+ rejtest::round no. =  124 player =  Dowdell_Dwayne rnd_upperFilter =  62.6322  rnd_adj_sc[j] = 48.9596
+ rejtest::round no. =  124 player =  Milks_Dave rnd_upperFilter =  62.6322  rnd_adj_sc[j] = 63.4152
+ rejtest::round no. =  124 player =  Smyth_Conor rnd_upperFilter =  62.6322  rnd_adj_sc[j] = 49.6321
+ rejtest::round no. =  124 player =  Starchuk_Trevor rnd_upperFilter =  62.6322  rnd_adj_sc[j] = 50.0258
+ after round  124 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    125
+
+
+  rnd no.    125  rnd_upperFilter     64.3359  rnd score =    0  HC =    -1
+ rejtest::round no. =  125 player =  Antle_Dennis rnd_upperFilter =  64.3359  rnd_adj_sc[j] = 63.0868
+ rejtest::round no. =  125 player =  Bailey_Connor rnd_upperFilter =  64.3359  rnd_adj_sc[j] = 57.7053
+ rejtest::round no. =  125 player =  Kathnelson_Zach rnd_upperFilter =  64.3359  rnd_adj_sc[j] = 62.7214
+ rejtest::round no. =  125 player =  Munoz_Manny rnd_upperFilter =  64.3359  rnd_adj_sc[j] = 62.9917
+ rejtest::round no. =  125 player =  Noseworthy_Jordan rnd_upperFilter =  64.3359  rnd_adj_sc[j] = 58.2742
+ rejtest::round no. =  125 player =  Penny_Brian rnd_upperFilter =  64.3359  rnd_adj_sc[j] = 57.3369
+ after round  125 lowest HC  = 0.0910984 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    126
+
+
+  rnd no.    126  rnd_upperFilter     52.6069  rnd score =    0  HC =    -1
+ rejtest::round no. =  126 player =  Atos_Mark rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 49.7537
+ rejtest::round no. =  126 player =  Brown_Murray rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 46.4248
+ rejtest::round no. =  126 player =  Darcovich_Ken rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 43.1568
+ rejtest::round no. =  126 player =  Donovan_Lee rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 47.0797
+ rejtest::round no. =  126 player =  Hosmar_Chris rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 52.8848
+ rejtest::round no. =  126 player =  Houle_Mario rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 50.3841
+ rejtest::round no. =  126 player =  Ivanchenko_Alexey rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 48.0698
+ rejtest::round no. =  126 player =  Kudinov_Yuriy rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 47.9098
+ rejtest::round no. =  126 player =  Mainville_Jacob rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 48.3757
+ rejtest::round no. =  126 player =  Seguin_Serge rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 52.8871
+ rejtest::round no. =  126 player =  Starchuk_Trevor rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 49.907
+ rejtest::round no. =  126 player =  Verheyden_Graham rnd_upperFilter =  52.6069  rnd_adj_sc[j] = 44.4316
+ diff::round no. =  126 player =  Darcovich_Ken rnd score =  50  rnd_scratch = 47.5493 diff[k][rnd_count[k]] = 2.9456 No. plyr's rds::rnd_count[k]  = 34 rd year  = 25
+ after round  126 lowest HC  = 0.249588 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    127
+
+
+  rnd no.    127  rnd_upperFilter     57.4717  rnd score =    0  HC =    -1
+ rejtest::round no. =  127 player =  Alexander_Ken rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 56.8909
+ rejtest::round no. =  127 player =  Correia_Justin rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 54.2073
+ rejtest::round no. =  127 player =  Ellis_Adam rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 52.5121
+ rejtest::round no. =  127 player =  Gillard_Logan rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 52.6955
+ rejtest::round no. =  127 player =  Guit�_Eric rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 60.3006
+ rejtest::round no. =  127 player =  Gyre_Pier-Luc rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 50.2707
+ rejtest::round no. =  127 player =  Houle_Mario rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 57.3325
+ rejtest::round no. =  127 player =  Lay_Chris rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 51.541
+ rejtest::round no. =  127 player =  L'Esperance_Pat rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 53.9231
+ rejtest::round no. =  127 player =  Mainville_Jacob rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 51.7434
+ rejtest::round no. =  127 player =  Martel_Sebastien rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 53.6084
+ rejtest::round no. =  127 player =  Melan�on_Errol rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 51.6307
+ rejtest::round no. =  127 player =  Milks_Dave rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 55.1267
+ rejtest::round no. =  127 player =  Munoz_Manny rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 53.6296
+ rejtest::round no. =  127 player =  Penton_Geoff rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 53.9132
+ rejtest::round no. =  127 player =  Seguin_Serge rnd_upperFilter =  57.4717  rnd_adj_sc[j] = 53.7418
+ after round  127 lowest HC  = -0.130595 diff-corr  = -0.136037  player  = Mainville_Jacob  i_zero_flag  = 1
+
+
+  NEW ROUND   rnd no.    128
+
+
+  rnd no.    128  rnd_upperFilter     57.9257  rnd score =    0  HC =    -1
+ rejtest::round no. =  128 player =  Atos_Allysha rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 45.4621
+ rejtest::round no. =  128 player =  Beard_Greg rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 51.6202
+ rejtest::round no. =  128 player =  Becanic_Corey rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 46.6834
+ rejtest::round no. =  128 player =  Chyzyk_Austen rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 49.2315
+ rejtest::round no. =  128 player =  Deslauriers_Fran�ois rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 42.511
+ rejtest::round no. =  128 player =  Donovan_Lee rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 54.4344
+ rejtest::round no. =  128 player =  Ivanchenko_Alexey rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 49.1005
+ rejtest::round no. =  128 player =  Landry_Chris rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 44.0856
+ rejtest::round no. =  128 player =  Nadeau_Gabriel rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 51.1558
+ rejtest::round no. =  128 player =  O'Neil_Colin rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 40.7261
+ rejtest::round no. =  128 player =  Oosterhoff_Jacob rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 65.2892
+ rejtest::round no. =  128 player =  Svetkoff_Ben rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 47.0692
+ rejtest::round no. =  128 player =  Tremblay_Fran�ois rnd_upperFilter =  57.9257  rnd_adj_sc[j] = 51.7586
+ after round  128 lowest HC  = 0 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+  NEW ROUND   rnd no.    129
+
+
+  rnd no.    129  rnd_upperFilter     56.7182  rnd score =    0  HC =    -1
+ rejtest::round no. =  129 player =  Gozdowski_Troy rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 55.9194
+ rejtest::round no. =  129 player =  Joss_Jamie rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 45.9926
+ rejtest::round no. =  129 player =  Kilbride_Kyle rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 53.043
+ rejtest::round no. =  129 player =  MacGillivary_Brian rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 50.7569
+ rejtest::round no. =  129 player =  MacGillivary_Marie rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 54.7201
+ rejtest::round no. =  129 player =  Maria_Adam rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 49.5235
+ rejtest::round no. =  129 player =  Milks_Dave rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 51.7244
+ rejtest::round no. =  129 player =  Smyth_Conor rnd_upperFilter =  56.7182  rnd_adj_sc[j] = 55.0032
+ after round  129 lowest HC  = 0 diff-corr  = 0  player  = Mainville_Jacob  i_zero_flag  = 0
+
+
+ playerIDno. =  1  Abthorpe_Dan HC =  9.09161  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  2  Adams_Mike HC =  5.78234  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  3  Ainsworth_Terry HC =  13.2332  rounds played = 13  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  4  Alexander_Ken HC =  3.15454  rounds played = 24  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  5  Antle_Dennis HC =  -nan(ind)  rounds played = 15  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  6  Arnot_Cameron HC =  14.2654  rounds played = 14  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  7  Atos_Allysha HC =  18.5035  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  8  Atos_Mark HC =  10.8042  rounds played = 39  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  10  Baird_Drake HC =  9.87602  rounds played = 15  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  12  Beard_Greg HC =  9.90485  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  13  Beaudoin_Chris HC =  5.65936  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  14  Becanic_Corey HC =  19.296  rounds played = 16  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  15  Beck_David HC =  9.02041  rounds played = 16  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  17  Berenbaum_Matt HC =  14.7322  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  18  Bluthner_Lucas HC =  5.46794  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  19  Bourgeois_Paul HC =  19.4894  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  20  Bourne_Chris HC =  7.17866  rounds played = 18  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  22  Briggs_Ryan HC =  13.4194  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  23  Brown_Lance HC =  8.48578  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  26  Chisholm_Duncan HC =  9.69311  rounds played = 6  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  27  Chyzyk_Austen HC =  2.76641  rounds played = 24  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  28  Chyzyk_Kasia HC =  13.3303  rounds played = 7  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  29  Clavel_Stephanie HC =  16.9306  rounds played = 10  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  32  Cole_Scott HC =  10.6549  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  33  Colford_Adam HC =  11.9793  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  36  Cooper_Ian HC =  12.297  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  38  Correia_Justin HC =  8.68257  rounds played = 22  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  40  Cox_Brenda HC =  17.2789  rounds played = 42  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  42  Darcovich_Alex HC =  14.7668  rounds played = 25  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  43  Darcovich_Ken HC =  3.71504  rounds played = 34  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  45  Deslauriers_Fran�ois HC =  25.6708  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  47  Dobrev_Stefan HC =  8.37936  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  48  Dolliver_Dan HC =  13.7594  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  49  Donovan_Justin HC =  18.8321  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  50  Donovan_Lee HC =  12.5563  rounds played = 36  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  51  Dorion_John HC =  15.8489  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  52  Dotto_Karen HC =  26.0181  rounds played = 13  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  53  Dotto_Laurie HC =  4.99209  rounds played = 19  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  55  Doucette_Claude HC =  27.6994  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  56  Douglas_Ron HC =  -nan(ind)  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  57  Dowdell_Brock HC =  2.46959  rounds played = 21  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  58  Dowdell_Dwayne HC =  7.05501  rounds played = 16  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  59  Duppa_Pat HC =  9.02534  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  61  Ellis_Adam HC =  8.07574  rounds played = 25  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  63  Foster_Neil HC =  19.5226  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  67  Gillard_Logan HC =  5.09221  rounds played = 28  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  68  Gozdowski_Troy HC =  7.49749  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  69  Guit�_Eric HC =  1.78346  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  70  Guthrie_Brian HC =  10.3807  rounds played = 13  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  71  Gyre_Pier-Luc HC =  12.2652  rounds played = 20  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  72  Haggert_Angelica HC =  11.5371  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  73  Hale_Rob HC =  17.7658  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  77  Hosmar_Chris HC =  4.09454  rounds played = 18  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  78  Houle_Mario HC =  3.69772  rounds played = 43  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  79  Huhta_Matt HC =  12.4677  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  81  Ide_Tetsuro HC =  4.71946  rounds played = 26  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  83  Ivanchenko_Alexey HC =  13.9488  rounds played = 30  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  84  James_Aaron HC =  8.66877  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  85  Joron_Jacob HC =  11.6032  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  86  Joron_Tavis HC =  18.5504  rounds played = 7  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  87  Joron_Tom HC =  17.1248  rounds played = 4  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  88  Joss_Jamie HC =  13.169  rounds played = 27  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  89  Kaarid_Tristan HC =  5.39441  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  90  Kathnelson_Zach HC =  9.86594  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  91  Kauffmann_Andrew HC =  13.0094  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  93  Kilbride_Kyle HC =  8.95789  rounds played = 16  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  94  Krig_Oskar HC =  11.561  rounds played = 4  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  95  Kudinov_Yuriy HC =  13.1963  rounds played = 31  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  98  Landry_Chris HC =  13.4465  rounds played = 13  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  99  Landry_Stephanie HC =  21.1066  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  100  Lane_Don HC =  13.4938  rounds played = 13  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  101  Lange_Ken HC =  9.5187  rounds played = 24  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  106  Lavoie_Sebastien HC =  9.90059  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  107  Lay_Chris HC =  0.16977  rounds played = 30  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  108  Lebrun_Jon HC =  2.68956  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  110  L'Esperance_Pat HC =  7.01376  rounds played = 10  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  112  Lilly_Tom HC =  13.1204  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  113  Linthorne_Jarred HC =  6.52366  rounds played = 14  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  114  Lochhead_Jake HC =  5.42225  rounds played = 18  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  116  MacDonald_Adam HC =  9.11057  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  117  MacDonald_Emily HC =  22.4402  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  119  MacGillivary_Brian HC =  10.3  rounds played = 14  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  120  MacGillivary_Marie HC =  22.5408  rounds played = 6  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  122  Mainville_Jacob HC =  0  rounds played = 39  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  123  Major_Phil HC =  8.34781  rounds played = 13  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  124  Malenfant_Frank HC =  -nan(ind)  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  125  Manser_Diane HC =  28.9394  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  126  Maria_Adam HC =  0.389594  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  127  Martel_Sebastien HC =  5.92957  rounds played = 16  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  131  McCormick_Mike HC =  10.7482  rounds played = 15  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  132  McDonald_Colin HC =  4.51355  rounds played = 21  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  133  McDonald_Dylan HC =  0.520032  rounds played = 19  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  136  McLeod_David HC =  6.89295  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  137  Melan�on_Errol HC =  11.8373  rounds played = 28  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  138  Meldrum_Jeff HC =  7.74336  rounds played = 9  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  140  Milks_Dave HC =  1.46827  rounds played = 49  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  141  Munoz_Manny HC =  8.95709  rounds played = 21  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  142  Mussell_Ryan HC =  4.90054  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  145  Noseworthy_Jordan HC =  10.9818  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  147  O'Neil_Colin HC =  13.834  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  148  Oosterhoff_Jacob HC =  9.35779  rounds played = 21  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  150  Pegg_Larry HC =  16.3394  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  151  Pengelly_Arthur HC =  8.30037  rounds played = 26  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  152  Pengelly_Dawn HC =  11.1275  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  153  Penny_Brian HC =  18.2273  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  154  Penton_Geoff HC =  2.99607  rounds played = 25  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  156  Phillips_Dan HC =  9.14496  rounds played = 10  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  157  Pigeon_Marc-Andr� HC =  11.2196  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  158  Pigeon_Markis HC =  11.8858  rounds played = 5  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  159  Playfair_Joe HC =  6.91332  rounds played = 12  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  161  Pytel_John HC =  9.12648  rounds played = 31  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  164  Reade_Michael HC =  12.0188  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  165  Reitlingshoefer_Claus HC =  9.86444  rounds played = 20  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  167  Robinson_Jim HC =  13.3196  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  169  Rowland_Geoff HC =  8.18462  rounds played = 27  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  172  Seguin_Serge HC =  13.0258  rounds played = 14  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  173  Senecal_Gabe HC =  14.9594  rounds played = 3  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  174  Sider_Dietrich HC =  16.3661  rounds played = 23  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  175  Silianu_Daniel HC =  4.2837  rounds played = 19  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  176  Sivyer_Stacie HC =  18.5914  rounds played = 8  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  177  Smyth_Conor HC =  7.41975  rounds played = 26  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  179  Starchuk_Trevor HC =  8.32848  rounds played = 49  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  182  Steckley_Joe HC =  12.3577  rounds played = 7  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  183  Svetkoff_Ben HC =  18.697  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  185  Tremblay_Fran�ois HC =  19.1792  rounds played = 11  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  186  Upton_Daryl HC =  13.1001  rounds played = 4  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  188  Vallee_Andrew HC =  6.5179  rounds played = 19  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  189  VanderEyken_Michael HC =  -nan(ind)  rounds played = 19  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  190  Verheyden_Graham HC =  9.31886  rounds played = 4  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  192  Villeneuve_Pat HC =  7.89229  rounds played = 25  current member? - NO 2019TOSSrnds = 0
+ playerIDno. =  193  Villeneuve_Yan HC =  8.882  rounds played = 23  current member? - NO 2019TOSSrnds = 
