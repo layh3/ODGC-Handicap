@@ -1,0 +1,83 @@
+
+  name    base54HC 
+Atos_Mark   11.41
+Beard_Greg   11.43
+Beck_David   11.93
+Chyzyk_Austen   2.81
+Chyzyk_Kasia   20.04
+Clavel_Stephanie   20.25
+Cooper_Ian   14.41
+Corey_Andy   7.32
+Cox_Brenda   17.98
+Darcovich_Ken   3.79
+Donovan_Lee   12.69
+Dorion_John   17.32
+Dotto_Karen   27.87
+Dotto_Laurie   4.29
+Ellis_Adam   7.98
+Gillard_Logan   5.22
+Gozdowski_Troy   9.79
+Guthrie_Brian   11.23
+Gyre_Pier-Luc   11.82
+Hosmar_Chris   4.71
+Houle_Mario   4.30
+Ivanchenko_Alexey   14.00
+Joss_Jamie   13.81
+Kudinov_Yuriy   13.34
+Lane_Don   18.85
+Lange_Ken   9.38
+Lay_Chris   0.31
+L'Esperance_Pat   11.15
+Linthorne_Jarred   6.38
+MacGillivary_Brian   13.06
+MacGillivary_Marie   28.37
+Mainville_Jacob   0.15
+McCormick_Mike   15.36
+McDonald_Colin   1.99
+McDonald_Dylan   0.00
+McLeod_David   12.27
+Melançon_Errol   11.83
+Milks_Dave   1.85
+Munoz_Manny   9.77
+Mussell_Ryan   7.96
+O'Neil_Colin   15.89
+Oosterhoff_Jacob   9.43
+Penton_Geoff   3.17
+Pigeon_Markis   16.20
+Reitlingshoefer_Claus   9.92
+Rowland_Geoff   9.45
+Sider_Dietrich   15.39
+Silianu_Daniel   3.37
+Sivyer_Stacie   23.18
+Starchuk_Trevor   10.00
+Svetkoff_Ben   24.51
+Tremblay_François   18.58
+Vallee_Andrew   10.79
+Visser_Cameron   22.69
+Visser_Carl   4.44
+Waithe_Dave   15.04
+Wormald_Rob   9.07
+
+
+The_Shire   53.72   0.99
+Kanata   48.04   0.89
+Larrimac   60.64   1.12
+Larrimac   54.04   1.00
+Larrimac   55.52   1.03
+Almonte   49.40   0.91
+Almonte   54.96   1.02
+Almonte   59.88   1.11
+Ettyville_MVP   56.76   1.05
+Ettyville_MVP   66.08   1.22
+Ettyville_MVP   63.24   1.17
+Ettyville_Axiom   47.76   0.88
+Ettyville_Axiom   60.64   1.12
+Ettyville_Axiom   58.64   1.09
+Kemptville   53.95   1.00
+Kemptville   58.64   1.09
+Kemptville   61.05   1.13
+Camp_Fortune   54.80   1.01
+Franktown   53.95   1.00
+Phillips_Screwdriver   65.60   1.21
+UPI   55.32   1.02
+Centrepointe   48.60   0.90
