@@ -1,0 +1,10 @@
+# Build artifacts (we keep just source + golden outputs)
+build/
+py_out/
+
+# OS junk
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
