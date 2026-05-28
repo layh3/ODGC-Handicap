@@ -13,19 +13,24 @@ python3 hc24.py --xlsx RoundData.xlsx --sheet active2025
 python3 hc24.py
 ```
 
-That's it. Nine `*.txt` files appear in the current directory:
+That's it. **Eighteen** `*.txt` files appear in the current directory — nine
+under the legacy ODGC convention (lowest HC anchored at 0, no "+" handicaps)
+and the same nine with a `_golf` suffix using standard golf convention
+(handicaps can be negative, displayed as `+X.X`).
 
 | Output | Audience |
 | --- | --- |
-| `rankHC.txt` | Everyone, sorted best-to-worst |
-| `alphHC.txt` | Everyone, alphabetical |
-| `player_rounds.txt` | Internal — HC + rounds played |
-| `odgcHC.txt` | ODGC members, scaled to each ODGC course |
-| `odgccaCH.txt` | Stripped list for the ODGC website |
-| `atosHC.txt` | TOSS list — ODGC + Atos-list members |
-| `evHC.txt` | Ettyville members |
-| `kvHC.txt` | Kemptville club |
-| `ladiesHC.txt` | Ladies League |
+| `rankHC.txt` / `rankHC_golf.txt` | Everyone, sorted best-to-worst |
+| `alphHC.txt` / `alphHC_golf.txt` | Everyone, alphabetical |
+| `player_rounds.txt` / `player_rounds_golf.txt` | Internal — HC + rounds played |
+| `odgcHC.txt` / `odgcHC_golf.txt` | ODGC members, scaled to each ODGC course |
+| `odgccaCH.txt` / `odgccaCH_golf.txt` | Stripped list for the ODGC website |
+| `atosHC.txt` / `atosHC_golf.txt` | TOSS list — ODGC + Atos-list members |
+| `evHC.txt` / `evHC_golf.txt` | Ettyville members |
+| `kvHC.txt` / `kvHC_golf.txt` | Kemptville club |
+| `ladiesHC.txt` / `ladiesHC_golf.txt` | Ladies League |
+
+Add `--odgc-only` to skip the golf set if you only want the legacy outputs.
 
 Requirements: Python 3.9+, `openpyxl` (`pip install openpyxl`) for `--xlsx`
 input. The `.dat` path has no dependencies.
@@ -90,12 +95,21 @@ chronological order:
 5. **Updated HC.** Sort the player's most recent ≤20 differentials, take
    the lowest *N* (sliding scale: 1 differential for 3 rounds, up to 10
    for 20+ rounds), average, multiply by 0.96, cap at 36.
-6. **Sub-zero correction.** If any HC goes negative, anchor the lowest at
-   0 and shift everyone else up by the same amount. (Planned future
-   change: switch to standard golf conventions and allow negative — i.e.
-   "+" — handicaps.)
+6. **Sub-zero correction (ODGC mode only).** If any HC goes negative, anchor
+   the lowest at 0 and shift everyone else up by the same amount. The
+   `_golf` outputs skip this step — naturally-computed HCs are kept and
+   displayed using the standard golf "+" prefix.
 
-Course-scaled outputs are `base_HC × crs_ref[N] / 54` for each tee.
+Course-scaled outputs are `base_HC × crs_ref[N] / 54` for each tee. A "+"
+handicap stays "+" on every course; harder courses just make the "+" bigger.
+
+## ODGC vs. golf — why they differ in ranking
+
+The ODGC anchoring isn't a flat shift across players. Each time a player
+drops below zero, the algorithm zeroes out their `numcz` most-recent
+differentials. That permanently degrades that player's data going forward,
+so anchored HCs aren't a faithful reordering of natural ones — the rank
+order can differ slightly between the two output sets.
 
 ## Verifying changes
 

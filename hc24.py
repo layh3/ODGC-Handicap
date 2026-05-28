@@ -22,6 +22,21 @@ def fmt_g(x: float) -> str:
     return f"{x:g}"
 
 
+def fmt_g_golf(x: float) -> str:
+    """%g formatting but with '+' prefix for negative values (golf convention:
+    '+1.5' means the player is 1.5 strokes better than scratch)."""
+    if x < 0:
+        return f"+{-x:g}"
+    return f"{x:g}"
+
+
+def fmt_2f_golf(x: float) -> str:
+    """Fixed 2-decimal but with '+' prefix for negative values."""
+    if x < 0:
+        return f"+{-x:.2f}"
+    return f"{x:.2f}"
+
+
 def open_latin1(path, mode="w"):
     """Output bytes in Latin-1 to match the C++ ofstream byte stream (the source
     .dat file is ISO-8859-1, and C++ does no transcoding)."""
@@ -290,31 +305,17 @@ def export_tokens_as_dat(player, i_pl, tokens, out_path: Path):
     out_path.write_text("\n".join(parts) + "\n", encoding="latin-1")
 
 
-def main(argv=None):
-    import argparse
-    parser = argparse.ArgumentParser(description="ODGC handicap calculator (Python port of hc24.cpp).")
-    src = parser.add_mutually_exclusive_group()
-    src.add_argument("--dat", type=Path, default=None,
-                     help="Path to RoundData.dat input (default: ./RoundData.dat)")
-    src.add_argument("--xlsx", type=Path, default=None,
-                     help="Path to RoundData.xlsx — read scores from a worksheet")
-    parser.add_argument("--sheet", default="active2025",
-                        help="Worksheet name when using --xlsx (default: active2025)")
-    parser.add_argument("--export-dat", type=Path, default=None,
-                        help="Also write the parsed input back out as a .dat file "
-                             "(useful for round-trip verification against the C++ tool)")
-    args = parser.parse_args(argv)
+def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True):
+    """Run the full algorithm and return final state.
 
-    here = Path.cwd()
-    if args.xlsx is not None:
-        player, i_pl, tokens = parse_input_xlsx(args.xlsx, args.sheet)
-    else:
-        dat_path = args.dat if args.dat is not None else (here / "RoundData.dat")
-        player, i_pl, tokens = parse_input_dat(dat_path)
-
-    if args.export_dat is not None:
-        export_tokens_as_dat(player, i_pl, tokens, args.export_dat)
-
+    anchor_at_zero=True   ODGC convention: when any HC goes negative, anchor
+                          the lowest at 0 and shift all other HCs/differentials
+                          up by the same amount (no '+' handicaps).
+    anchor_at_zero=False  Standard golf convention: HCs are computed naturally
+                          and may be negative. Display as '+X.X' downstream.
+    verbose=True          Print unknown-course warning to stderr (only the
+                          first call in a session needs to.)
+    """
     pos = 0
     def take():
         nonlocal pos
@@ -325,8 +326,15 @@ def main(argv=None):
     # Line 2: "end_2020_hc" "HC" <seed HCs>
     take(); take()  # discard label tokens
     hc = [0.0] * (i_pl + 2)
+    # Track "this player has an established HC entering each round" separately
+    # from the HC value itself. In ODGC mode the C++ used `hc[j] > -0.9` as a
+    # proxy (since real HCs are always ≥0). In golf mode HCs can legitimately
+    # be below -0.9, so we need an explicit flag.
+    has_hc = [False] * (i_pl + 2)
     for j in range(1, i_pl + 1):
         hc[j] = float(take())
+        if hc[j] > -0.9:  # any seed value other than the -1 sentinel
+            has_hc[j] = True
 
     # Lines 3-9: 7 lines of seed differentials (no labels; just values).
     # Values < 90 are real; 90/99.9/100 are sentinels.
@@ -435,7 +443,7 @@ def main(argv=None):
                 crs_ref[i_c] = rnd_std
         rnd_crs_ref[i_rc] = crs_ref[i_c]
 
-    if unknown_courses:
+    if unknown_courses and verbose:
         import sys
         print("WARNING: unknown course codes — treated as par-54 reference "
               "(c_fac=1.0). The original C++ would NaN-cascade on these.",
@@ -516,7 +524,7 @@ def main(argv=None):
                 if rnd_count[j] <= 3:
                     rnd_adj_gen[rnd_size] = sc
 
-                if hc[j] > -0.9:
+                if has_hc[j]:
                     rnd_asize += 1
                     rnd_ascores[rnd_asize] = sc
                     rnd_adj_sc[rnd_asize] = sc - hc0[j] * c_fac
@@ -568,11 +576,12 @@ def main(argv=None):
                 irck = 20
             if rnd_count[k] > 2:
                 hc[k] = hcc(dfk, irck)
+                has_hc[k] = True  # established (will be true going forward)
 
-            # Sub-zero detection: if this player just went negative, schedule a
-            # global shift so the lowest HC anchors at 0 (no "+ handicap" in
-            # the current system).
-            if rnd_count[k] > 2 and hc[k] < 0.0:
+            # Sub-zero detection: schedule a global shift so the lowest HC
+            # anchors at 0 (ODGC convention — no '+' handicaps). Skipped
+            # entirely in golf mode: the player's HC simply stays negative.
+            if anchor_at_zero and rnd_count[k] > 2 and hc[k] < 0.0:
                 q_subzero = hc[k]
                 qzeroHCid = k
                 i_zero_flag = 1
@@ -590,8 +599,9 @@ def main(argv=None):
                 q_subzero = hc[id_zfc]
                 qzeroHCid = id_zfc
 
-        # Sub-zero shift: anchor lowest HC at 0, shift all others up by the same amount.
-        if i_zero_flag == 1:
+        # Sub-zero shift: ODGC convention — anchor lowest HC at 0, shift others up.
+        # Skipped entirely in golf mode (anchor_at_zero=False) so HCs can stay negative.
+        if anchor_at_zero and i_zero_flag == 1:
             for j in range(1, i_pl + 1):
                 if rnd_count[j] > 2:
                     hc[j] -= q_subzero * numcz / 10
@@ -611,55 +621,95 @@ def main(argv=None):
         if rnd_count[j] > 2 and hc[j] > 36.0:
             hc[j] = 36.0
 
-    # --- output files --------------------------------------------------------
+    return {
+        "player": player,
+        "i_pl": i_pl,
+        "hc": hc,
+        "rnd_count": rnd_count,
+        "in_rnd_count": in_rnd_count,
+        "toss19_rnd_count": toss19_rnd_count,
+        "ODGCmem_stat": ODGCmem_stat,
+        "TOSSmem_stat": TOSSmem_stat,
+        "EVmem_stat": EVmem_stat,
+        "LLmem_stat": LLmem_stat,
+        "crs_ref": crs_ref,
+    }
 
-    with open_latin1(here / "player_rounds.txt", "w") as f:
+
+def write_outputs(result, here, *, suffix="", golf_style=False):
+    """Write the nine HC files into `here`.
+
+    suffix       Appended to each filename before '.txt' (e.g. '_golf' →
+                 'rankHC_golf.txt'). Empty for the default ODGC outputs.
+    golf_style   If True, negative HCs render with '+' prefix (golf convention:
+                 '+1.5' means the player is 1.5 strokes better than scratch).
+                 If False, numbers print as-is (matches C++ reference output).
+    """
+    player = result["player"]
+    i_pl = result["i_pl"]
+    hc = result["hc"]
+    rnd_count = result["rnd_count"]
+    in_rnd_count = result["in_rnd_count"]
+    toss19_rnd_count = result["toss19_rnd_count"]
+    ODGCmem_stat = result["ODGCmem_stat"]
+    TOSSmem_stat = result["TOSSmem_stat"]
+    EVmem_stat = result["EVmem_stat"]
+    LLmem_stat = result["LLmem_stat"]
+    crs_ref = result["crs_ref"]
+
+    f_g = fmt_g_golf if golf_style else fmt_g
+    f_2 = fmt_2f_golf if golf_style else (lambda x: f"{x:.2f}")
+
+    def out(name):
+        return here / f"{name}{suffix}.txt"
+
+    with open_latin1(out("player_rounds"), "w") as f:
         for j in range(1, i_pl + 1):
-            f.write(f"{player[j]} HC =  {fmt_g(hc[j])}  rounds played = {rnd_count[j] - in_rnd_count[j]}\n")
+            f.write(f"{player[j]} HC =  {f_g(hc[j])}  rounds played = {rnd_count[j] - in_rnd_count[j]}\n")
 
-    # rankHC.txt — sorted ascending by HC; same bubble-sort as C++
-    rank_hc = list(range(0, i_pl + 2))  # rank_hc[1..i_pl] starts as identity
+    # rankHC — sorted ascending by HC; same bubble-sort as C++
+    rank_hc = list(range(0, i_pl + 2))
     for ij in range(1, i_pl):
         for j in range(1, i_pl - ij + 1):
             if hc[rank_hc[j]] > hc[rank_hc[j + 1]]:
                 rank_hc[j], rank_hc[j + 1] = rank_hc[j + 1], rank_hc[j]
 
-    with open_latin1(here / "rankHC.txt", "w") as f:
+    with open_latin1(out("rankHC"), "w") as f:
         f.write("\n\n")
         i_rank = 0
         for j in range(1, i_pl + 1):
             idx = rank_hc[j]
             if rnd_count[idx] > 2:
                 i_rank += 1
-                f.write(f" rank =  {i_rank}  {player[idx]} HC =  {fmt_g(hc[idx])}  rounds played = {rnd_count[idx] - in_rnd_count[idx]}\n")
+                f.write(f" rank =  {i_rank}  {player[idx]} HC =  {f_g(hc[idx])}  rounds played = {rnd_count[idx] - in_rnd_count[idx]}\n")
 
-    # alphHC.txt — natural file order is already alphabetical.
-    # `mem_stat` array in the C++ is declared but never populated, so the
-    # "current member?" field is always "NO". Reproduce.
-    with open_latin1(here / "alphHC.txt", "w") as f:
+    # alphHC — file order is already alphabetical.
+    # The C++ `mem_stat` array is declared but never populated, so this field
+    # is always "NO". Reproduce.
+    with open_latin1(out("alphHC"), "w") as f:
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2:
                 f.write(
-                    f"{player[j]} HC =  {fmt_g(hc[j])}  "
+                    f"{player[j]} HC =  {f_g(hc[j])}  "
                     f"rounds played = {rnd_count[j] - in_rnd_count[j]}  "
                     f"current member? - NO 2019TOSSrnds = {toss19_rnd_count[j]}\n"
                 )
 
-    # kvHC.txt — Kemptville (Ferguson + Mountain), all qualified players
-    with open_latin1(here / "kvHC.txt", "w") as f:
+    # kvHC — Kemptville (Ferguson + Mountain), all qualified players
+    with open_latin1(out("kvHC"), "w") as f:
         f.write("\nKemptville_courses_HC_list    base54HC Ferguson   Mountain  \n")
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2:
                 f.write(
                     f"{player[j]}   "
-                    f"{hc[j]:.2f}   "
-                    f"{hc[j] * crs_ref[12] / 54.0:.2f}   "
-                    f"{hc[j] * crs_ref[13] / 54.0:.2f}   "
-                    f"{hc[j] * crs_ref[1] / 54.0:.2f}\n"
+                    f"{f_2(hc[j])}   "
+                    f"{f_2(hc[j] * crs_ref[12] / 54.0)}   "
+                    f"{f_2(hc[j] * crs_ref[13] / 54.0)}   "
+                    f"{f_2(hc[j] * crs_ref[1] / 54.0)}\n"
                 )
 
-    # odgcHC.txt — ODGC members, multi-course scaled
-    with open_latin1(here / "odgcHC.txt", "w") as f:
+    # odgcHC — ODGC members, multi-course scaled
+    with open_latin1(out("odgcHC"), "w") as f:
         f.write(
             "\nODGC_courses_HC_list    base54HC LmacBlue  LmacYellow Almonte_blue   "
             "Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown Camp_Fortune\n"
@@ -667,28 +717,28 @@ def main(argv=None):
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2 and ODGCmem_stat[j] == 1:
                 f.write(
-                    f"{player[j]}   {hc[j]:.2f}   "
-                    f"{hc[j]*crs_ref[8]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[9]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[22]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[11]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[13]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[25]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[17]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[21]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[15]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[18]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[24]/54.0:.2f}\n"
+                    f"{player[j]}   {f_2(hc[j])}   "
+                    f"{f_2(hc[j]*crs_ref[8]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[9]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[22]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[11]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[13]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[25]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[17]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[21]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[15]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[18]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[24]/54.0)}\n"
                 )
 
-    # odgccaCH.txt — ODGC.ca stripped-down list + course difficulty table
-    with open_latin1(here / "odgccaCH.txt", "w") as f:
+    # odgccaCH — ODGC.ca stripped-down list + course difficulty table
+    with open_latin1(out("odgccaCH"), "w") as f:
         f.write("\n  name    base54HC \n")
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2 and ODGCmem_stat[j] == 1:
-                f.write(f"{player[j]}   {hc[j]:.2f}\n")
+                f.write(f"{player[j]}   {f_2(hc[j])}\n")
         f.write("\n\n")
-        # Course catalog — C++ stream state is still fixed/setprecision(2) here
+        # Course catalog — these are reference scores, never negative, so :.2f is fine.
         cnm = [
             "", "The_Shire", "Kanata", "Larrimac", "Larrimac", "Larrimac",
             "Almonte", "Almonte", "Almonte", "Ettyville_MVP", "Ettyville_MVP",
@@ -703,8 +753,8 @@ def main(argv=None):
             ref = crs_ref[icnm[j]]
             f.write(f"{cnm[j]}   {ref:.2f}   {ref / 54.0:.2f}\n")
 
-    # atosHC.txt — TOSS list (ODGC + Atos-list members)
-    with open_latin1(here / "atosHC.txt", "w") as f:
+    # atosHC — TOSS list (ODGC + Atos-list members)
+    with open_latin1(out("atosHC"), "w") as f:
         f.write(
             "ODGC_courses_HC_list    base54HC LmacBlue  LmacYellow Almonte_Blue  "
             "Almonte_Yellow  Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown "
@@ -713,45 +763,83 @@ def main(argv=None):
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2 and (TOSSmem_stat[j] == 1 or ODGCmem_stat[j] == 1):
                 f.write(
-                    f"{player[j]}   {hc[j]:.2f}   "
-                    f"{hc[j]*crs_ref[8]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[9]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[22]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[23]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[11]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[13]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[25]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[17]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[21]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[15]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[18]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[24]/54.0:.2f}\n"
+                    f"{player[j]}   {f_2(hc[j])}   "
+                    f"{f_2(hc[j]*crs_ref[8]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[9]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[22]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[23]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[11]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[13]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[25]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[17]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[21]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[15]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[18]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[24]/54.0)}\n"
                 )
 
-    # evHC.txt — Ettyville (MVP + Axiom)
-    with open_latin1(here / "evHC.txt", "w") as f:
+    # evHC — Ettyville (MVP + Axiom)
+    with open_latin1(out("evHC"), "w") as f:
         f.write("EV_courses_HC_list   MVP_WHI  MVP_BLU  MVP_YEL   AxiomWHI  AxiomBLU  AxiomYEL \n")
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2 and (EVmem_stat[j] == 1 or ODGCmem_stat[j] == 1):
                 f.write(
                     f"{player[j]}   "
-                    f"{hc[j]*crs_ref[1]/54.0:.2f}   "
-                    f"{hc[j]*(crs_ref[3]-3.21)/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[3]/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[4]/54.0:.2f}   "
-                    f"{hc[j]*(crs_ref[6]-2.05)/54.0:.2f}   "
-                    f"{hc[j]*crs_ref[6]/54.0:.2f}\n"
+                    f"{f_2(hc[j]*crs_ref[1]/54.0)}   "
+                    f"{f_2(hc[j]*(crs_ref[3]-3.21)/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[3]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[4]/54.0)}   "
+                    f"{f_2(hc[j]*(crs_ref[6]-2.05)/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[6]/54.0)}\n"
                 )
 
-    # ladiesHC.txt — Ladies League & ODGC members
-    with open_latin1(here / "ladiesHC.txt", "w") as f:
+    # ladiesHC — Ladies League & ODGC members
+    with open_latin1(out("ladiesHC"), "w") as f:
         f.write("\nLL_courses_HC_list   base54HC  Kanata \n")
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2 and LLmem_stat[j] == 1 and ODGCmem_stat[j] == 1:
                 f.write(
-                    f"{player[j]}   {hc[j]:.2f}   "
-                    f"{hc[j]*crs_ref[11]/54.0:.2f}\n"
+                    f"{player[j]}   {f_2(hc[j])}   "
+                    f"{f_2(hc[j]*crs_ref[11]/54.0)}\n"
                 )
+
+
+def main(argv=None):
+    import argparse
+    parser = argparse.ArgumentParser(description="ODGC handicap calculator (Python port of hc24.cpp).")
+    src = parser.add_mutually_exclusive_group()
+    src.add_argument("--dat", type=Path, default=None,
+                     help="Path to RoundData.dat input (default: ./RoundData.dat)")
+    src.add_argument("--xlsx", type=Path, default=None,
+                     help="Path to RoundData.xlsx — read scores from a worksheet")
+    parser.add_argument("--sheet", default="active2025",
+                        help="Worksheet name when using --xlsx (default: active2025)")
+    parser.add_argument("--export-dat", type=Path, default=None,
+                        help="Also write the parsed input back out as a .dat file "
+                             "(useful for round-trip verification against the C++ tool)")
+    parser.add_argument("--odgc-only", action="store_true",
+                        help="Skip the golf-style output set (default: write both)")
+    args = parser.parse_args(argv)
+
+    here = Path.cwd()
+    if args.xlsx is not None:
+        player, i_pl, tokens = parse_input_xlsx(args.xlsx, args.sheet)
+    else:
+        dat_path = args.dat if args.dat is not None else (here / "RoundData.dat")
+        player, i_pl, tokens = parse_input_dat(dat_path)
+
+    if args.export_dat is not None:
+        export_tokens_as_dat(player, i_pl, tokens, args.export_dat)
+
+    # ODGC convention — current behavior, lowest HC anchored at 0.
+    result = compute_handicaps(player, i_pl, tokens, anchor_at_zero=True, verbose=True)
+    write_outputs(result, here)
+
+    if not args.odgc_only:
+        # Standard golf convention — HCs can be negative, shown as '+X.X'.
+        # Re-runs the algorithm because the sub-zero shifting is not reversible.
+        result_golf = compute_handicaps(player, i_pl, tokens, anchor_at_zero=False, verbose=False)
+        write_outputs(result_golf, here, suffix="_golf", golf_style=True)
 
 
 if __name__ == "__main__":
