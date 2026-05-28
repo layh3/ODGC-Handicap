@@ -1,6 +1,9 @@
 # Build artifacts (we keep just source + golden outputs)
 build/
 py_out/
+xlsx_py/
+xlsx_cpp/
+xlsx_py_dat/
 
 # OS junk
 .DS_Store

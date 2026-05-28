@@ -129,8 +129,8 @@ SEEDS = {
 }
 
 
-def parse_input(path: Path):
-    """Return a parsed-input bundle from RoundData.dat."""
+def parse_input_dat(path: Path):
+    """Parse RoundData.dat into (player[], i_pl, remainder_tokens)."""
     text = path.read_text(encoding="latin-1")
     lines = text.split("\n")
 
@@ -154,9 +154,166 @@ def parse_input(path: Path):
     return player, i_pl, remainder
 
 
-def main():
+def parse_input_xlsx(path: Path, sheet: str):
+    """Parse an active*-style worksheet into the same shape as parse_input_dat.
+
+    Sheet layout (rows 1-indexed, cols 1-indexed):
+        col A,B,C: row labels / round metadata
+        col D+:    one column per player
+
+        row  1: player names (cols D..)
+        row  2: seed HCs (-1 if no seed)
+        rows 3-9: 7 lines of seed differentials (100 if no seed)
+        row 10: ODGCmember 0/1
+        row 11: Atos_List 0/1
+        row 12: EVmember 0/1
+        row 13: LadiesLeague 0/1
+        row 14+: year (A), event (B), course (C), scores (D..) — 0 = did not play
+    """
+    try:
+        from openpyxl import load_workbook
+    except ImportError as e:
+        raise ImportError("openpyxl required for --xlsx; install with `pip install openpyxl`") from e
+
+    wb = load_workbook(path, data_only=True)
+    if sheet not in wb.sheetnames:
+        raise ValueError(f"Sheet {sheet!r} not found. Available: {wb.sheetnames}")
+    ws = wb[sheet]
+
+    # Player columns: row 1, col D (=4) onward, stopping at the first None or
+    # at a known helper column ("count", "total", etc. — sums added to the
+    # right of the real roster by the spreadsheet maintainer).
+    HELPER_LABELS = {"count", "total", "sum", "tally", "n", "#"}
+    row1 = list(ws.iter_rows(min_row=1, max_row=1, values_only=True))[0]
+    names = []
+    for v in row1[3:]:
+        if v is None:
+            break
+        s = str(v).strip()
+        if s.lower() in HELPER_LABELS:
+            break
+        names.append(s)
+    i_pl = len(names)
+    if i_pl == 0:
+        raise ValueError(f"No player names found in row 1 of sheet {sheet!r}")
+    player = [""] * (i_pl + 2)
+    player[0] = "PLAYER"
+    for idx, name in enumerate(names, 1):
+        player[idx] = name
+
+    def cells_row(row_num):
+        """Return values from col D to col D+i_pl-1 of the given row."""
+        return [ws.cell(row=row_num, column=4 + j).value for j in range(i_pl)]
+
+    def as_num(v, default):
+        return v if v is not None else default
+
+    tokens: list[str] = []
+
+    # Row 2: seed HCs
+    tokens += ["end_2020_hc", "HC"]
+    for v in cells_row(2):
+        tokens.append(_fmt_num(as_num(v, -1)))
+
+    # Rows 3-9: 7 lines of seed differentials, no labels
+    for r in range(3, 10):
+        for v in cells_row(r):
+            tokens.append(_fmt_num(as_num(v, 100)))
+
+    # Rows 10-13: membership flags (each has labels in col B,C)
+    label_pairs = [
+        ("ODGCmember", "status"),
+        ("Atos_List", "status"),
+        ("EVmember", "status"),
+        ("LadiesLeague", "status"),
+    ]
+    for r, (lab1, lab2) in zip(range(10, 14), label_pairs):
+        tokens += [lab1, lab2]
+        for v in cells_row(r):
+            tokens.append(str(int(as_num(v, 0))))
+
+    # Rows 14+: rounds. Mirror the .dat parser's stop rule (event len < 3).
+    for r in range(14, ws.max_row + 1):
+        yr = ws.cell(row=r, column=1).value
+        ev = ws.cell(row=r, column=2).value
+        cr = ws.cell(row=r, column=3).value
+        if yr is None or ev is None or cr is None:
+            break
+        ev_str = str(ev).strip()
+        if len(ev_str) < 3:
+            break
+        tokens.append(str(int(yr)))
+        tokens.append(ev_str)
+        tokens.append(str(cr).strip())
+        for v in cells_row(r):
+            tokens.append(str(int(as_num(v, 0))))
+
+    return player, i_pl, tokens
+
+
+def _fmt_num(v):
+    """Stringify a numeric cell value the way the .dat file does (e.g. -1 not -1.0)."""
+    if isinstance(v, float) and v.is_integer():
+        return str(int(v))
+    return str(v)
+
+
+def export_tokens_as_dat(player, i_pl, tokens, out_path: Path):
+    """Write the (player, tokens) parse back out as a .dat-formatted file.
+
+    Used as a round-trip verification fixture: the same xlsx data, exported
+    and run through the C++ pipeline, must produce identical output to the
+    Python --xlsx run."""
+    parts = ["\t" * 2 + "PLAYER\t" + "\t".join(player[1:i_pl + 1])]
+
+    pos = 0
+    def take_n(n):
+        nonlocal pos
+        out = tokens[pos:pos + n]
+        pos += n
+        return out
+
+    # Row 2: 2 labels + i_pl values
+    parts.append("\t" + "\t".join(take_n(2)) + "\t" + "\t".join(take_n(i_pl)))
+    # Rows 3-9: 7 lines of i_pl values
+    for _ in range(7):
+        parts.append("\t\t\t" + "\t".join(take_n(i_pl)))
+    # Rows 10-13: 2 labels + i_pl values
+    for _ in range(4):
+        parts.append("\t" + "\t".join(take_n(2)) + "\t" + "\t".join(take_n(i_pl)))
+    # Round rows: 3 metadata + i_pl scores each, until tokens run out
+    while pos + 3 + i_pl <= len(tokens):
+        meta = take_n(3)
+        scores = take_n(i_pl)
+        parts.append("\t".join(meta) + "\t" + "\t".join(scores) + "\t")
+
+    out_path.write_text("\n".join(parts) + "\n", encoding="latin-1")
+
+
+def main(argv=None):
+    import argparse
+    parser = argparse.ArgumentParser(description="ODGC handicap calculator (Python port of hc24.cpp).")
+    src = parser.add_mutually_exclusive_group()
+    src.add_argument("--dat", type=Path, default=None,
+                     help="Path to RoundData.dat input (default: ./RoundData.dat)")
+    src.add_argument("--xlsx", type=Path, default=None,
+                     help="Path to RoundData.xlsx — read scores from a worksheet")
+    parser.add_argument("--sheet", default="active2025",
+                        help="Worksheet name when using --xlsx (default: active2025)")
+    parser.add_argument("--export-dat", type=Path, default=None,
+                        help="Also write the parsed input back out as a .dat file "
+                             "(useful for round-trip verification against the C++ tool)")
+    args = parser.parse_args(argv)
+
     here = Path.cwd()
-    player, i_pl, tokens = parse_input(here / "RoundData.dat")
+    if args.xlsx is not None:
+        player, i_pl, tokens = parse_input_xlsx(args.xlsx, args.sheet)
+    else:
+        dat_path = args.dat if args.dat is not None else (here / "RoundData.dat")
+        player, i_pl, tokens = parse_input_dat(dat_path)
+
+    if args.export_dat is not None:
+        export_tokens_as_dat(player, i_pl, tokens, args.export_dat)
 
     pos = 0
     def take():
@@ -218,6 +375,7 @@ def main():
     score = [[0] * (i_pl + 2) for _ in range(n_rounds_cap)]
     rnd_crs_ref = [0.0] * n_rounds_cap
 
+    unknown_courses: dict[str, int] = {}
     i_rc = 0
     while pos < len(tokens):
         # Need at least 3 tokens to start a round header.
@@ -250,6 +408,11 @@ def main():
         for j in range(1, NUM_CRS):
             if crs == COURSE_ID[j]:
                 i_c = j
+        if i_c == 0 and not (ev and ev[0] == "x"):
+            # The C++ tolerates this silently and lets crs_ref[0]=0 corrupt
+            # downstream c_fac → divide-by-zero → NaN/inf cascade. Track it so
+            # we can warn the operator.
+            unknown_courses[crs] = unknown_courses.get(crs, 0) + 1
         if ev and ev[0] == "x":
             i_c = 0  # B-tier excluded from course reference
         course_rnds[i_c] += 1
@@ -271,6 +434,14 @@ def main():
                 # 'unq' layout uses just this one round's ref score.
                 crs_ref[i_c] = rnd_std
         rnd_crs_ref[i_rc] = crs_ref[i_c]
+
+    if unknown_courses:
+        import sys
+        print("WARNING: unknown course codes — treated as par-54 reference "
+              "(c_fac=1.0). The original C++ would NaN-cascade on these.",
+              file=sys.stderr)
+        for crs_code, n in sorted(unknown_courses.items()):
+            print(f"  {crs_code!r}: {n} round(s)", file=sys.stderr)
 
     # --- main round loop -----------------------------------------------------
     hc0 = [0.0] * (i_pl + 2)
