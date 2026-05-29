@@ -498,6 +498,19 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
     ss_numc = [0] * 12
 
     for r in range(1, i_rc + 1):
+        # Pre-check: a round needs ≥2 players with an established HC for the
+        # round-scratch / stddev / slope calc to be meaningful. PDGA-style
+        # division splits (e.g. a single-player FA1 or FA40) can leave only
+        # one ODGC member in a pool. Skip these rounds entirely so they
+        # don't affect anyone's HC. (The .dat never had this; only matters
+        # for xlsx-imported tournament data.)
+        established_in_round = sum(
+            1 for j in range(1, i_pl + 1)
+            if score[r][j] > 0 and has_hc[j]
+        )
+        if established_in_round < 2:
+            continue
+
         # Year-boundary stale-HC reset: if last round was >2 years ago, reset to
         # 3 seed diffs at current HC.
         if r > 1 and ry[r] > ry[r - 1]:
