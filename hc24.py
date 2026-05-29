@@ -695,11 +695,24 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
     f_g = fmt_g_golf if golf_style else fmt_g
     f_2 = fmt_2f_golf if golf_style else (lambda x: f"{x:.2f}")
 
+    # Alphabetical iteration order by player name. The .dat input was
+    # manually maintained in name-sorted order treating apostrophes as
+    # invisible (so L'Esperance sits between Lebrun and Lessard, not at
+    # the top of the L's); the sort key matches that convention so the
+    # regression byte-equality holds on the existing input.
+    def _alpha_key(name: str) -> str:
+        # Drop apostrophes (so L'Esperance sorts as "Lesperance") and
+        # case-fold so the capitalized letter that follows an apostrophe
+        # doesn't sort before lowercase neighbors.
+        return name.replace("'", "").replace("’", "").casefold()
+
+    alpha_order = sorted(range(1, i_pl + 1), key=lambda j: _alpha_key(player[j]))
+
     def out(name):
         return here / f"{name}{suffix}.txt"
 
     with open_latin1(out("player_rounds"), "w") as f:
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             f.write(f"{player[j]} HC =  {f_g(hc[j])}  rounds played = {rnd_count[j] - in_rnd_count[j]}\n")
 
     # rankHC — sorted ascending by HC; same bubble-sort as C++
@@ -718,11 +731,10 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
                 i_rank += 1
                 f.write(f" rank =  {i_rank}  {player[idx]} HC =  {f_g(hc[idx])}  rounds played = {rnd_count[idx] - in_rnd_count[idx]}\n")
 
-    # alphHC — file order is already alphabetical.
-    # The C++ `mem_stat` array is declared but never populated, so this field
-    # is always "NO". Reproduce.
+    # alphHC — players in alphabetical order. The C++ `mem_stat` array is
+    # declared but never populated, so this field always prints "NO". Reproduce.
     with open_latin1(out("alphHC"), "w") as f:
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2:
                 f.write(
                     f"{player[j]} HC =  {f_g(hc[j])}  "
@@ -733,7 +745,7 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
     # kvHC — Kemptville (Ferguson + Mountain), all qualified players
     with open_latin1(out("kvHC"), "w") as f:
         f.write("\nKemptville_courses_HC_list    base54HC Ferguson   Mountain  \n")
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2:
                 f.write(
                     f"{player[j]}   "
@@ -749,7 +761,7 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
             "\nODGC_courses_HC_list    base54HC LmacBlue  LmacYellow Almonte_blue   "
             "Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown Camp_Fortune\n"
         )
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2 and ODGCmem_stat[j] == 1:
                 f.write(
                     f"{player[j]}   {f_2(hc[j])}   "
@@ -769,7 +781,7 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
     # odgccaCH — ODGC.ca stripped-down list + course difficulty table
     with open_latin1(out("odgccaCH"), "w") as f:
         f.write("\n  name    base54HC \n")
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2 and ODGCmem_stat[j] == 1:
                 f.write(f"{player[j]}   {f_2(hc[j])}\n")
         f.write("\n\n")
@@ -795,7 +807,7 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
             "Almonte_Yellow  Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown "
             "Camp_Fortune Sandy_Row\n"
         )
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2 and (TOSSmem_stat[j] == 1 or ODGCmem_stat[j] == 1):
                 f.write(
                     f"{player[j]}   {f_2(hc[j])}   "
@@ -817,7 +829,7 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
     # evHC — Ettyville (MVP + Axiom). TOSS members also included.
     with open_latin1(out("evHC"), "w") as f:
         f.write("EV_courses_HC_list   MVP_WHI  MVP_BLU  MVP_YEL   AxiomWHI  AxiomBLU  AxiomYEL \n")
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2 and (EVmem_stat[j] == 1 or ODGCmem_stat[j] == 1 or TOSSmem_stat[j] == 1):
                 f.write(
                     f"{player[j]}   "
@@ -832,7 +844,7 @@ def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
     # ladiesHC — Ladies League & ODGC members
     with open_latin1(out("ladiesHC"), "w") as f:
         f.write("\nLL_courses_HC_list   base54HC  Kanata \n")
-        for j in range(1, i_pl + 1):
+        for j in alpha_order:
             if rnd_count[j] > 2 and LLmem_stat[j] == 1 and ODGCmem_stat[j] == 1:
                 f.write(
                     f"{player[j]}   {f_2(hc[j])}   "
