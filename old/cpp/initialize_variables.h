@@ -4,9 +4,9 @@
     int i_rc;  i_rc = 0;  // index number for r rounds
     static int cr0, crF, crT;   static double crS;    static int jin;
     	int i_c; //  index ID for courses
-     const int num_crs = 28;   // total number of different courses, includes layout variations of a course
+     const int num_crs = 30         ;   // total number of different courses, includes layout variations of a course
 //      string courseID[] = { "jeu", "alc", "shr", "kan", "cfs", "cfl", "mtn", "evm", "evp", "k27", "cfb", "cal", "cas", "alm", "mnb", "evn", "mt9", "ev1", "kss", "lml", "lmm", "twl", "lmy", "lmb", "lmr", "cf9", "rgn", "evd", "evb",  "unq", "evy" , "evi" , "evw" , "eil", "eiw" };    //  array of strings IDing each course we play on
-      string courseID[] = { "jeu", "epw", "epb", "epy", "eiw", "eib", "eiy", "unq", "lmb", "lmy", "alm0", "kan", "kpv","mtn","cur", "shr", "upi", "kvb", "ffw" , "rhl", "alm", "kvr", "alb", "aly", "cf", "kvy", "alr", "ctp"};    //  array of strings IDing each course we play on
+      string courseID[] = { "jeu", "epw", "epb", "epy", "eiw", "eib", "eiy", "unq", "lmb", "lmy", "alm0", "kan", "kpv","mtn","cur", "shr", "upi", "kvb", "ffw" , "rhl", "alm", "kvr", "alb", "aly", "cf", "kvy", "alr", "ctp", "sr" , "sro" };    //  array of strings IDing each course we play on
 //      string courseID[] = { "jeu", "alc", "shr", "kan", "cfs", "cfl", "mtn", "evm", "evp", "k27", "cfb", "cal", "cas", "alm", "mnb", "evn", "mt9", "ev1", "kss", "lml", "lmm" };    //  array of strings IDing each course we play on
 	int course_rnds[num_crs] = { 0 };   // counter array for number rounds played on Nth course  
  static  string course[n_rounds]; 
@@ -132,5 +132,9 @@ course_rnds[25] = 0;
 course_rnds[26] = 0;
 //ctp
 course_rnds[27] = 0;
+//initialize 
+course_rnds[28] = 0;
+//initialize 
+course_rnds[29] = 0;
 //initialize 
 for (int j = 1; j < num_crs; j++) {if(course_rnds[j]>0) {crS=0;crT=0; 	for (int i = 1; i <= course_rnds[j]; ++i) {crS = crS + icrs_ref[i][j];  crT++; }		crs_ref[j] = crS /crT;  }     }

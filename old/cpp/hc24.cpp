@@ -638,7 +638,7 @@ int main() {
 	//  add to ODGC HC File  course stats...
 	//  course info data
 	int nnm = 22;
-	string cnm[] = { " ","The_Shire","Kanata","Larrimac","Larrimac","Larrimac","Almonte","Almonte","Almonte","Ettyville_MVP","Ettyville_MVP","Ettyville_MVP","Ettyville_Axiom","Ettyville_Axiom","Ettyville_Axiom","Kemptville","Kemptville","Kemptville","Camp_Fortune","Franktown","Phillips_Screwdriver","UPI","Centrepointe"};
+	string cnm[] = { " ","The_Shire","Kanata","Larrimac","Larrimac","Larrimac","Almonte","Almonte","Almonte","Ettyville_MVP","Ettyville_MVP","Ettyville_MVP","Ettyville_Axiom","Ettyville_Axiom","Ettyville_Axiom","Kemptville","Kemptville","Kemptville","Camp_Fortune","Franktown","Phillips_Screwdriver","UPI","Centrepointe","Sandy_Row"};
 	int icnm[] = { 0,15,11,5,8,9,26,22,23,1,2,3,4,5,6,21,17,25,24,18,13,16,27 };
 
 	odgccafile << '\n' << '\n';
@@ -648,12 +648,12 @@ int main() {
 		//odgccafile << '\n';
 	}
 	//  same loop as above ONLY prints for ODGC paid-up members and a few other TOSS eligble people for Mark Atos
-	Atosfile << "ODGC_courses_HC_list    base54HC LmacBlue  LmacYellow Almonte_Blue  Almonte_Yellow  Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown Camp_Fortune" << '\n';  //  "lmb", "lmy", "alm", "kan",
+	Atosfile << "ODGC_courses_HC_list    base54HC LmacBlue  LmacYellow Almonte_Blue  Almonte_Yellow  Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown Camp_Fortune Sandy_Row" << '\n';  //  "lmb", "lmy", "alm", "kan",
 	for (int j = 1; j <= i_pl; j++) {
 		//	my2file <<   " j =  " << j  << "  rank_hc[j] = " << rank_hc[j]  << '\n';
 		if (rnd_count[j] > 2) {
 			string TOSSmemboo; if (TOSSmem_stat[j] == 1 || ODGCmem_stat[j] == 1)TOSSmemboo = "YES"; if (ODGCmem_stat[j] == 0)TOSSmemboo = "NO";
-			if (TOSSmem_stat[j] == 1 || ODGCmem_stat[j] == 1) Atosfile << player[j] << "   " << std::fixed << std::setprecision(2) << hc[j] << "   " << hc[j] * crs_ref[8] / 54.0 << "   " << hc[j] * crs_ref[9] / 54.0 << "   " << hc[j] * crs_ref[22] / 54.0 << "   " << hc[j] * crs_ref[23] / 54.0 << "   " << hc[j] * crs_ref[11] / 54.0 << "   " << hc[j] * crs_ref[13] / 54.0 << "   " << hc[j] * crs_ref[25] / 54.0 << "   " << hc[j] * crs_ref[17] / 54.0 << "   " << hc[j] * crs_ref[21] / 54.0 << "   " << hc[j] * crs_ref[15] / 54.0 << "   " << hc[j] * crs_ref[18] / 54.0 << "   " << hc[j] * crs_ref[24] / 54.0 << '\n';
+			if (TOSSmem_stat[j] == 1 || ODGCmem_stat[j] == 1) Atosfile << player[j] << "   " << std::fixed << std::setprecision(2) << hc[j] << "   " << hc[j] * crs_ref[8] / 54.0 << "   " << hc[j] * crs_ref[9] / 54.0 << "   " << hc[j] * crs_ref[22] / 54.0 << "   " << hc[j] * crs_ref[23] / 54.0 << "   " << hc[j] * crs_ref[11] / 54.0 << "   " << hc[j] * crs_ref[13] / 54.0 << "   " << hc[j] * crs_ref[25] / 54.0 << "   " << hc[j] * crs_ref[17] / 54.0 << "   " << hc[j] * crs_ref[21] / 54.0 << "   " << hc[j] * crs_ref[15] / 54.0 << "   " << hc[j] * crs_ref[18] / 54.0 << "   " << hc[j] * crs_ref[24] / 54.0 << "   " << hc[j] * crs_ref[28] / 54.0 << '\n';
 		}
 	}
 	//  same loop as above ONLY prints for EV purposes
@@ -662,7 +662,7 @@ int main() {
 		//	my2file <<   " j =  " << j  << "  rank_hc[j] = " << rank_hc[j]  << '\n';
 		if (rnd_count[j] > 2) {
 			string EVmemboo; if (EVmem_stat[j] == 1 && ODGCmem_stat[j] == 1)EVmemboo = "YES"; if (EVmem_stat[j] == 0)EVmemboo = "NO";
-			if (EVmem_stat[j] == 1 || ODGCmem_stat[j] == 1) evfile << player[j] << "   " << std::fixed << std::setprecision(2) << hc[j] * crs_ref[1] / 54.0 << "   " << hc[j] * (crs_ref[3]-3.21) / 54.0 << "   " << hc[j] * crs_ref[3] / 54.0 << "   " << hc[j] * crs_ref[4] / 54.0 << "   " << hc[j] * (crs_ref[6]-2.05) / 54.0 << "   " << hc[j] * crs_ref[6
+			if (EVmem_stat[j] == 1 || ODGCmem_stat[j] == 1 || TOSSmem_stat[j] == 1) evfile << player[j] << "   " << std::fixed << std::setprecision(2) << hc[j] * crs_ref[1] / 54.0 << "   " << hc[j] * (crs_ref[3]-3.21) / 54.0 << "   " << hc[j] * crs_ref[3] / 54.0 << "   " << hc[j] * crs_ref[4] / 54.0 << "   " << hc[j] * (crs_ref[6]-2.05) / 54.0 << "   " << hc[j] * crs_ref[6
 			] / 54.0 << '\n';
 		}
 	}

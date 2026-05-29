@@ -90,7 +90,7 @@ def hcc(x, ir):
 # --- input parsing ---------------------------------------------------------
 
 # Course code list and seed reference-score history (from initialize_variables.h).
-NUM_CRS = 28
+NUM_CRS = 30
 # Indexed to match the C++ 0-indexed courseID[] exactly. The course-match loop
 # starts at index 1, so the "jeu" entry at index 0 is never matched (dead slot).
 # Critical lookups depend on these specific indices: crs_ref[7]==unq triggers the
@@ -125,6 +125,8 @@ COURSE_ID = [
     "kvy",  # 25
     "alr",  # 26
     "ctp",  # 27
+    "sr",   # 28 — Sandy Row
+    "sro",  # 29 — Sandy Row (alt layout)
 ]
 
 # Seed top-5 reference scores per course (most recent at highest index).
@@ -753,12 +755,12 @@ def write_outputs(result, here, *, suffix="", golf_style=False):
             ref = crs_ref[icnm[j]]
             f.write(f"{cnm[j]}   {ref:.2f}   {ref / 54.0:.2f}\n")
 
-    # atosHC — TOSS list (ODGC + Atos-list members)
+    # atosHC — TOSS list (ODGC + Atos-list members). Includes Sandy_Row tail column.
     with open_latin1(out("atosHC"), "w") as f:
         f.write(
             "ODGC_courses_HC_list    base54HC LmacBlue  LmacYellow Almonte_Blue  "
             "Almonte_Yellow  Kanata   Mountain  KvYel KvBlue KvRed Shire Franktown "
-            "Camp_Fortune\n"
+            "Camp_Fortune Sandy_Row\n"
         )
         for j in range(1, i_pl + 1):
             if rnd_count[j] > 2 and (TOSSmem_stat[j] == 1 or ODGCmem_stat[j] == 1):
@@ -775,14 +777,15 @@ def write_outputs(result, here, *, suffix="", golf_style=False):
                     f"{f_2(hc[j]*crs_ref[21]/54.0)}   "
                     f"{f_2(hc[j]*crs_ref[15]/54.0)}   "
                     f"{f_2(hc[j]*crs_ref[18]/54.0)}   "
-                    f"{f_2(hc[j]*crs_ref[24]/54.0)}\n"
+                    f"{f_2(hc[j]*crs_ref[24]/54.0)}   "
+                    f"{f_2(hc[j]*crs_ref[28]/54.0)}\n"
                 )
 
-    # evHC — Ettyville (MVP + Axiom)
+    # evHC — Ettyville (MVP + Axiom). TOSS members also included.
     with open_latin1(out("evHC"), "w") as f:
         f.write("EV_courses_HC_list   MVP_WHI  MVP_BLU  MVP_YEL   AxiomWHI  AxiomBLU  AxiomYEL \n")
         for j in range(1, i_pl + 1):
-            if rnd_count[j] > 2 and (EVmem_stat[j] == 1 or ODGCmem_stat[j] == 1):
+            if rnd_count[j] > 2 and (EVmem_stat[j] == 1 or ODGCmem_stat[j] == 1 or TOSSmem_stat[j] == 1):
                 f.write(
                     f"{player[j]}   "
                     f"{f_2(hc[j]*crs_ref[1]/54.0)}   "
