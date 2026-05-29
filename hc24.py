@@ -43,6 +43,29 @@ def open_latin1(path, mode="w"):
     return open(path, mode, encoding="latin-1", newline="\n")
 
 
+def compress_plus_hc(hc: float, k: float) -> float:
+    """Soft-compress '+' handicaps (negative HC values) with a tanh curve.
+
+    Applied only to negative HCs (handicaps better than scratch). Positive
+    HCs pass through unchanged — high-handicappers don't need taming.
+
+    Formula:  hc' = -k * tanh(|hc| / k)
+
+    Behavior:
+      - hc near 0           barely changed (tanh(x) ≈ x for small x)
+      - hc ~ -k             ~halfway to the soft cap
+      - hc → -∞             asymptote at -k (never reached, no hard ceiling)
+
+    Disc-golf rationale: scoring volatility makes the natural HC formula
+    produce '+9'-style numbers that overstate the consistent skill gap.
+    A tanh compression with k=5 lands top players in the +4 to +5 range
+    while leaving the rest of the field untouched. Tune via --golf-cap.
+    """
+    if hc >= 0 or not k:
+        return hc
+    return -k * math.tanh(-hc / k)
+
+
 def least_squares_slope(x, y, n):
     """Mirror LeastSquares.h: 1-indexed arrays of length n+1, returns slope only."""
     sx = sum(x[i] for i in range(1, n + 1))
@@ -638,7 +661,7 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
     }
 
 
-def write_outputs(result, here, *, suffix="", golf_style=False):
+def write_outputs(result, here, *, suffix="", golf_style=False, golf_cap_k=5.0):
     """Write the nine HC files into `here`.
 
     suffix       Appended to each filename before '.txt' (e.g. '_golf' →
@@ -646,10 +669,12 @@ def write_outputs(result, here, *, suffix="", golf_style=False):
     golf_style   If True, negative HCs render with '+' prefix (golf convention:
                  '+1.5' means the player is 1.5 strokes better than scratch).
                  If False, numbers print as-is (matches C++ reference output).
+    golf_cap_k   Tanh soft-cap for '+' handicaps. Applied only when
+                 golf_style=True. Set to 0 to disable compression and show
+                 raw natural HCs. Default 5.0 → '+' handicaps asymptote at +5.
     """
     player = result["player"]
     i_pl = result["i_pl"]
-    hc = result["hc"]
     rnd_count = result["rnd_count"]
     in_rnd_count = result["in_rnd_count"]
     toss19_rnd_count = result["toss19_rnd_count"]
@@ -658,6 +683,14 @@ def write_outputs(result, here, *, suffix="", golf_style=False):
     EVmem_stat = result["EVmem_stat"]
     LLmem_stat = result["LLmem_stat"]
     crs_ref = result["crs_ref"]
+
+    # Compress '+' handicaps for display when in golf mode. The natural HC
+    # array is left intact in `result` so it stays available to callers.
+    raw_hc = result["hc"]
+    if golf_style and golf_cap_k:
+        hc = [compress_plus_hc(h, golf_cap_k) for h in raw_hc]
+    else:
+        hc = raw_hc
 
     f_g = fmt_g_golf if golf_style else fmt_g
     f_2 = fmt_2f_golf if golf_style else (lambda x: f"{x:.2f}")
@@ -822,6 +855,9 @@ def main(argv=None):
                              "(useful for round-trip verification against the C++ tool)")
     parser.add_argument("--odgc-only", action="store_true",
                         help="Skip the golf-style output set (default: write both)")
+    parser.add_argument("--golf-cap", type=float, default=5.0, metavar="K",
+                        help="Soft cap '+' handicaps with tanh, asymptote at +K "
+                             "(default: 5.0; pass 0 to disable compression)")
     args = parser.parse_args(argv)
 
     here = Path.cwd()
@@ -841,8 +877,11 @@ def main(argv=None):
     if not args.odgc_only:
         # Standard golf convention — HCs can be negative, shown as '+X.X'.
         # Re-runs the algorithm because the sub-zero shifting is not reversible.
+        # The tanh soft-cap (default k=5) tames disc-golf's score volatility
+        # so top players land in the +4 to +5 range rather than +8 to +9.
         result_golf = compute_handicaps(player, i_pl, tokens, anchor_at_zero=False, verbose=False)
-        write_outputs(result_golf, here, suffix="_golf", golf_style=True)
+        write_outputs(result_golf, here, suffix="_golf", golf_style=True,
+                      golf_cap_k=args.golf_cap)
 
 
 if __name__ == "__main__":
