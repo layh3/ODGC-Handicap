@@ -188,6 +188,10 @@ def main(argv=None):
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--no-add-players", action="store_true",
                    help="Skip unmatched players instead of adding them to the roster")
+    p.add_argument("--no-merge-same-course", action="store_true",
+                   help="Disable merging divisions playing the same (round, course) "
+                        "into one row. Off by default — merging keeps single-player "
+                        "divisions from being skipped by the round-size guard.")
     args = p.parse_args(argv)
 
     # Parse --course-override entries.
@@ -234,6 +238,29 @@ def main(argv=None):
             pool["course"] = code
             pool["course_why"] = f"auto-detected from {pool['layout_text'][:50]!r}"
 
+    # Group pools by (round, course) so divisions on the same layout share
+    # one row. Single-player pools then merge with other divisions on the
+    # same course, avoiding the round-size guard in hc24.py that would
+    # otherwise skip them entirely.
+    if not args.no_merge_same_course:
+        merged: dict[tuple[int, str], dict] = {}
+        for pool in pools:
+            key = (pool["round"], pool["course"])
+            if key not in merged:
+                merged[key] = {
+                    "round": pool["round"],
+                    "course": pool["course"],
+                    "course_why": pool["course_why"],
+                    "divisions": [],
+                    "players": [],
+                }
+            merged[key]["divisions"].append(pool["division"])
+            merged[key]["players"].extend(pool["players"])
+        pools = list(merged.values())
+        # Sort by round then course for readable output order.
+        pools.sort(key=lambda p: (p["round"], p["course"]))
+        print(f"Merged same-course divisions: {len(pools)} pool(s) after merge\n")
+
     # Open the master workbook.
     master = load_workbook(args.master, data_only=False)
     if args.sheet not in master.sheetnames:
@@ -247,7 +274,10 @@ def main(argv=None):
     # Match + (optionally) auto-add, accumulate writes.
     appended: list[dict] = []
     for pool in pools:
-        label = f"{pool['division']} R{pool['round']}"
+        if "divisions" in pool:
+            label = f"R{pool['round']} {'/'.join(pool['divisions'])}"
+        else:
+            label = f"{pool['division']} R{pool['round']}"
         print(f"══ {label}  →  {pool['course']!r}  "
               f"({len(pool['players'])} players, {pool['course_why']}) ══")
         scores_by_col: dict[int, int] = {}
@@ -276,9 +306,17 @@ def main(argv=None):
             mark = "++" if why == "ADDED to roster" else "  "
             print(f"  {mark}{pdga_name:<32} → {roster_name:<32} (score={score}, {why})")
 
+        # Event name: merged pools just use {prefix}_R{round}; multiple rows
+        # with the same event name but different courses are fine (mirrors
+        # how LETS04 shows up twice in active2025 for lmy and lmb pools).
+        # Un-merged pools include the division so each row is unique.
+        if "divisions" in pool:
+            event_name = f"{args.event}_R{pool['round']}"
+        else:
+            event_name = f"{args.event}_R{pool['round']}_{pool['division']}"
         appended.append({
             "course": pool["course"],
-            "event_name": f"{args.event}_R{pool['round']}_{pool['division']}",
+            "event_name": event_name,
             "scores": scores_by_col,
             "n_added": added_count,
         })
