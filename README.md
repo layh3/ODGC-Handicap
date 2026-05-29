@@ -198,59 +198,80 @@ Override on a per-run basis with `--division-map NAME=code`.
 Run `python3 import_udisc.py --dry-run ...` first to preview the matches.
 A `RoundData.xlsx.bak` is created on the first real run.
 
-## Differences from the original C++ source
+## Differences from the C++ source
 
 The Python port is **byte-identical** to the C++ output on the same
 `.dat` input (proven by [verify.sh](verify.sh) against [golden/](golden/),
-which is captured fresh from the upstream C++ binary). Beyond that, the
-following are intentional extensions or fixes:
+captured fresh from the latest C++ binary). Differences below are extras
+the Python adds to support workflows the C++ doesn't have (xlsx input,
+golf mode, UDisc import), not changes to the core algorithm.
 
-### Bug fixes the Python silently applies
-
-1. **Unknown-course divide-by-zero.** When a round uses a course code not
-   in `COURSE_ID`, the C++ sets `i_c = 0` and computes `c_fac = crs_ref[0]
-   / 54 = 0`, then divides by it → every subsequent round inherits the
-   `±inf`/`NaN` and the algorithm cascades to garbage (all HCs cap at 36).
-   The Python guards `c_fac = 1.0` when no course matches and prints a
-   stderr warning so the operator notices.
-2. **Helper-column detection.** The xlsx parser stops at the first
-   roster column whose row-1 label is `count`, `total`, `sum`, etc.
-   (Right-edge helper columns the spreadsheet maintainer adds for tally
-   formulas would otherwise be parsed as fake players.)
-3. **Regression with golf-mode HCs.** The C++ uses `hc[j] > -0.9` as a
-   "has established HC" check — a proxy that holds in ODGC mode (real HCs
-   never go negative) but fails in golf mode (a scratch player can sit at
-   `-1.5`). The Python tracks `has_hc[j]` explicitly so golf mode doesn't
-   spuriously drop top players from the round pool.
-
-### New behavior on top of the original algorithm
+### Extras on top of the original algorithm
 
 1. **xlsx input.** `--xlsx RoundData.xlsx --sheet active2025` reads the
    spreadsheet directly, no manual export to `.dat` needed.
 2. **Golf-style output set.** Every legacy output also produced with
-   `_golf` suffix using standard golf "+" handicap conventions.
+   `_golf` suffix using standard golf "+" handicap conventions
+   (sub-zero correction skipped; HCs can be negative).
 3. **Tanh `+` handicap compression.** Soft-caps the golf side at `+K`
    (default `5`) to handle disc-golf's score volatility without imposing
-   a hard ceiling.
+   a hard ceiling. Applied display-only — the round-by-round algorithm
+   uses natural HCs.
 4. **UDisc league import.** `import_udisc.py` matches player names,
    detects division→tee, appends rounds to the xlsx in one command.
-5. **`--export-dat`.** Useful for verification: parse xlsx → write `.dat`
-   → run the C++ on it → diff against the Python output. Used to prove
-   the xlsx parser produces an equivalent token stream.
+5. **`--export-dat`.** Parse xlsx → write `.dat` round-trip; useful for
+   verifying the xlsx parser produces an equivalent token stream.
+
+### Implementation notes worth flagging
+
+- **Helper-column detection** — xlsx-only thing. The parser stops at the
+  first roster column whose row-1 label is `count`/`total`/`sum`/etc.,
+  so right-edge sum columns don't get parsed as fake players. No
+  equivalent in the C++ since it doesn't read xlsx.
+- **`has_hc[j]` flag** — golf-mode-only thing. The C++ uses `hc[j] > -0.9`
+  as the "has an established HC" check, which works perfectly in ODGC
+  mode (HCs ≥ 0) but excludes scratch players in golf mode (a real HC of
+  `-1.5` fails the check). The Python tracks an explicit `has_hc[j]`
+  flag so golf mode doesn't drop top players from the round pool. ODGC
+  mode is unaffected.
+
+### Robustness note (still relevant to the new C++)
+
+When a round uses a course code not in `COURSE_ID`, the C++ sets
+`i_c = 0`, computes `c_fac = crs_ref[0] / 54 = 0`, then divides by it →
+every subsequent round inherits `±inf`/`NaN` and the algorithm cascades
+to garbage (final HCs all cap at 36). Adding `sr` and `sro` to the new
+C++ fixed the immediate symptom on the current data, but the same trap
+fires whenever a new course code appears before it's added.
+
+The Python guards `c_fac = 1.0` when no course matches and prints a
+stderr warning so the operator notices. Worth considering a similar
+guard in the C++ — small change, prevents silent corruption next time.
 
 ### Upstream changes synced in May 2026
 
-Cross-checked against Ken's `hc24.rar` (May 28, 2026 snapshot). Five real
-changes brought over:
+Cross-checked against the May 28, 2026 C++ snapshot. Five behavioral
+changes brought into the Python:
 
 - Added `sr` (Sandy Row) at course index 28, `sro` (alt layout) at 29.
 - `num_crs` bumped 28 → 30.
 - `atosHC.txt` gained a `Sandy_Row` column (`crs_ref[28]`).
 - `evHC.txt` qualification widened from `EV || ODGC` to `EV || ODGC || TOSS`.
-- Course-catalog `cnm[]` array gained `"Sandy_Row"` but `nnm` wasn't bumped
-  to match — the Python matches that exactly (entry sits unused in the
-  array, no new row in `odgccaCH.txt`). One-line fix here if you want it
-  to appear.
+- Course-catalog `cnm[]` gained `"Sandy_Row"` but `nnm` wasn't bumped to
+  match — Python matches the C++ exactly (entry sits unused in the array;
+  no new row in `odgccaCH.txt` catalog). One-line fix on either side if
+  intent was to display it.
+
+### Other observations from the read-through
+
+- The `i_zfc > 55` branch in the sub-zero handler ([hc24.cpp](old/cpp/hc24.cpp))
+  appears to never fire — `i_zfc` is per-round and bounded by the
+  `ss_id[10]` array size. The Python omits it on the assumption it was
+  dead code; if it was intended to handle a real case, the port would
+  need to be revisited.
+- The `r == 204` multi-subzero special case is hard-coded to that one
+  round number; effectively dead on any dataset that didn't go through
+  that exact sequence. Also omitted.
 
 ## Verifying changes
 
