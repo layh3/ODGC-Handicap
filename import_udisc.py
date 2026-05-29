@@ -43,37 +43,9 @@ DIVISION_TO_COURSE = {
     "BLUE": "lmb",   # Larrimac Blue tees
 }
 
-# UDisc layout/course names (URL mode) → course code. The scraper falls back
-# to `--course` if it can't match.
-UDISC_LAYOUT_LOOKUP = [
-    # (substring-to-match, course code) — first hit wins
-    ("almonte blue",     "alb"),
-    ("almonte yellow",   "aly"),
-    ("almonte red",      "alr"),
-    ("almonte",          "alm"),
-    ("larrimac blue",    "lmb"),
-    ("larrimac yellow",  "lmy"),
-    ("larrimac",         "lmb"),
-    ("mvp white",        "epw"),
-    ("mvp blue",         "epb"),
-    ("mvp yellow",       "epy"),
-    ("axiom white",      "eiw"),
-    ("axiom blue",       "eib"),
-    ("axiom yellow",     "eiy"),
-    ("ettyville",        "epb"),
-    ("mountain",         "mtn"),
-    ("kanata",           "kan"),
-    ("kemptville ferguson", "kpv"),
-    ("kemptville blue",  "kvb"),
-    ("kemptville yellow","kvy"),
-    ("kemptville red",   "kvr"),
-    ("kemptville",       "kpv"),
-    ("shire",            "shr"),
-    ("camp fortune",     "cf"),
-    ("franktown",        "rhl"),
-    ("centrepointe",     "ctp"),
-    ("sandy row",        "sr"),
-]
+# (No flat lookup table — guess_course_from_layout() below does context-aware
+# matching that handles both UDisc's compact phrasing ("Almonte Blues")
+# and PDGA's verbose layout strings ("Larrimac Disc Golf Course - YELLOWS").)
 
 # Common first-name shortenings the master sheet uses.
 FIRST_NAME_ALIASES = {
@@ -132,7 +104,14 @@ def match_player(udisc_name: str, roster: list[str]) -> tuple[str | None, str]:
     if candidate.lower() in ci:
         return ci[candidate.lower()], "case-insensitive"
 
-    # 4 — unique surname
+    # 4 — unique surname, BUT only if the first name's first letter also
+    #     agrees. Without that check, an unfamiliar player ("Amber Correia")
+    #     would get auto-matched to a roster member ("Correia_Justin") just
+    #     because they share a last name. First-name shortenings (Chris/
+    #     Christopher, Dave/David, Max/Maxime) still share initial letters,
+    #     so this filter doesn't reject legitimate matches.
+    parts = udisc_name.strip().split()
+    udisc_first_initial = parts[0][0].lower() if parts else ""
     last = candidate.split("_")[0]
     last_stripped = strip_accents(last).lower()
     surname_matches = [
@@ -140,7 +119,14 @@ def match_player(udisc_name: str, roster: list[str]) -> tuple[str | None, str]:
         if strip_accents(n).lower().startswith(last_stripped + "_")
     ]
     if len(surname_matches) == 1:
-        return surname_matches[0], "unique surname"
+        roster_first = surname_matches[0].split("_", 1)[1] if "_" in surname_matches[0] else ""
+        if roster_first and udisc_first_initial == roster_first[0].lower():
+            return surname_matches[0], "unique surname + first-initial"
+        # Surname matches but first names disagree → probably a different person
+        return None, (
+            f"surname matches {surname_matches[0]!r} but first names "
+            f"differ ({parts[0] if parts else '?'} vs {roster_first})"
+        )
     if len(surname_matches) > 1:
         return None, f"ambiguous surname → {surname_matches}"
 
@@ -280,11 +266,80 @@ def fetch_udisc_url(url: str):
 
 
 def guess_course_from_layout(text: str) -> str | None:
-    """Map a UDisc layout/event string to one of our course codes."""
-    lower = text.lower()
-    for needle, code in UDISC_LAYOUT_LOOKUP:
-        if needle in lower:
-            return code
+    """Map a layout/event string (UDisc or PDGA) to one of our course codes.
+
+    Context-aware: looks for the COURSE name first, then a tee color modifier
+    within the same text. Handles both compact UDisc names ("Almonte Blues")
+    and verbose PDGA strings ("Larrimac Disc Golf Course - YELLOWS; 18 holes").
+    """
+    s = text.lower()
+
+    def has(*tokens):
+        return any(t in s for t in tokens)
+
+    # Larrimac
+    if has("larrimac", "lmac"):
+        if has("yellow"):
+            return "lmy"
+        if has("blue"):
+            return "lmb"
+        return "lmb"
+    # Sandy Row (PDGA layouts: "ORANGE Sandy Row" / "BLUE Sandy Row")
+    if has("sandy row"):
+        return "sro" if has("blue") else "sr"
+    # Almonte
+    if has("almonte"):
+        if has("yellow"):
+            return "aly"
+        if has("blue"):
+            return "alb"
+        if has("red"):
+            return "alr"
+        return "alm"
+    # Kemptville
+    if has("kemptville"):
+        if has("ferguson"):
+            return "kpv"
+        if has("yellow"):
+            return "kvy"
+        if has("blue"):
+            return "kvb"
+        if has("red"):
+            return "kvr"
+        return "kpv"
+    # Ettyville Phase MVP — Pdgy in UDisc parlance
+    if has("ettyville mvp", "phase mvp", "pdgy", "mvp tee"):
+        if has("white"):
+            return "epw"
+        if has("yellow"):
+            return "epy"
+        if has("blue"):
+            return "epb"
+    # Ettyville Phase Axiom — Inva in UDisc parlance
+    if has("axiom", "inva"):
+        if has("white"):
+            return "eiw"
+        if has("yellow"):
+            return "eiy"
+        if has("blue"):
+            return "eib"
+    # Single-layout courses
+    if has("the shire", "shire"):
+        return "shr"
+    if has("camp fortune"):
+        return "cf"
+    if has("franktown"):
+        return "rhl"
+    if has("centrepointe", "centerpointe"):
+        return "ctp"
+    if has("mountain"):
+        return "mtn"
+    if has("kanata"):
+        return "kan"
+    if has("phillips screwdriver"):
+        return "mtn"  # mountain alias
+    if has("upi"):
+        return "upi"
     return None
 
 
