@@ -1,42 +1,79 @@
 #!/usr/bin/env python3
-"""Import a UDisc league round export into RoundData.xlsx.
+"""Import a UDisc league round into RoundData.xlsx.
 
-UDisc lets you download a per-round xlsx that has one sheet per pool/division.
-This script:
-  1. Reads each sheet in the UDisc file
-  2. Maps the UDisc division name → a course code (GOLD=lmy, BLUE=lmb by default)
-  3. Matches each player against the active2025 roster (handles accents,
+Accepts either:
+  * an xlsx exported from the UDisc app (one sheet per pool/division), or
+  * a UDisc leaderboard URL (e.g. https://udisc.com/events/.../leaderboard?round=1&view=scores)
+
+Workflow:
+  1. Read scores (from xlsx sheets or by scraping the URL)
+  2. Map division/layout → a course code (GOLD=lmy, BLUE=lmb by default)
+  3. Match each player against the active2025 roster (handles accents,
      surname-only matches, common first-name shortenings)
-  4. Appends one new round row per pool into the active2025 sheet
-  5. Saves the workbook (a `.bak` backup is created next to the file)
+  4. Append one new round row per pool into active2025
+  5. Save the workbook (a `.bak` backup is created on first run)
 
-Players that don't match are skipped (column score stays 0 = did not play).
+Unmatched players are added to the roster as new columns by default; pass
+`--no-add-players` to fall back to the old "skip and warn" behavior.
 Re-run hc24.py after to recompute handicaps.
 
 Usage:
-    python3 import_udisc.py udisc_export.xlsx \\
-        --event LETS04 --year 26 [--dry-run]
+    python3 import_udisc.py FILE_OR_URL --event LETS04 --year 26 [--dry-run]
 """
 
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import shutil
 import sys
 import unicodedata
+import urllib.request
 from difflib import get_close_matches
 from pathlib import Path
 
 from openpyxl import load_workbook
 
 
-# Map UDisc division name → course code in RoundData.xlsx.
+# Map UDisc division name (xlsx mode) → course code in RoundData.xlsx.
 # Edit if the league uses different division names.
 DIVISION_TO_COURSE = {
     "GOLD": "lmy",   # Larrimac Yellow tees
     "BLUE": "lmb",   # Larrimac Blue tees
 }
+
+# UDisc layout/course names (URL mode) → course code. The scraper falls back
+# to `--course` if it can't match.
+UDISC_LAYOUT_LOOKUP = [
+    # (substring-to-match, course code) — first hit wins
+    ("almonte blue",     "alb"),
+    ("almonte yellow",   "aly"),
+    ("almonte red",      "alr"),
+    ("almonte",          "alm"),
+    ("larrimac blue",    "lmb"),
+    ("larrimac yellow",  "lmy"),
+    ("larrimac",         "lmb"),
+    ("mvp white",        "epw"),
+    ("mvp blue",         "epb"),
+    ("mvp yellow",       "epy"),
+    ("axiom white",      "eiw"),
+    ("axiom blue",       "eib"),
+    ("axiom yellow",     "eiy"),
+    ("ettyville",        "epb"),
+    ("mountain",         "mtn"),
+    ("kanata",           "kan"),
+    ("kemptville ferguson", "kpv"),
+    ("kemptville blue",  "kvb"),
+    ("kemptville yellow","kvy"),
+    ("kemptville red",   "kvr"),
+    ("kemptville",       "kpv"),
+    ("shire",            "shr"),
+    ("camp fortune",     "cf"),
+    ("franktown",        "rhl"),
+    ("centrepointe",     "ctp"),
+    ("sandy row",        "sr"),
+]
 
 # Common first-name shortenings the master sheet uses.
 FIRST_NAME_ALIASES = {
@@ -187,11 +224,75 @@ def read_udisc_pool(ws) -> tuple[str, list[tuple[str, int]]]:
     return str(div).strip(), rows
 
 
+def fetch_udisc_url(url: str):
+    """Scrape a UDisc leaderboard page. Returns (layout_text, players).
+
+    layout_text   The human-readable layout name shown on the page (e.g.
+                  "Blue Tees 18"). Used to guess a course code.
+    players       List of (display_name, round_total_score) tuples.
+    """
+    headers = {
+        # UDisc 403s when there's no User-Agent set
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) "
+                      "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+                      "Version/17.0 Safari/605.1.15",
+    }
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        page = resp.read().decode("utf-8", errors="replace")
+
+    # Title gives us the full event name; <h1> gives layout/round.
+    m_title = re.search(r"<title[^>]*>([^<]+)</title>", page)
+    m_h1 = re.search(r"<h1[^>]*>([^<]+)</h1>", page)
+    layout_text = " | ".join(
+        s.group(1).strip()
+        for s in (m_h1, m_title)
+        if s and "UDisc" not in s.group(1).split("|", 1)[0]
+    )
+
+    # Each player row has the pattern (after stripping tags):
+    #   |position|<blank>|Player Name|relative_score|h1|h2|...|h18|rating|strokes|
+    # Strokes is the last cell. Name is in a <p class="text-wrap text-start">.
+    players = []
+    for tr_match in re.finditer(r"<tr[^>]*>(.+?)</tr>", page, re.DOTALL):
+        row_html = tr_match.group(1)
+        name_match = re.search(
+            r'<p class="text-wrap text-start">\s*(?:<!--[^>]*-->)?\s*([^<]+?)</p>',
+            row_html,
+        )
+        if not name_match:
+            continue
+        name = html.unescape(name_match.group(1).strip())
+        # All <td> cell text contents:
+        cells = re.findall(r"<td[^>]*>(.*?)</td>", row_html, re.DOTALL)
+        # Strokes is the last numeric cell
+        strokes = None
+        for cell in reversed(cells):
+            txt = re.sub(r"<[^>]+>", "", cell).strip()
+            if txt.isdigit():
+                strokes = int(txt)
+                break
+        if strokes is None:
+            continue
+        players.append((name, strokes))
+
+    return layout_text, players
+
+
+def guess_course_from_layout(text: str) -> str | None:
+    """Map a UDisc layout/event string to one of our course codes."""
+    lower = text.lower()
+    for needle, code in UDISC_LAYOUT_LOOKUP:
+        if needle in lower:
+            return code
+    return None
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("udisc_file", type=Path,
-                   help="UDisc league round xlsx export")
+    p.add_argument("source",
+                   help="UDisc xlsx file path OR leaderboard URL")
     p.add_argument("--master", type=Path, default=Path("RoundData.xlsx"),
                    help="Master workbook (default: ./RoundData.xlsx)")
     p.add_argument("--sheet", default="active2025",
@@ -202,6 +303,8 @@ def main(argv=None):
                    help='2-digit year for col A (e.g. 26 for 2026)')
     p.add_argument("--division-map", action="append", default=[],
                    help='Override DIVISION_TO_COURSE: --division-map GOLD=lmy')
+    p.add_argument("--course", default=None,
+                   help='Course code (URL mode only; overrides auto-detection)')
     p.add_argument("--dry-run", action="store_true",
                    help="Print what would be written; do not save the workbook")
     p.add_argument("--no-add-players", action="store_true",
@@ -213,7 +316,36 @@ def main(argv=None):
         k, _, v = entry.partition("=")
         div_map[k.strip()] = v.strip()
 
-    udisc = load_workbook(args.udisc_file, data_only=True)
+    is_url = args.source.startswith(("http://", "https://"))
+
+    # Build a list of (label, course_code, [(name, score), ...]) pools.
+    pools_to_import = []
+    if is_url:
+        layout_text, players = fetch_udisc_url(args.source)
+        course = args.course or guess_course_from_layout(layout_text)
+        if not course:
+            sys.exit(
+                f"could not infer course from layout {layout_text!r}; "
+                f"pass --course explicitly (e.g. --course lmb)"
+            )
+        if not players:
+            sys.exit(f"no players found at {args.source}")
+        pools_to_import.append((layout_text or "url-pool", course, players))
+    else:
+        udisc_path = Path(args.source)
+        if not udisc_path.exists():
+            sys.exit(f"file not found: {udisc_path}")
+        udisc = load_workbook(udisc_path, data_only=True)
+        for sheet_name in udisc.sheetnames:
+            ws = udisc[sheet_name]
+            division, pool = read_udisc_pool(ws)
+            course = div_map.get(division)
+            if not course:
+                print(f"  SKIP {sheet_name!r}: unknown division {division!r} "
+                      f"(map with --division-map {division}=<code>)")
+                continue
+            pools_to_import.append((f"{sheet_name} [{division}]", course, pool))
+
     master = load_workbook(args.master, data_only=False)
     if args.sheet not in master.sheetnames:
         sys.exit(f"sheet {args.sheet!r} not in {args.master}")
@@ -224,19 +356,12 @@ def main(argv=None):
 
     print(f"Master roster: {len(roster_names)} players in {args.sheet!r}")
     print(f"Event: year={args.year}  name={args.event!r}")
+    print(f"Source: {args.source}")
     print()
 
     appended = []
-    for sheet_name in udisc.sheetnames:
-        ws = udisc[sheet_name]
-        division, pool = read_udisc_pool(ws)
-        course = div_map.get(division)
-        if not course:
-            print(f"  SKIP {sheet_name!r}: unknown division {division!r} "
-                  f"(map with --division-map {division}=<code>)")
-            continue
-
-        print(f"══ {sheet_name}  ({division} → {course}, {len(pool)} players) ══")
+    for label, course, pool in pools_to_import:
+        print(f"══ {label}  (→ course {course!r}, {len(pool)} players) ══")
         scores_by_col: dict[int, int] = {}
         added = []     # (display_name, roster_name, score) for newly-created columns
         for udisc_name, score in pool:
