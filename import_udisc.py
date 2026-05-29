@@ -149,6 +149,31 @@ def next_empty_row(ws, start_row: int = 14) -> int:
     return r
 
 
+def add_new_player(ws, name: str, last_player_col: int):
+    """Append a new player column right after the existing roster.
+
+    Writes the name in row 1, '-1' seed HC in row 2, '100' (no-data sentinels)
+    in the 7 seed-differential rows (3-9), and '0' membership flags in rows
+    10-13. The roster's count/total helper column (if any) is left where it
+    is — the operator can manually re-extend its SUM range later.
+
+    Returns the column index of the new player.
+    """
+    new_col = last_player_col + 1
+    # If there's something at new_col (e.g. a 'count' helper), bump it right
+    # by inserting a column. openpyxl's insert_cols preserves cell values and
+    # adjusts ranges in formulas where possible.
+    if ws.cell(row=1, column=new_col).value is not None:
+        ws.insert_cols(new_col)
+    ws.cell(row=1, column=new_col, value=name)
+    ws.cell(row=2, column=new_col, value=-1)     # seed HC sentinel
+    for r in range(3, 10):                       # 7 seed differential rows
+        ws.cell(row=r, column=new_col, value=100)
+    for r in range(10, 14):                      # membership flags
+        ws.cell(row=r, column=new_col, value=0)
+    return new_col
+
+
 def read_udisc_pool(ws) -> tuple[str, list[tuple[str, int]]]:
     """Return (division_name, [(player_name, round_total_score), ...])."""
     div = ws.cell(row=2, column=1).value
@@ -179,6 +204,8 @@ def main(argv=None):
                    help='Override DIVISION_TO_COURSE: --division-map GOLD=lmy')
     p.add_argument("--dry-run", action="store_true",
                    help="Print what would be written; do not save the workbook")
+    p.add_argument("--no-add-players", action="store_true",
+                   help="Skip unmatched players instead of adding them to the roster")
     args = p.parse_args(argv)
 
     div_map = dict(DIVISION_TO_COURSE)
@@ -211,25 +238,38 @@ def main(argv=None):
 
         print(f"══ {sheet_name}  ({division} → {course}, {len(pool)} players) ══")
         scores_by_col: dict[int, int] = {}
-        unmatched = []
+        added = []     # (display_name, roster_name, score) for newly-created columns
         for udisc_name, score in pool:
             roster_name, why = match_player(udisc_name, roster_names)
             if roster_name is None:
-                unmatched.append((udisc_name, score, why))
-                continue
-            col = name_to_col[roster_name]
+                if args.no_add_players:
+                    print(f"  ?? {udisc_name:<32}   skipped (score={score}, {why})")
+                    continue
+                # Convert "Jacob Mainville" → "Mainville_Jacob"; if it's a
+                # single-token name (no surname), use it as-is.
+                roster_name = to_lastname_first(udisc_name)
+                last_col = max(c for c, _ in roster)
+                if not args.dry_run:
+                    new_col = add_new_player(ms, roster_name, last_col)
+                else:
+                    new_col = last_col + 1
+                roster.append((new_col, roster_name))
+                roster_names.append(roster_name)
+                name_to_col[roster_name] = new_col
+                added.append((udisc_name, roster_name, score))
+                col = new_col
+                why = "ADDED to roster"
+            else:
+                col = name_to_col[roster_name]
             scores_by_col[col] = score
-            tag = "  " if why == "exact" else "  "
-            print(f"  {tag}{udisc_name:<32} → {roster_name:<32} (score={score}, {why})")
-
-        for udisc_name, score, why in unmatched:
-            print(f"  ?? {udisc_name:<32}   skipped (score={score}, {why})")
+            mark = "++" if why == "ADDED to roster" else "  "
+            print(f"  {mark}{udisc_name:<32} → {roster_name:<32} (score={score}, {why})")
 
         appended.append({
             "course": course,
             "scores": scores_by_col,
-            "n_matched": len(scores_by_col),
-            "n_skipped": len(unmatched),
+            "n_matched": len(scores_by_col) - len(added),
+            "n_added": len(added),
         })
         print()
 
@@ -241,7 +281,7 @@ def main(argv=None):
     for i, entry in enumerate(appended):
         r = target_row + i
         print(f"  row {r}: year={args.year}  event={args.event!r}  course={entry['course']!r}"
-              f"  ({entry['n_matched']} scores written, {entry['n_skipped']} skipped)")
+              f"  ({entry['n_matched']} matched, {entry['n_added']} new players added)")
         if args.dry_run:
             continue
         ms.cell(row=r, column=1, value=args.year)
