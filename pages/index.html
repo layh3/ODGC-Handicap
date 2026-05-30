@@ -406,6 +406,21 @@
       </div>
     </div>
 
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="input-wrap pw-wrap">
+        <input id="password" type="password" required autocomplete="off"
+               placeholder="shared password">
+        <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <p class="hint">Required for every submit — not saved between visits.</p>
+    </div>
+
     <div class="actions">
       <button type="submit" class="btn btn-primary" id="submit-btn">
         <span id="submit-label">Run ingest</span>
@@ -444,18 +459,11 @@
 
 <script>
 // --- configuration -------------------------------------------------------
-// The password is baked into the page (no UI prompt). Anyone who can view
-// the page source can read it, so this is obscurity rather than real auth —
-// the real defense is the page URL not being widely shared, plus optional
-// Cloudflare rate-limiting on the worker route.
-//
-// To rotate the password:
-//   1. Edit CONFIG.password below
-//   2. cd worker && wrangler secret put SHARED_PASSWORD   (enter the same value)
-//   3. cd ../pages && wrangler pages deploy . --project-name odgc-hc-page
+// Only the worker URL is hardcoded. The password is typed by the operator
+// for every submit (not stored in localStorage). To rotate the password:
+//   cd worker && wrangler secret put SHARED_PASSWORD
 const CONFIG = {
   workerUrl: "https://odgc-hc.chris-lay9.workers.dev",
-  password: "odgcadmin",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -482,6 +490,12 @@ function updateKindBadge() {
 $("url").addEventListener("input", updateKindBadge);
 
 const RECENT_KEY = "odgc-hc-recent";
+
+// --- show/hide password toggle (eye icon in the input) ---
+$("pw-toggle").addEventListener("click", () => {
+  const inp = $("password");
+  inp.type = inp.type === "password" ? "text" : "password";
+});
 
 // --- recent history ---
 function loadRecent() {
@@ -536,7 +550,7 @@ async function runIngest() {
   const url = $("url").value.trim();
   const event = $("event").value.trim();
   const year = parseInt($("year").value, 10);
-  const password = CONFIG.password;
+  const password = $("password").value;
 
   setStatus("run", "running on Cloudflare…");
   $("log").innerHTML = '<span class="dim">Submitting…</span>';
