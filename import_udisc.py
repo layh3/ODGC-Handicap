@@ -170,11 +170,12 @@ def read_udisc_pool(ws) -> tuple[str, list[tuple[str, int]]]:
 
 
 def fetch_udisc_url(url: str):
-    """Scrape a UDisc leaderboard page. Returns (layout_text, players).
+    """Scrape a UDisc leaderboard page. Returns the list of pools described
+    in hc_parsing.parse_udisc_leaderboard — usually one, but mixed-tee
+    league events (LETS, etc.) produce one pool per layout.
 
-    Thin urllib-backed wrapper around hc_parsing.parse_udisc_leaderboard;
-    the Cloudflare Worker replaces the fetch with js.fetch and calls the
-    shared parser directly."""
+    Thin urllib-backed wrapper; the Cloudflare Worker replaces the fetch
+    with js.fetch and calls the shared parser directly."""
     from hc_parsing import parse_udisc_leaderboard, UDISC_USER_AGENT
     req = urllib.request.Request(url, headers={"User-Agent": UDISC_USER_AGENT})
     with urllib.request.urlopen(req, timeout=30) as resp:
@@ -351,16 +352,27 @@ def main(argv=None):
     # Build a list of (label, course_code, [(name, score), ...]) pools.
     pools_to_import = []
     if is_url:
-        layout_text, players = fetch_udisc_url(args.source)
-        course = args.course or guess_course_from_layout(layout_text)
-        if not course:
+        raw_pools = fetch_udisc_url(args.source)
+        if any(p.get("unmatched") for p in raw_pools):
+            unmatched = [p for p in raw_pools if p.get("unmatched")][0]
             sys.exit(
-                f"could not infer course from layout {layout_text!r}; "
-                f"pass --course explicitly (e.g. --course lmb)"
+                "UDisc stream didn't assign these players to a layout: "
+                f"{[n for n, _ in unmatched['players']]!r}"
             )
-        if not players:
+        if not raw_pools or not any(p["players"] for p in raw_pools):
             sys.exit(f"no players found at {args.source}")
-        pools_to_import.append((layout_text or "url-pool", course, players))
+        for p in raw_pools:
+            layout_text = p["layout_text"]
+            course = args.course or guess_course_from_layout(layout_text)
+            if not course:
+                sys.exit(
+                    f"could not infer course from layout {layout_text!r}; "
+                    f"pass --course explicitly (e.g. --course lmb)"
+                )
+            label = layout_text or "url-pool"
+            if len(raw_pools) > 1:
+                label = f"{label} [{course}]"
+            pools_to_import.append((label, course, p["players"]))
     else:
         udisc_path = Path(args.source)
         if not udisc_path.exists():

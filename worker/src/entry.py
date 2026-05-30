@@ -247,17 +247,32 @@ async def _fetch_pools(kind, url, event, log):
     if kind == "udisc":
         log.append("GET UDisc page…")
         page = await fetch_text(url, user_agent=UDISC_USER_AGENT)
-        layout_text, players = parse_udisc_leaderboard(page)
-        course = guess_course_from_layout(layout_text)
-        if not course:
+        raw_pools = parse_udisc_leaderboard(page)
+        if any(p.get("unmatched") for p in raw_pools):
+            unmatched = [p for p in raw_pools if p.get("unmatched")][0]
             raise ValueError(
-                f"can't infer course from UDisc layout {layout_text!r}"
+                "UDisc stream payload didn't assign these players to a "
+                f"layout: {[n for n,_ in unmatched['players']]!r}"
             )
-        return [{
-            "course": course,
-            "event_name": event,
-            "players": players,
-        }]
+        pools = []
+        for p in raw_pools:
+            course = guess_course_from_layout(p["layout_text"])
+            if not course:
+                raise ValueError(
+                    f"can't infer course from UDisc layout {p['layout_text']!r}"
+                )
+            ev = event
+            if len(raw_pools) > 1:
+                ev = f"{event}_{course}"
+            pools.append({
+                "course": course,
+                "event_name": ev,
+                "players": p["players"],
+            })
+        if len(pools) > 1:
+            log.append(f"  split by tee → {len(pools)} pools: "
+                       f"{', '.join(p['course'] for p in pools)}")
+        return pools
 
     # PDGA
     src = url
