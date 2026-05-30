@@ -36,12 +36,26 @@ HELP = (
     "POST JSON: {url, event, year, password}\n"
 )
 
+# CORS — the frontend lives at a different origin (CF Pages) so the browser
+# enforces a preflight + ACAO check. We allow any origin since the password
+# gate is the real auth.
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+}
+
 
 async def on_fetch(request, env):
+    if request.method == "OPTIONS":
+        return Response("", headers=CORS_HEADERS)
     if request.method == "GET":
-        return Response(HELP, headers={"content-type": "text/plain"})
+        h = {"content-type": "text/plain"}
+        h.update(CORS_HEADERS)
+        return Response(HELP, headers=h)
     if request.method != "POST":
-        return Response("method not allowed", status=405)
+        return Response("method not allowed", status=405, headers=CORS_HEADERS)
 
     try:
         body = _json.loads(await request.text() or "{}")
@@ -402,8 +416,6 @@ def _build_hc_rows(res_odgc, res_golf, golf_cap_k=5.0):
 
 
 def _json_resp(obj, status=200):
-    return Response(
-        _json.dumps(obj, indent=2),
-        status=status,
-        headers={"content-type": "application/json"},
-    )
+    h = {"content-type": "application/json"}
+    h.update(CORS_HEADERS)
+    return Response(_json.dumps(obj, indent=2), status=status, headers=h)

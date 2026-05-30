@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ODGC Handicap Update</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #f7f7f7;
+      --panel: #ffffff;
+      --panel-border: #e3e3e3;
+      --ink: #1f2024;
+      --muted: #6b6f76;
+      --accent: #1f6feb;
+      --accent-ink: #ffffff;
+      --ok: #1a7f37;
+      --warn: #b8651f;
+      --err: #c62828;
+      --code-bg: #0d1117;
+      --code-ink: #c9d1d9;
+      --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+    body {
+      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px 16px 64px;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; }
+    h1 {
+      font-size: 24px; margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
+    .subtitle { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .panel + .panel { margin-top: 16px; }
+
+    .field { margin-top: 14px; }
+    .field:first-child { margin-top: 0; }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 4px;
+      letter-spacing: 0.01em;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 4px 0 0;
+    }
+    input[type="text"], input[type="number"], input[type="password"] {
+      width: 100%;
+      font: inherit;
+      padding: 9px 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+    }
+    input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+
+    .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+    @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+
+    .kind-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .kind-badge.unknown { background: #efe9e9; color: var(--muted); }
+    .kind-badge.udisc   { background: #e0f2e6; color: var(--ok); }
+    .kind-badge.pdga    { background: #e7eefc; color: var(--accent); }
+
+    .actions { margin-top: 18px; display: flex; gap: 12px; align-items: center; }
+    button {
+      font: inherit;
+      font-weight: 600;
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:disabled { background: #b9c5da; cursor: not-allowed; }
+    .secondary {
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+    }
+
+    .panel h2 {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+
+    .log {
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 96px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+    }
+    .log .ok   { color: #7ee787; }
+    .log .warn { color: #f0a861; }
+    .log .err  { color: #ff7b72; }
+
+    .status-row {
+      display: flex; gap: 12px; align-items: center;
+      font-size: 14px; margin-top: 12px; flex-wrap: wrap;
+    }
+    .pill {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .pill.ok   { background: #d8f0d8; color: var(--ok); }
+    .pill.warn { background: #fbe6cf; color: var(--warn); }
+    .pill.err  { background: #fbe0e0; color: var(--err); }
+    .pill.idle { background: #ecedef; color: var(--muted); }
+
+    .recent {
+      list-style: none;
+      padding: 0; margin: 0;
+      font-size: 14px;
+    }
+    .recent li {
+      padding: 8px 0;
+      border-top: 1px solid var(--panel-border);
+      display: flex; gap: 12px; justify-content: space-between;
+    }
+    .recent li:first-child { border-top: 0; }
+    .recent .when { color: var(--muted); font-size: 12px; }
+    .recent .empty { color: var(--muted); font-style: italic; }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <h1>ODGC Handicap Update</h1>
+  <p class="subtitle">
+    Paste a UDisc league round URL or a PDGA tournament URL/ID, give it a
+    name, and submit. The round gets imported and handicaps are recomputed.
+  </p>
+
+  <form id="form" class="panel" autocomplete="off">
+    <div class="field">
+      <label for="url">Tournament or league round URL</label>
+      <input id="url" type="text" required
+             placeholder="https://udisc.com/events/.../leaderboard?round=1   or   https://www.pdga.com/tour/event/101991   or just 101991">
+      <span id="kind" class="kind-badge unknown">paste a URL to see what gets ingested</span>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label for="event">Event name</label>
+        <input id="event" type="text" required placeholder="TOSS05">
+        <p class="hint">Goes in column B of the active sheet. Examples: TOSS05, LETS06, LarrimacOpen.</p>
+      </div>
+      <div class="field">
+        <label for="year">Year</label>
+        <input id="year" type="number" min="0" max="99" required placeholder="26">
+        <p class="hint">Two-digit (26 = 2026).</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" required autocomplete="current-password"
+             placeholder="shared password">
+      <p class="hint">Click "Remember" after a successful submit to save it on this device.</p>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn-primary" id="submit-btn">Run ingest</button>
+      <button type="button" class="secondary" id="remember-btn" title="Save password to localStorage on this device">Remember password</button>
+    </div>
+  </form>
+
+  <div class="panel" id="status-panel">
+    <h2>Output</h2>
+    <div class="status-row">
+      <span id="status-pill" class="pill idle">idle</span>
+      <span id="status-summary" class="hint" style="font-size:14px;"></span>
+    </div>
+    <pre id="log" class="log" aria-live="polite">— waiting for submission —</pre>
+  </div>
+
+  <div class="panel">
+    <h2>Recent ingests on this device</h2>
+    <ul id="recent" class="recent">
+      <li class="empty">No history yet.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+const CONFIG = {
+  // Point at the deployed worker. If you swap to a custom domain later,
+  // change just this one line.
+  workerUrl: "https://odgc-hc.chris-lay9.workers.dev",
+};
+
+const $ = (id) => document.getElementById(id);
+
+// --- source kind auto-detect (URL → badge) ---
+function detectKind(s) {
+  const v = (s || "").trim();
+  if (!v) return ["unknown", "paste a URL to see what gets ingested"];
+  if (/^\d+$/.test(v))             return ["pdga",   "PDGA event id"];
+  if (/pdga\.com/i.test(v))        return ["pdga",   "PDGA event URL"];
+  if (/udisc\.com\/events/i.test(v)) return ["udisc", "UDisc league round"];
+  return ["unknown", "couldn't identify this URL — submit anyway?"];
+}
+function updateKindBadge() {
+  const [k, label] = detectKind($("url").value);
+  const el = $("kind");
+  el.className = "kind-badge " + k;
+  el.textContent = k === "unknown" ? label : `${k.toUpperCase()} — ${label}`;
+}
+$("url").addEventListener("input", updateKindBadge);
+
+// --- password persistence (localStorage) ---
+const PW_KEY = "odgc-hc-pw";
+const RECENT_KEY = "odgc-hc-recent";
+const savedPw = localStorage.getItem(PW_KEY);
+if (savedPw) $("password").value = savedPw;
+$("remember-btn").addEventListener("click", () => {
+  const v = $("password").value;
+  if (!v) { alert("Password is empty."); return; }
+  localStorage.setItem(PW_KEY, v);
+  $("remember-btn").textContent = "Saved ✓";
+  setTimeout(() => { $("remember-btn").textContent = "Remember password"; }, 1500);
+});
+
+// --- recent ingests ---
+function loadRecent() {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); }
+  catch { return []; }
+}
+function saveRecent(list) {
+  localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 10)));
+}
+function renderRecent() {
+  const list = loadRecent();
+  const ul = $("recent");
+  if (list.length === 0) {
+    ul.innerHTML = '<li class="empty">No history yet.</li>';
+    return;
+  }
+  ul.innerHTML = list.map((item) => `
+    <li>
+      <span><strong>${escapeHtml(item.event)}</strong>
+        — ${escapeHtml(item.kind || "?")}
+        — added ${item.rows_added} row(s), ${item.new_players} new player(s)</span>
+      <span class="when">${escapeHtml(item.when || "")}</span>
+    </li>`).join("");
+}
+function recordRecent(entry) {
+  const list = loadRecent();
+  list.unshift({...entry, when: new Date().toLocaleString()});
+  saveRecent(list);
+  renderRecent();
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+renderRecent();
+
+// --- main submit ---
+$("form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  await runIngest();
+});
+
+async function runIngest() {
+  const url = $("url").value.trim();
+  const event = $("event").value.trim();
+  const year = parseInt($("year").value, 10);
+  const password = $("password").value;
+
+  setStatus("idle", "");
+  $("log").textContent = "Submitting…\n";
+  $("submit-btn").disabled = true;
+
+  const start = performance.now();
+  try {
+    const resp = await fetch(CONFIG.workerUrl, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({url, event, year, password}),
+    });
+    const result = await resp.json();
+    renderResult(resp.status, result, (performance.now() - start) / 1000);
+
+    if (result.ok && result.result) {
+      recordRecent({
+        event,
+        kind: result.result.kind || detectKind(url)[0],
+        rows_added: result.result.rows_added ?? 0,
+        new_players: result.result.new_players ?? 0,
+      });
+    }
+  } catch (err) {
+    setStatus("err", "network error");
+    $("log").textContent = "Error: " + String(err);
+  } finally {
+    $("submit-btn").disabled = false;
+  }
+}
+
+function renderResult(httpStatus, result, secs) {
+  const log = (result && result.log) || [];
+  const lines = log.map(formatLogLine);
+  $("log").innerHTML = lines.join("\n") || "— no log lines —";
+
+  if (httpStatus >= 200 && httpStatus < 300 && result.ok) {
+    const r = result.result || {};
+    if (r.hc_pushed) {
+      setStatus("ok",
+        `✓ ${r.rows_added} new round row(s), ${r.new_players} new player(s), `
+        + `HC tab refreshed (${r.hc_rows} rows) — ${secs.toFixed(1)}s`);
+    } else {
+      setStatus("warn",
+        `nothing new to write (all candidates were duplicates) — ${secs.toFixed(1)}s`);
+    }
+  } else {
+    setStatus("err", `${httpStatus} — ${result.error || "unknown error"} (${secs.toFixed(1)}s)`);
+  }
+}
+
+function setStatus(kind, summary) {
+  const pill = $("status-pill");
+  pill.className = "pill " + kind;
+  pill.textContent = kind === "idle" ? "idle"
+                   : kind === "ok"   ? "ok"
+                   : kind === "warn" ? "skipped"
+                   : "error";
+  $("status-summary").textContent = summary;
+}
+
+function formatLogLine(line) {
+  const s = escapeHtml(String(line || ""));
+  if (/^SKIP /.test(s))    return `<span class="warn">${s}</span>`;
+  if (/^ERROR/i.test(s))   return `<span class="err">${s}</span>`;
+  if (/^  rows /.test(s))  return `<span class="ok">${s}</span>`;
+  if (/^  HC tab/.test(s)) return `<span class="ok">${s}</span>`;
+  return s;
+}
+
+// init
+updateKindBadge();
+</script>
+
+</body>
+</html>
