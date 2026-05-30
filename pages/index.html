@@ -3,266 +3,516 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ODGC Handicap Update</title>
-  <link rel="icon" href="data:,">
+  <title>ODGC Handicap</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2384e1bc' /%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    /* ---------- theme tokens ---------- */
     :root {
-      --bg: #f7f7f7;
-      --panel: #ffffff;
-      --panel-border: #e3e3e3;
-      --ink: #1f2024;
-      --muted: #6b6f76;
-      --accent: #1f6feb;
-      --accent-ink: #ffffff;
-      --ok: #1a7f37;
-      --warn: #b8651f;
-      --err: #c62828;
-      --code-bg: #0d1117;
-      --code-ink: #c9d1d9;
-      --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.06);
+      --bg-0:       #07080d;
+      --bg-1:       #0c0f17;
+      --bg-2:       #11151f;
+      --surface:    rgba(255,255,255,0.04);
+      --surface-2:  rgba(255,255,255,0.06);
+      --border:     rgba(255,255,255,0.07);
+      --border-2:   rgba(255,255,255,0.12);
+      --ink:        #e5ecf6;
+      --ink-dim:    #9aa5b6;
+      --ink-faint:  #6b7689;
+      --accent:     #84e1bc;
+      --accent-2:   #5ec6a0;
+      --accent-ink: #07120c;
+      --warn:       #f5b454;
+      --err:        #f87171;
+      --ok:         #6ee7b7;
+      --code-bg:    #050609;
+      --shadow-card: 0 1px 0 rgba(255,255,255,0.05) inset,
+                     0 20px 40px -16px rgba(0,0,0,0.55),
+                     0 2px 6px rgba(0,0,0,0.35);
+      --shadow-glow: 0 0 0 1px rgba(132,225,188,0.18),
+                     0 8px 30px -8px rgba(132,225,188,0.25);
     }
+
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+    html, body { margin: 0; padding: 0; }
     body {
-      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 24px 16px 64px;
+      background:
+        radial-gradient(1200px 600px at 100% -10%, rgba(132,225,188,0.10), transparent 60%),
+        radial-gradient(900px 500px at -10% 0%, rgba(110,170,255,0.06), transparent 55%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 30%, var(--bg-1));
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-feature-settings: "cv02","cv03","cv04","cv11";
+      letter-spacing: -0.005em;
+      min-height: 100vh;
+      padding: 48px 20px 96px;
     }
-    .wrap { max-width: 760px; margin: 0 auto; }
-    h1 {
-      font-size: 24px; margin: 0 0 4px;
-      letter-spacing: -0.01em;
-    }
-    .subtitle { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
 
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
+    .grain {
+      position: fixed; inset: 0; pointer-events: none; opacity: 0.4; mix-blend-mode: overlay;
+      background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' seed='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+      background-size: 180px 180px;
+      z-index: 0;
+    }
+    .glow {
+      position: fixed; pointer-events: none; z-index: 0;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      top: -180px; right: -160px;
+      background: radial-gradient(closest-side, rgba(132,225,188,0.18), transparent 70%);
+      filter: blur(20px);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ---------- header ---------- */
+    header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 32px;
+    }
+    .logo {
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
       border-radius: 12px;
-      padding: 20px;
-      box-shadow: var(--shadow);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.4) inset, 0 8px 24px -10px rgba(132,225,188,0.6);
+      color: var(--accent-ink);
+      font-weight: 800;
     }
-    .panel + .panel { margin-top: 16px; }
+    .brand {
+      display: flex; flex-direction: column; line-height: 1;
+    }
+    .brand .name {
+      font-size: 18px; font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand .sub {
+      font-size: 12px; color: var(--ink-dim);
+      margin-top: 4px;
+    }
 
-    .field { margin-top: 14px; }
-    .field:first-child { margin-top: 0; }
-    label {
-      display: block;
-      font-weight: 600;
-      font-size: 13px;
-      margin-bottom: 4px;
-      letter-spacing: 0.01em;
+    .hero h1 {
+      font-size: 36px; line-height: 1.1; font-weight: 800;
+      letter-spacing: -0.025em;
+      margin: 8px 0 12px;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(120deg, var(--accent), #cbe9d4 60%, #ffffff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero .tag {
+      color: var(--ink-dim);
+      font-size: 15px; line-height: 1.55;
+      margin: 0;
+      max-width: 580px;
+    }
+
+    /* ---------- card ---------- */
+    .card {
+      background: linear-gradient(180deg, var(--surface), var(--surface-2));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: var(--shadow-card);
+      margin-top: 24px;
+    }
+
+    .card-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 16px;
+    }
+    .card-head h2 {
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-weight: 700; color: var(--ink-faint);
+      margin: 0;
+    }
+    .card-head .right {
+      font-size: 12px; color: var(--ink-faint);
+    }
+
+    /* ---------- form fields ---------- */
+    form { display: flex; flex-direction: column; gap: 18px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 12px; font-weight: 600; color: var(--ink-dim);
+      letter-spacing: 0.03em; text-transform: uppercase;
+    }
+    .input-wrap {
+      position: relative;
+      display: flex; align-items: center;
+    }
+    .input-wrap input {
+      flex: 1;
+      font: inherit;
+      font-size: 16px;
+      color: var(--ink);
+      padding: 13px 14px;
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      border-radius: 10px;
+      transition: border-color .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    .input-wrap input::placeholder { color: var(--ink-faint); }
+    .input-wrap input:hover { border-color: rgba(255,255,255,0.18); }
+    .input-wrap input:focus {
+      outline: 0;
+      border-color: rgba(132,225,188,0.55);
+      box-shadow: 0 0 0 4px rgba(132,225,188,0.10);
+      background: var(--bg-1);
+    }
+    .input-wrap.has-badge input { padding-right: 92px; }
+    .badge-in-input {
+      position: absolute; right: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      pointer-events: none;
+      border: 1px solid transparent;
+      transition: all .15s ease;
+    }
+    .badge-in-input.unknown {
+      background: rgba(255,255,255,0.06);
+      color: var(--ink-faint);
+      border-color: var(--border-2);
+    }
+    .badge-in-input.udisc {
+      background: rgba(132,225,188,0.12);
+      color: var(--accent);
+      border-color: rgba(132,225,188,0.28);
+    }
+    .badge-in-input.pdga {
+      background: rgba(110,170,255,0.10);
+      color: #9cc6ff;
+      border-color: rgba(110,170,255,0.30);
     }
     .hint {
-      color: var(--muted);
-      font-size: 12px;
-      margin: 4px 0 0;
+      font-size: 12px; color: var(--ink-faint);
+      margin: 2px 2px 0;
     }
-    input[type="text"], input[type="number"], input[type="password"] {
-      width: 100%;
-      font: inherit;
-      padding: 9px 12px;
-      border: 1px solid var(--panel-border);
-      border-radius: 8px;
-      background: #fff;
-      color: var(--ink);
-    }
-    input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
 
-    .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+    .row2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; }
     @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
 
-    .kind-badge {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+    /* ---------- actions ---------- */
+    .actions {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-top: 4px;
     }
-    .kind-badge.unknown { background: #efe9e9; color: var(--muted); }
-    .kind-badge.udisc   { background: #e0f2e6; color: var(--ok); }
-    .kind-badge.pdga    { background: #e7eefc; color: var(--accent); }
-
-    .actions { margin-top: 18px; display: flex; gap: 12px; align-items: center; }
-    button {
+    .btn-row { display: flex; gap: 10px; align-items: center; }
+    .btn {
       font: inherit;
       font-weight: 600;
-      padding: 10px 18px;
-      border: 0;
-      border-radius: 8px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid transparent;
       cursor: pointer;
+      transition: transform .08s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
     }
+    .btn:active { transform: translateY(1px); }
     .btn-primary {
-      background: var(--accent);
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
       color: var(--accent-ink);
+      box-shadow: 0 6px 24px -8px rgba(132,225,188,0.55), 0 1px 0 rgba(255,255,255,0.4) inset;
     }
-    .btn-primary:hover { filter: brightness(1.08); }
-    .btn-primary:disabled { background: #b9c5da; cursor: not-allowed; }
-    .secondary {
+    .btn-primary:hover { filter: brightness(1.04); box-shadow: 0 10px 32px -10px rgba(132,225,188,0.6), 0 1px 0 rgba(255,255,255,0.45) inset; }
+    .btn-primary:disabled { background: rgba(132,225,188,0.18); color: rgba(255,255,255,0.4); cursor: progress; box-shadow: none; }
+    .btn-ghost {
       background: transparent;
-      color: var(--muted);
-      padding: 8px 12px;
+      color: var(--ink-dim);
+      border-color: var(--border-2);
     }
+    .btn-ghost:hover { color: var(--ink); border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.03); }
+    .btn-icon { padding: 10px; display: inline-flex; align-items: center; justify-content: center; }
 
-    .panel h2 {
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin: 0 0 12px;
+    .pw-wrap {
+      position: relative;
     }
+    .pw-toggle {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: 0; padding: 6px; color: var(--ink-faint);
+      cursor: pointer; border-radius: 8px;
+    }
+    .pw-toggle:hover { color: var(--ink); background: rgba(255,255,255,0.05); }
+
+    /* ---------- status + log ---------- */
+    .status-row {
+      display: flex; gap: 12px; align-items: center;
+      margin-bottom: 14px; font-size: 13px;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+    .pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .pill.idle { background: rgba(255,255,255,0.04); color: var(--ink-faint); border-color: var(--border-2); }
+    .pill.idle .dot { background: var(--ink-faint); }
+    .pill.run  { background: rgba(110,170,255,0.10); color: #9cc6ff; border-color: rgba(110,170,255,0.25); }
+    .pill.run .dot  { background: #9cc6ff; animation: pulse 1.2s ease-in-out infinite; }
+    .pill.ok   { background: rgba(110,231,183,0.12); color: var(--ok); border-color: rgba(110,231,183,0.30); }
+    .pill.ok .dot   { background: var(--ok); }
+    .pill.warn { background: rgba(245,180,84,0.10); color: var(--warn); border-color: rgba(245,180,84,0.25); }
+    .pill.warn .dot { background: var(--warn); }
+    .pill.err  { background: rgba(248,113,113,0.10); color: var(--err); border-color: rgba(248,113,113,0.30); }
+    .pill.err .dot  { background: var(--err); }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.8); } }
+
+    .status-summary { color: var(--ink-dim); }
 
     .log {
       background: var(--code-bg);
-      color: var(--code-ink);
-      border-radius: 8px;
+      color: #d3dde6;
+      border-radius: 12px;
       padding: 14px 16px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.6;
       min-height: 96px;
+      max-height: 340px;
+      overflow-y: auto;
       white-space: pre-wrap;
       word-break: break-word;
-      overflow-x: auto;
+      border: 1px solid var(--border);
     }
     .log .ok   { color: #7ee787; }
     .log .warn { color: #f0a861; }
     .log .err  { color: #ff7b72; }
+    .log .dim  { color: #6b7689; }
+    .log .step { color: #c9d1d9; }
+    .log .step::before { content: "→ "; color: var(--accent); }
+    .log .empty { color: var(--ink-faint); font-style: italic; }
 
-    .status-row {
-      display: flex; gap: 12px; align-items: center;
-      font-size: 14px; margin-top: 12px; flex-wrap: wrap;
-    }
-    .pill {
-      padding: 3px 10px;
-      border-radius: 999px;
+    /* ---------- recent ---------- */
+    .recent { display: flex; flex-direction: column; gap: 8px; }
+    .recent .item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px; align-items: center;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       font-size: 13px;
-      font-weight: 600;
     }
-    .pill.ok   { background: #d8f0d8; color: var(--ok); }
-    .pill.warn { background: #fbe6cf; color: var(--warn); }
-    .pill.err  { background: #fbe0e0; color: var(--err); }
-    .pill.idle { background: #ecedef; color: var(--muted); }
+    .recent .kind {
+      padding: 3px 8px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    }
+    .recent .kind.udisc { color: var(--accent); background: rgba(132,225,188,0.10); }
+    .recent .kind.pdga  { color: #9cc6ff;       background: rgba(110,170,255,0.10); }
+    .recent .kind.unknown { color: var(--ink-faint); background: rgba(255,255,255,0.05); }
+    .recent .desc { color: var(--ink); }
+    .recent .desc strong { color: var(--ink); font-weight: 600; }
+    .recent .when { color: var(--ink-faint); font-size: 12px; white-space: nowrap; }
+    .recent .empty {
+      color: var(--ink-faint); font-style: italic; text-align: center;
+      padding: 16px 0;
+    }
 
-    .recent {
-      list-style: none;
-      padding: 0; margin: 0;
-      font-size: 14px;
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      color: var(--ink-faint);
+      font-size: 12px;
     }
-    .recent li {
-      padding: 8px 0;
-      border-top: 1px solid var(--panel-border);
-      display: flex; gap: 12px; justify-content: space-between;
+    footer a { color: var(--ink-dim); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+
+    /* ---------- micro animations ---------- */
+    .reveal { animation: reveal 0.4s ease-out both; }
+    .reveal.delay-1 { animation-delay: 0.05s; }
+    .reveal.delay-2 { animation-delay: 0.10s; }
+    .reveal.delay-3 { animation-delay: 0.15s; }
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .recent li:first-child { border-top: 0; }
-    .recent .when { color: var(--muted); font-size: 12px; }
-    .recent .empty { color: var(--muted); font-style: italic; }
   </style>
 </head>
 
 <body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
 <div class="wrap">
 
-  <h1>ODGC Handicap Update</h1>
-  <p class="subtitle">
-    Paste a UDisc league round URL or a PDGA tournament URL/ID, give it a
-    name, and submit. The round gets imported and handicaps are recomputed.
-  </p>
+  <header class="reveal">
+    <div class="logo" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <span class="name">ODGC</span>
+      <span class="sub">Ottawa Disc Golf Club — handicap updater</span>
+    </div>
+  </header>
 
-  <form id="form" class="panel" autocomplete="off">
+  <div class="hero reveal delay-1">
+    <h1>Update <span class="grad">handicaps</span><br>from a single URL.</h1>
+    <p class="tag">
+      Paste a UDisc league round or PDGA event. The round is imported,
+      duplicates are skipped, new players are added, and handicaps are
+      recomputed — all in one round-trip.
+    </p>
+  </div>
+
+  <form id="form" class="card reveal delay-2" autocomplete="off">
+    <div class="card-head">
+      <h2>Ingest</h2>
+      <span class="right" id="kind-help">UDisc or PDGA</span>
+    </div>
+
     <div class="field">
       <label for="url">Tournament or league round URL</label>
-      <input id="url" type="text" required
-             placeholder="https://udisc.com/events/.../leaderboard?round=1   or   https://www.pdga.com/tour/event/101991   or just 101991">
-      <span id="kind" class="kind-badge unknown">paste a URL to see what gets ingested</span>
+      <div class="input-wrap has-badge">
+        <input id="url" type="text" required
+               placeholder="https://udisc.com/events/…  or  101991">
+        <span id="kind" class="badge-in-input unknown">paste URL</span>
+      </div>
     </div>
 
     <div class="row2">
       <div class="field">
         <label for="event">Event name</label>
-        <input id="event" type="text" required placeholder="TOSS05">
-        <p class="hint">Goes in column B of the active sheet. Examples: TOSS05, LETS06, LarrimacOpen.</p>
+        <div class="input-wrap">
+          <input id="event" type="text" required placeholder="TOSS05">
+        </div>
+        <p class="hint">Becomes column B. e.g. TOSS05, LETS06, LarrimacOpen.</p>
       </div>
       <div class="field">
         <label for="year">Year</label>
-        <input id="year" type="number" min="0" max="99" required placeholder="26">
-        <p class="hint">Two-digit (26 = 2026).</p>
+        <div class="input-wrap">
+          <input id="year" type="number" min="0" max="99" required placeholder="26">
+        </div>
+        <p class="hint">2-digit (26 = 2026).</p>
       </div>
     </div>
 
     <div class="field">
       <label for="password">Password</label>
-      <input id="password" type="password" required autocomplete="current-password"
-             placeholder="shared password">
-      <p class="hint">Click "Remember" after a successful submit to save it on this device.</p>
+      <div class="input-wrap pw-wrap">
+        <input id="password" type="password" required autocomplete="current-password"
+               placeholder="shared password">
+        <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <p class="hint">Saved locally after first successful submit (click <em>Remember</em>).</p>
     </div>
 
     <div class="actions">
-      <button type="submit" class="btn-primary" id="submit-btn">Run ingest</button>
-      <button type="button" class="secondary" id="remember-btn" title="Save password to localStorage on this device">Remember password</button>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="submit-btn">
+          <span id="submit-label">Run ingest</span>
+        </button>
+        <button type="button" class="btn btn-ghost" id="remember-btn">Remember</button>
+      </div>
+      <a class="btn btn-ghost" href="https://docs.google.com/spreadsheets/" target="_blank" rel="noopener">Open sheet ↗</a>
     </div>
   </form>
 
-  <div class="panel" id="status-panel">
-    <h2>Output</h2>
-    <div class="status-row">
-      <span id="status-pill" class="pill idle">idle</span>
-      <span id="status-summary" class="hint" style="font-size:14px;"></span>
+  <div class="card reveal delay-3" id="status-panel">
+    <div class="card-head">
+      <h2>Output</h2>
+      <span class="right" id="elapsed"></span>
     </div>
-    <pre id="log" class="log" aria-live="polite">— waiting for submission —</pre>
+    <div class="status-row">
+      <span id="status-pill" class="pill idle"><span class="dot"></span>idle</span>
+      <span class="status-summary" id="status-summary"></span>
+    </div>
+    <pre id="log" class="log" aria-live="polite"><span class="empty">— waiting for submission —</span></pre>
   </div>
 
-  <div class="panel">
-    <h2>Recent ingests on this device</h2>
-    <ul id="recent" class="recent">
-      <li class="empty">No history yet.</li>
-    </ul>
+  <div class="card reveal delay-3">
+    <div class="card-head">
+      <h2>Recent on this device</h2>
+      <span class="right" id="recent-count"></span>
+    </div>
+    <div class="recent" id="recent">
+      <div class="empty">No history yet.</div>
+    </div>
   </div>
+
+  <footer>
+    <span>worker · <a href="https://odgc-hc.chris-lay9.workers.dev" target="_blank" rel="noopener">odgc-hc.chris-lay9.workers.dev</a></span>
+  </footer>
 
 </div>
 
 <script>
 const CONFIG = {
-  // Point at the deployed worker. If you swap to a custom domain later,
-  // change just this one line.
   workerUrl: "https://odgc-hc.chris-lay9.workers.dev",
 };
 
 const $ = (id) => document.getElementById(id);
 
-// --- source kind auto-detect (URL → badge) ---
+// --- source kind auto-detect ---
 function detectKind(s) {
   const v = (s || "").trim();
-  if (!v) return ["unknown", "paste a URL to see what gets ingested"];
-  if (/^\d+$/.test(v))             return ["pdga",   "PDGA event id"];
-  if (/pdga\.com/i.test(v))        return ["pdga",   "PDGA event URL"];
-  if (/udisc\.com\/events/i.test(v)) return ["udisc", "UDisc league round"];
-  return ["unknown", "couldn't identify this URL — submit anyway?"];
+  if (!v) return ["unknown", "paste URL"];
+  if (/^\d+$/.test(v))             return ["pdga",  "PDGA id"];
+  if (/pdga\.com/i.test(v))        return ["pdga",  "PDGA URL"];
+  if (/udisc\.com\/events/i.test(v)) return ["udisc", "UDisc URL"];
+  return ["unknown", "unknown"];
 }
 function updateKindBadge() {
   const [k, label] = detectKind($("url").value);
   const el = $("kind");
-  el.className = "kind-badge " + k;
-  el.textContent = k === "unknown" ? label : `${k.toUpperCase()} — ${label}`;
+  el.className = "badge-in-input " + k;
+  el.textContent = label;
+  const help = $("kind-help");
+  help.textContent = k === "unknown" ? "UDisc or PDGA"
+                    : k === "udisc"  ? "Detected: UDisc"
+                    : "Detected: PDGA";
 }
 $("url").addEventListener("input", updateKindBadge);
 
-// --- password persistence (localStorage) ---
+// --- password helpers ---
 const PW_KEY = "odgc-hc-pw";
 const RECENT_KEY = "odgc-hc-recent";
 const savedPw = localStorage.getItem(PW_KEY);
 if (savedPw) $("password").value = savedPw;
+
 $("remember-btn").addEventListener("click", () => {
   const v = $("password").value;
-  if (!v) { alert("Password is empty."); return; }
+  if (!v) { flashRemember("Enter a password first"); return; }
   localStorage.setItem(PW_KEY, v);
-  $("remember-btn").textContent = "Saved ✓";
-  setTimeout(() => { $("remember-btn").textContent = "Remember password"; }, 1500);
+  flashRemember("Saved ✓");
+});
+function flashRemember(text) {
+  const btn = $("remember-btn");
+  const orig = btn.textContent;
+  btn.textContent = text;
+  setTimeout(() => { btn.textContent = orig; }, 1400);
+}
+
+$("pw-toggle").addEventListener("click", () => {
+  const inp = $("password");
+  inp.type = inp.type === "password" ? "text" : "password";
 });
 
-// --- recent ingests ---
+// --- recent history ---
 function loadRecent() {
   try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); }
   catch { return []; }
@@ -272,24 +522,32 @@ function saveRecent(list) {
 }
 function renderRecent() {
   const list = loadRecent();
-  const ul = $("recent");
+  const wrap = $("recent");
+  $("recent-count").textContent = list.length ? `${list.length} entr${list.length === 1 ? "y" : "ies"}` : "";
   if (list.length === 0) {
-    ul.innerHTML = '<li class="empty">No history yet.</li>';
+    wrap.innerHTML = '<div class="empty">No history yet.</div>';
     return;
   }
-  ul.innerHTML = list.map((item) => `
-    <li>
-      <span><strong>${escapeHtml(item.event)}</strong>
-        — ${escapeHtml(item.kind || "?")}
-        — added ${item.rows_added} row(s), ${item.new_players} new player(s)</span>
+  wrap.innerHTML = list.map((item) => `
+    <div class="item">
+      <span class="kind ${escapeHtml(item.kind || "unknown")}">${escapeHtml((item.kind || "?").toUpperCase())}</span>
+      <span class="desc">
+        <strong>${escapeHtml(item.event)}</strong>
+        — ${item.rows_added ?? 0} row(s), ${item.new_players ?? 0} new
+      </span>
       <span class="when">${escapeHtml(item.when || "")}</span>
-    </li>`).join("");
+    </div>`).join("");
 }
 function recordRecent(entry) {
   const list = loadRecent();
-  list.unshift({...entry, when: new Date().toLocaleString()});
+  list.unshift({...entry, when: relativeTime(new Date())});
   saveRecent(list);
   renderRecent();
+}
+function relativeTime() {
+  const d = new Date();
+  const opts = {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'};
+  return d.toLocaleString(undefined, opts);
 }
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({
@@ -297,7 +555,7 @@ function escapeHtml(s) {
 }
 renderRecent();
 
-// --- main submit ---
+// --- submit ---
 $("form").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   await runIngest();
@@ -309,11 +567,17 @@ async function runIngest() {
   const year = parseInt($("year").value, 10);
   const password = $("password").value;
 
-  setStatus("idle", "");
-  $("log").textContent = "Submitting…\n";
+  setStatus("run", "running on Cloudflare…");
+  $("log").innerHTML = '<span class="dim">Submitting…</span>';
   $("submit-btn").disabled = true;
+  $("submit-label").textContent = "Running…";
+  $("elapsed").textContent = "";
 
   const start = performance.now();
+  let timer = setInterval(() => {
+    $("elapsed").textContent = ((performance.now() - start) / 1000).toFixed(1) + "s";
+  }, 100);
+
   try {
     const resp = await fetch(CONFIG.workerUrl, {
       method: "POST",
@@ -321,7 +585,8 @@ async function runIngest() {
       body: JSON.stringify({url, event, year, password}),
     });
     const result = await resp.json();
-    renderResult(resp.status, result, (performance.now() - start) / 1000);
+    const secs = (performance.now() - start) / 1000;
+    renderResult(resp.status, result, secs);
 
     if (result.ok && result.result) {
       recordRecent({
@@ -333,52 +598,51 @@ async function runIngest() {
     }
   } catch (err) {
     setStatus("err", "network error");
-    $("log").textContent = "Error: " + String(err);
+    $("log").innerHTML = '<span class="err">Error: ' + escapeHtml(String(err)) + '</span>';
   } finally {
+    clearInterval(timer);
     $("submit-btn").disabled = false;
+    $("submit-label").textContent = "Run ingest";
   }
 }
 
 function renderResult(httpStatus, result, secs) {
+  $("elapsed").textContent = secs.toFixed(1) + "s";
   const log = (result && result.log) || [];
-  const lines = log.map(formatLogLine);
-  $("log").innerHTML = lines.join("\n") || "— no log lines —";
+  const html = log.map(formatLogLine).join("\n");
+  $("log").innerHTML = html || '<span class="empty">— no log lines —</span>';
+  $("log").scrollTop = $("log").scrollHeight;
 
   if (httpStatus >= 200 && httpStatus < 300 && result.ok) {
     const r = result.result || {};
     if (r.hc_pushed) {
       setStatus("ok",
-        `✓ ${r.rows_added} new round row(s), ${r.new_players} new player(s), `
-        + `HC tab refreshed (${r.hc_rows} rows) — ${secs.toFixed(1)}s`);
+        `${r.rows_added} new round(s), ${r.new_players} new player(s), HC tab refreshed (${r.hc_rows} rows)`);
     } else {
-      setStatus("warn",
-        `nothing new to write (all candidates were duplicates) — ${secs.toFixed(1)}s`);
+      setStatus("warn", "nothing new to write (all candidates were duplicates)");
     }
   } else {
-    setStatus("err", `${httpStatus} — ${result.error || "unknown error"} (${secs.toFixed(1)}s)`);
+    setStatus("err", `${httpStatus} — ${result && result.error ? result.error : "unknown error"}`);
   }
 }
 
 function setStatus(kind, summary) {
   const pill = $("status-pill");
+  const labels = { idle:"idle", run:"running", ok:"complete", warn:"skipped", err:"error" };
   pill.className = "pill " + kind;
-  pill.textContent = kind === "idle" ? "idle"
-                   : kind === "ok"   ? "ok"
-                   : kind === "warn" ? "skipped"
-                   : "error";
+  pill.innerHTML = '<span class="dot"></span>' + labels[kind];
   $("status-summary").textContent = summary;
 }
 
 function formatLogLine(line) {
   const s = escapeHtml(String(line || ""));
-  if (/^SKIP /.test(s))    return `<span class="warn">${s}</span>`;
-  if (/^ERROR/i.test(s))   return `<span class="err">${s}</span>`;
-  if (/^  rows /.test(s))  return `<span class="ok">${s}</span>`;
-  if (/^  HC tab/.test(s)) return `<span class="ok">${s}</span>`;
-  return s;
+  if (/^ERROR/i.test(s))            return `<span class="err">${s}</span>`;
+  if (/^SKIP /.test(s))             return `<span class="warn">${s}</span>`;
+  if (/^  rows /.test(s) || /^  HC tab/.test(s) || /^  \+ /.test(s)) return `<span class="ok">${s}</span>`;
+  if (/^  /.test(s))                return `<span class="dim">${s}</span>`;
+  return `<span class="step">${s}</span>`;
 }
 
-// init
 updateKindBadge();
 </script>
 
