@@ -94,6 +94,11 @@ def main(argv=None):
                    help="(hc24) skip the golf-style output set")
     p.add_argument("--golf-cap", type=float, default=None, metavar="K",
                    help="(hc24) tanh soft cap for '+' handicaps (default 5.0)")
+    p.add_argument("--push-tab", default="HC", metavar="TAB",
+                   help="Sheet tab to overwrite with the rankings table "
+                        "(gsheet backend only; default: HC)")
+    p.add_argument("--no-push", action="store_true",
+                   help="Skip pushing the rankings table back to the Sheet")
     args = p.parse_args(argv)
 
     # Source detection.
@@ -163,6 +168,10 @@ def main(argv=None):
         hc_argv += ["--odgc-only"]
     if args.golf_cap is not None:
         hc_argv += ["--golf-cap", str(args.golf_cap)]
+    # When backend is gsheet, also push the rankings table back to the
+    # Sheet unless the user asked us not to.
+    if not use_xlsx and not args.no_push:
+        hc_argv += ["--push-sheet", args.push_tab]
 
     print()
     print("┌── recompute HCs ──")

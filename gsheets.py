@@ -126,6 +126,82 @@ def add_player(url: str, name: str, after_col: int,
     return result["col"]
 
 
+def replace_sheet(url: str, target_sheet: str, rows: list[list]) -> dict:
+    """Drop and recreate `target_sheet` (a different tab from the data tab
+    used by other actions), then fill it with `rows`. Used to publish the
+    current handicap rankings into a dedicated tab."""
+    return _post(url, {
+        "action": "replace_sheet",
+        "target_sheet": target_sheet,
+        "rows": rows,
+    })
+
+
+# --- output → tab serialization -------------------------------------------
+
+import datetime as _dt
+import re as _re
+
+
+def _parse_rank_file(text: str) -> list[tuple[int, str, str, int]]:
+    """Pull (rank, name, hc, rounds) tuples out of a rankHC.txt-style file.
+
+    The HC field is kept as a string because golf-mode uses '+' prefixes
+    that we want to preserve when writing to the Sheet.
+    """
+    pat = _re.compile(
+        r" rank =\s+(\d+)\s+(\S+) HC =\s+(\S+)\s+rounds played = (\d+)"
+    )
+    out = []
+    for line in text.splitlines():
+        m = pat.match(line)
+        if m:
+            out.append((int(m.group(1)), m.group(2), m.group(3), int(m.group(4))))
+    return out
+
+
+def build_hc_summary_rows(out_dir) -> list[list]:
+    """Read rankHC.txt + rankHC_golf.txt from `out_dir` and build a 2D
+    table suitable for replace_sheet().
+
+    Layout:
+        row 1: title
+        row 2: "Generated <iso timestamp>"
+        row 4: header
+        rows 5+: one player per row, joined on name across the two outputs
+    """
+    from pathlib import Path
+    odgc_path = Path(out_dir) / "rankHC.txt"
+    golf_path = Path(out_dir) / "rankHC_golf.txt"
+    if not odgc_path.exists() or not golf_path.exists():
+        raise FileNotFoundError(
+            f"need both rankHC.txt and rankHC_golf.txt in {out_dir}"
+        )
+
+    odgc = _parse_rank_file(odgc_path.read_text(encoding="latin-1"))
+    golf = _parse_rank_file(golf_path.read_text(encoding="latin-1"))
+    golf_by_name = {name: (rank, hc) for rank, name, hc, _r in golf}
+
+    stamp = _dt.datetime.now().isoformat(timespec="minutes")
+    rows: list[list] = [
+        ["ODGC Handicaps"],
+        [f"Generated {stamp} from active2025"],
+        [],
+        ["Rank (ODGC)", "Player", "HC (ODGC)", "HC (Golf)", "Rank (Golf)", "Rounds played"],
+    ]
+    for rank, name, hc, rounds in odgc:
+        g_rank, g_hc = golf_by_name.get(name, ("", ""))
+        rows.append([rank, name, hc, g_hc, g_rank, rounds])
+    return rows
+
+
+def push_hc_summary(url: str, out_dir, target_sheet: str = "HC") -> dict:
+    """Convenience: build the rankings table from rankHC.txt /
+    rankHC_golf.txt in `out_dir` and push it to a tab named `target_sheet`."""
+    rows = build_hc_summary_rows(out_dir)
+    return replace_sheet(url, target_sheet, rows)
+
+
 # --- helpers used by the import scripts when they operate on cached data ---
 
 def cell_at(data: list[list], row: int, col: int):

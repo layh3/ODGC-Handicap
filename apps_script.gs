@@ -30,6 +30,12 @@
  *         rows 3-9: 100             (seed-diff sentinels = "no data")
  *         rows 10-13: 0             (ODGC/Atos/EV/Ladies membership flags)
  *
+ *   {"action": "replace_sheet", "target_sheet": "HC",
+ *    "rows": [[...header...], [...row...], ...]}
+ *       Deletes the named tab if it exists and creates a fresh one with the
+ *       given 2D values. Used by hc24.py to push the recomputed handicap
+ *       rankings into a tab in this spreadsheet.
+ *
  * Setup (one time, takes ~5 minutes):
  *   1. Open the Sheet → Extensions → Apps Script.
  *   2. Paste this whole file into the editor (replace the default Code.gs).
@@ -142,6 +148,44 @@ function doPost(e) {
           ];
           sheet.getRange(1, newCol, seedValues.length, 1).setValues(seedValues);
           return jsonResponse({ok: true, name: name, col: newCol});
+        }
+
+        case 'replace_sheet': {
+          // Drop and recreate `target_sheet` with the given 2D values.
+          // Uses target_sheet (not sheet) so the caller can publish to a
+          // different tab from the one they're reading from.
+          const targetName = req.target_sheet || 'HC';
+          const rows = req.rows || [];
+          // Won't delete the only remaining sheet in a spreadsheet — Apps
+          // Script blocks that — so guard with insertion first when the
+          // target is the only sheet.
+          let target = ss.getSheetByName(targetName);
+          if (target) {
+            if (ss.getSheets().length === 1) {
+              return jsonResponse({
+                ok: false,
+                error: 'cannot replace the only sheet in the spreadsheet',
+              });
+            }
+            ss.deleteSheet(target);
+          }
+          target = ss.insertSheet(targetName);
+          if (rows.length > 0) {
+            // Pad ragged rows so setValues accepts the array.
+            let width = 0;
+            for (let i = 0; i < rows.length; i++) {
+              if (rows[i].length > width) width = rows[i].length;
+            }
+            for (let i = 0; i < rows.length; i++) {
+              while (rows[i].length < width) rows[i].push('');
+            }
+            target.getRange(1, 1, rows.length, width).setValues(rows);
+          }
+          return jsonResponse({
+            ok: true,
+            target_sheet: targetName,
+            rows: rows.length,
+          });
         }
 
         default:

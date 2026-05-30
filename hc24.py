@@ -966,6 +966,11 @@ def main(argv=None):
     parser.add_argument("--golf-cap", type=float, default=5.0, metavar="K",
                         help="Soft cap '+' handicaps with tanh, asymptote at +K "
                              "(default: 5.0; pass 0 to disable compression)")
+    parser.add_argument("--push-sheet", nargs="?", const="HC", default=None,
+                        metavar="TAB",
+                        help="After writing output files, also push the rankings "
+                             "table back into a tab in the Google Sheet (default "
+                             "tab name: HC). Requires gsheets_url.txt next to hc24.py.")
     args = parser.parse_args(argv)
 
     here = Path.cwd()
@@ -996,6 +1001,20 @@ def main(argv=None):
         result_golf = compute_handicaps(player, i_pl, tokens, anchor_at_zero=False, verbose=False)
         write_outputs(result_golf, here, suffix="_golf", golf_style=True,
                       golf_cap_k=args.golf_cap)
+
+    if args.push_sheet is not None:
+        if args.odgc_only:
+            print(
+                "WARNING: --push-sheet skipped — need both rankHC.txt and "
+                "rankHC_golf.txt and --odgc-only suppresses the golf set.",
+                file=__import__("sys").stderr,
+            )
+        else:
+            from gsheets import load_url, push_hc_summary
+            url = load_url()
+            print(f"\nPushing rankings to {args.push_sheet!r} tab in Google Sheet…")
+            result = push_hc_summary(url, here, target_sheet=args.push_sheet)
+            print(f"  wrote {result['rows']} rows to tab {result['target_sheet']!r}")
 
 
 if __name__ == "__main__":
