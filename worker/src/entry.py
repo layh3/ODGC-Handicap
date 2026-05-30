@@ -62,7 +62,29 @@ async def on_fetch(request, env):
     except Exception as e:
         return _json_resp({"ok": False, "error": f"bad json: {e}"}, status=400)
 
-    # Password gate. env.SHARED_PASSWORD is set via `wrangler secret put`.
+    apps_url = getattr(env, "APPS_SCRIPT_URL", None) or ""
+    if not apps_url:
+        return _json_resp(
+            {"ok": False, "error": "server missing APPS_SCRIPT_URL"}, status=500
+        )
+
+    action = body.get("action") or "ingest"
+
+    # Player lookup is public — anyone with the page can browse rankings.
+    if action == "lookup":
+        name = (body.get("name") or "").strip()
+        sheet = body.get("sheet") or "active2025"
+        if not name:
+            return _json_resp({"ok": False, "error": "name required"}, status=400)
+        try:
+            dossier = await _run_lookup(apps_url, name, sheet)
+            return _json_resp({"ok": True, "dossier": dossier})
+        except LookupError as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=404)
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
+    # Ingest (default) is password-gated.
     shared = getattr(env, "SHARED_PASSWORD", None) or ""
     if not shared:
         return _json_resp(
@@ -71,12 +93,6 @@ async def on_fetch(request, env):
         )
     if body.get("password") != shared:
         return _json_resp({"ok": False, "error": "wrong password"}, status=401)
-
-    apps_url = getattr(env, "APPS_SCRIPT_URL", None) or ""
-    if not apps_url:
-        return _json_resp(
-            {"ok": False, "error": "server missing APPS_SCRIPT_URL"}, status=500
-        )
 
     url = (body.get("url") or "").strip()
     event = (body.get("event") or "").strip()
@@ -231,6 +247,149 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         "hc_pushed": True,
         "hc_rows": len(hc_rows),
         "subset_tabs": [s["tab_name"] for s in SUBSET_TABS],
+    }
+
+
+# --- player lookup --------------------------------------------------------
+
+async def _run_lookup(apps_url, name, sheet):
+    """Pull the sheet, compute both HCs, and build a per-player dossier.
+
+    Raises LookupError if the name doesn't match any roster entry.
+    """
+    data = await gs.pull(apps_url, sheet)
+    player_arr, i_pl, tokens = _data_to_tokens(data)
+    res_odgc = compute_handicaps(player_arr, i_pl, tokens,
+                                 anchor_at_zero=True, verbose=False)
+    res_golf = compute_handicaps(player_arr, i_pl, tokens,
+                                 anchor_at_zero=False, verbose=False)
+    return _build_dossier(name, res_odgc, res_golf)
+
+
+def _build_dossier(name, res_odgc, res_golf):
+    from hc_algorithm import _num_for_irck, compress_plus_hc
+
+    player = res_odgc["player"]
+    i_pl = res_odgc["i_pl"]
+
+    # Resolve name → 1-indexed player j. Try exact first, then case-insensitive.
+    target = name.strip()
+    j = None
+    for k in range(1, i_pl + 1):
+        if player[k] == target:
+            j = k
+            break
+    if j is None:
+        casefolded = target.casefold()
+        for k in range(1, i_pl + 1):
+            if player[k].casefold() == casefolded:
+                j = k
+                break
+    if j is None:
+        raise LookupError(f"no roster entry matches {name!r}")
+
+    hc_base = res_odgc["hc"][j]
+    hc_golf = res_golf["hc"][j]
+    hc_golf_disp = compress_plus_hc(hc_golf, 5.0)
+    rnd_count = res_odgc["rnd_count"][j]
+    crs_ref = res_odgc["crs_ref"]
+    score = res_odgc["score"]
+    event = res_odgc["event"]
+    course = res_odgc["course"]
+    ry = res_odgc["ry"]
+    diff = res_odgc["diff"][j]
+    d_ry = res_odgc["d_ry"][j]
+    played_at = res_odgc["played_at"][j]
+
+    # Walk slots 1..rnd_count and resolve each to its round of origin.
+    # played_at[k] = 0 means synthetic (seed or year-reset) — skip.
+    played: list[dict] = []
+    for k in range(1, rnd_count + 1):
+        r = played_at[k]
+        if r <= 0:
+            continue
+        sc = score[r][j] if r < len(score) else 0
+        played.append({
+            "round_index": r,
+            "diff_slot": k,
+            "year": ry[r],
+            "event": event[r],
+            "course": course[r],
+            "score": int(sc) if sc else 0,
+            "diff": round(diff[k], 3),
+        })
+
+    last20 = played[-20:]
+    diffs_in_window = [(p["diff_slot"], p["diff"]) for p in last20
+                       if p["diff"] is not None]
+    n_for_avg = _num_for_irck(min(20, rnd_count))
+    counted_slots: set[int] = set()
+    if n_for_avg > 0:
+        ranked = sorted(diffs_in_window, key=lambda x: x[1])
+        counted_slots = {slot for slot, _ in ranked[:n_for_avg]}
+    counted_sum = sum(d for slot, d in diffs_in_window if slot in counted_slots)
+
+    for p in last20:
+        p["counted"] = p["diff_slot"] in counted_slots
+
+    # Per-course HC for every course the algorithm has a reference for.
+    from hc_algorithm import COURSE_ID
+    per_course = []
+    for c in range(1, len(COURSE_ID)):
+        if c >= len(crs_ref):
+            continue
+        ref = crs_ref[c]
+        if ref <= 0:
+            continue
+        per_course.append({
+            "code": COURSE_ID[c],
+            "ref": round(ref, 2),
+            "hc": round(hc_base * ref / 54.0, 2),
+        })
+
+    # Ranks: position in each club's ascending-by-HC ordering.
+    def rank_in(filter_fn):
+        qualified = [k for k in range(1, i_pl + 1)
+                     if res_odgc["rnd_count"][k] > 2 and filter_fn(k)]
+        qualified.sort(key=lambda k: res_odgc["hc"][k])
+        for i, k in enumerate(qualified, 1):
+            if k == j:
+                return {"rank": i, "of": len(qualified)}
+        return None
+
+    is_member = res_odgc["rnd_count"][j] > 2
+    ranks = {
+        "overall": rank_in(lambda k: True) if is_member else None,
+        "ODGC": rank_in(lambda k: res_odgc["ODGCmem_stat"][k] == 1)
+                if is_member and res_odgc["ODGCmem_stat"][j] == 1 else None,
+        "EV": rank_in(lambda k: res_odgc["EVmem_stat"][k] == 1
+                      or res_odgc["ODGCmem_stat"][k] == 1
+                      or res_odgc["TOSSmem_stat"][k] == 1)
+              if is_member and (res_odgc["EVmem_stat"][j] == 1
+                                or res_odgc["ODGCmem_stat"][j] == 1
+                                or res_odgc["TOSSmem_stat"][j] == 1) else None,
+        "Ladies": rank_in(lambda k: res_odgc["LLmem_stat"][k] == 1
+                          and res_odgc["ODGCmem_stat"][k] == 1)
+                  if is_member and res_odgc["LLmem_stat"][j] == 1
+                  and res_odgc["ODGCmem_stat"][j] == 1 else None,
+    }
+
+    return {
+        "name": player[j],
+        "rnd_count": rnd_count,
+        "hc": round(hc_base, 4),
+        "hc_golf": round(hc_golf_disp, 4),
+        "memberships": {
+            "ODGC": res_odgc["ODGCmem_stat"][j] == 1,
+            "TOSS": res_odgc["TOSSmem_stat"][j] == 1,
+            "EV": res_odgc["EVmem_stat"][j] == 1,
+            "Ladies": res_odgc["LLmem_stat"][j] == 1,
+        },
+        "last_20": last20,
+        "counted_n": n_for_avg,
+        "counted_sum": round(counted_sum, 3),
+        "per_course_hc": per_course,
+        "ranks": ranks,
     }
 
 

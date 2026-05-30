@@ -201,6 +201,10 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
     rnd_count = [0] * (i_pl + 2)
     diff = [[0.0] * 600 for _ in range(i_pl + 2)]
     d_ry = [[0] * 600 for _ in range(i_pl + 2)]
+    # Mirrors diff[][]: which round_index each diff slot was created by.
+    # Lookup-only; the algorithm doesn't read this. 0 = synthetic (seed or
+    # year-reset). r > 0 = the actual round_index from the round loop below.
+    played_at = [[0] * 600 for _ in range(i_pl + 2)]
     for k in range(1, 8):
         for j in range(1, i_pl + 1):
             dum = float(take())
@@ -336,6 +340,7 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
                     for k in range(1, 4):
                         diff[j][k] = hc[j] / 0.96
                         d_ry[j][k] = ry[r]
+                        played_at[j][k] = 0
 
         rnd_size = 0
         rnd_asize = 0
@@ -407,6 +412,7 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
             k = player_pt[j]
             diff[k][rnd_count[k]] = (rnd_scores[j] - rnd_scratch) * (113 / slp) / c_fac
             d_ry[k][rnd_count[k]] = ry[r]
+            played_at[k][rnd_count[k]] = r
 
             i_in = 1
             if rnd_count[k] > 20:
@@ -470,4 +476,14 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
         "EVmem_stat": EVmem_stat,
         "LLmem_stat": LLmem_stat,
         "crs_ref": crs_ref,
+        # Per-round arrays used by the player-lookup endpoint. Verify.sh
+        # diffs the txt outputs — adding keys here doesn't change those.
+        "i_rc": i_rc,
+        "ry": ry,
+        "event": event,
+        "course": course,
+        "score": score,
+        "diff": diff,
+        "d_ry": d_ry,
+        "played_at": played_at,
     }
