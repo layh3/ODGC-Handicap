@@ -28,12 +28,20 @@ import html
 import re
 import shutil
 import sys
-import unicodedata
 import urllib.request
-from difflib import get_close_matches
 from pathlib import Path
 
 from openpyxl import load_workbook
+
+# Player matching + course-code lookup live in hc_matching so the
+# Cloudflare Worker shares them with the CLI.
+from hc_matching import (
+    FIRST_NAME_ALIASES,
+    strip_accents,
+    to_lastname_first,
+    match_player,
+    guess_course_from_layout,
+)
 
 
 # Map UDisc division name (xlsx mode) → course code in RoundData.xlsx.
@@ -47,104 +55,8 @@ DIVISION_TO_COURSE = {
 # matching that handles both UDisc's compact phrasing ("Almonte Blues")
 # and PDGA's verbose layout strings ("Larrimac Disc Golf Course - YELLOWS").)
 
-# Common first-name shortenings the master sheet uses.
-FIRST_NAME_ALIASES = {
-    "Christopher": "Chris", "Matthew": "Matt", "Jonathan": "Jon",
-    "Michael": "Mike", "Robert": "Rob", "William": "Will",
-    "Daniel": "Dan", "Nicholas": "Nick", "Andrew": "Andy",
-    "Joshua": "Josh", "Anthony": "Tony", "Maximilian": "Max",
-    "Maxime": "Max",
-}
-
-
-def strip_accents(s: str) -> str:
-    """é → e, ñ → n, ç → c, etc. — for matching only, never for writing."""
-    return "".join(
-        c for c in unicodedata.normalize("NFD", s)
-        if unicodedata.category(c) != "Mn"
-    )
-
-
-def to_lastname_first(udisc_name: str) -> str:
-    """'Jacob Mainville' → 'Mainville_Jacob'. Multi-word last names join with _.
-
-    'Pier-luc Gyre' → 'Gyre_Pier-luc' (hyphens preserved, case preserved).
-    """
-    parts = udisc_name.strip().split()
-    if len(parts) < 2:
-        return udisc_name.strip()
-    return f"{'_'.join(parts[1:])}_{parts[0]}"
-
-
-def match_player(udisc_name: str, roster: list[str]) -> tuple[str | None, str]:
-    """Return (matched_roster_name, reason) or (None, why_not).
-
-    Matching cascade (highest confidence first):
-        1. Exact match after Last_First flip
-        2. Same after stripping accents from both sides
-        3. Case-insensitive
-        4. Unique surname (one Last_* in roster)
-        5. First-name shortening (Christopher → Chris, etc.)
-        6. Fuzzy (difflib, ≥0.75 similarity)
-    """
-    candidate = to_lastname_first(udisc_name)
-
-    # 1 — exact
-    if candidate in roster:
-        return candidate, "exact"
-
-    # 2 — accent-stripped exact
-    stripped = {strip_accents(n).lower(): n for n in roster}
-    key = strip_accents(candidate).lower()
-    if key in stripped:
-        return stripped[key], "accent-normalized"
-
-    # 3 — case-insensitive
-    ci = {n.lower(): n for n in roster}
-    if candidate.lower() in ci:
-        return ci[candidate.lower()], "case-insensitive"
-
-    # 4 — unique surname, BUT only if the first name's first letter also
-    #     agrees. Without that check, an unfamiliar player ("Amber Correia")
-    #     would get auto-matched to a roster member ("Correia_Justin") just
-    #     because they share a last name. First-name shortenings (Chris/
-    #     Christopher, Dave/David, Max/Maxime) still share initial letters,
-    #     so this filter doesn't reject legitimate matches.
-    parts = udisc_name.strip().split()
-    udisc_first_initial = parts[0][0].lower() if parts else ""
-    last = candidate.split("_")[0]
-    last_stripped = strip_accents(last).lower()
-    surname_matches = [
-        n for n in roster
-        if strip_accents(n).lower().startswith(last_stripped + "_")
-    ]
-    if len(surname_matches) == 1:
-        roster_first = surname_matches[0].split("_", 1)[1] if "_" in surname_matches[0] else ""
-        if roster_first and udisc_first_initial == roster_first[0].lower():
-            return surname_matches[0], "unique surname + first-initial"
-        # Surname matches but first names disagree → probably a different person
-        return None, (
-            f"surname matches {surname_matches[0]!r} but first names "
-            f"differ ({parts[0] if parts else '?'} vs {roster_first})"
-        )
-    if len(surname_matches) > 1:
-        return None, f"ambiguous surname → {surname_matches}"
-
-    # 5 — first-name shortening
-    parts = udisc_name.strip().split()
-    if len(parts) >= 2:
-        short = FIRST_NAME_ALIASES.get(parts[0])
-        if short:
-            alt = f"{'_'.join(parts[1:])}_{short}"
-            if alt in roster:
-                return alt, f"first-name shortening ({parts[0]}→{short})"
-
-    # 6 — fuzzy
-    close = get_close_matches(candidate, roster, n=1, cutoff=0.75)
-    if close:
-        return close[0], "fuzzy"
-
-    return None, "no match"
+# match_player, strip_accents, to_lastname_first, FIRST_NAME_ALIASES are
+# imported from hc_matching (shared with the Cloudflare Worker).
 
 
 def load_roster(ws) -> list[tuple[int, str]]:
@@ -260,146 +172,14 @@ def read_udisc_pool(ws) -> tuple[str, list[tuple[str, int]]]:
 def fetch_udisc_url(url: str):
     """Scrape a UDisc leaderboard page. Returns (layout_text, players).
 
-    layout_text   The human-readable layout name shown on the page (e.g.
-                  "Blue Tees 18"). Used to guess a course code.
-    players       List of (display_name, round_total_score) tuples.
-    """
-    headers = {
-        # UDisc 403s when there's no User-Agent set
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) "
-                      "AppleWebKit/605.1.15 (KHTML, like Gecko) "
-                      "Version/17.0 Safari/605.1.15",
-    }
-    req = urllib.request.Request(url, headers=headers)
+    Thin urllib-backed wrapper around hc_parsing.parse_udisc_leaderboard;
+    the Cloudflare Worker replaces the fetch with js.fetch and calls the
+    shared parser directly."""
+    from hc_parsing import parse_udisc_leaderboard, UDISC_USER_AGENT
+    req = urllib.request.Request(url, headers={"User-Agent": UDISC_USER_AGENT})
     with urllib.request.urlopen(req, timeout=30) as resp:
         page = resp.read().decode("utf-8", errors="replace")
-
-    # Title gives us the full event name; <h1> gives layout/round.
-    m_title = re.search(r"<title[^>]*>([^<]+)</title>", page)
-    m_h1 = re.search(r"<h1[^>]*>([^<]+)</h1>", page)
-    layout_text = " | ".join(
-        s.group(1).strip()
-        for s in (m_h1, m_title)
-        if s and "UDisc" not in s.group(1).split("|", 1)[0]
-    )
-
-    # Each player row has the pattern (after stripping tags):
-    #   |position|<blank>|Player Name|relative_score|h1|h2|...|h18|rating|strokes|
-    # Strokes is the last cell. Name is in a <p class="text-wrap text-start">.
-    players = []
-    for tr_match in re.finditer(r"<tr[^>]*>(.+?)</tr>", page, re.DOTALL):
-        row_html = tr_match.group(1)
-        name_match = re.search(
-            r'<p class="text-wrap text-start">\s*(?:<!--[^>]*-->)?\s*([^<]+?)</p>',
-            row_html,
-        )
-        if not name_match:
-            continue
-        name = html.unescape(name_match.group(1).strip())
-        # All <td> cell text contents:
-        cells = re.findall(r"<td[^>]*>(.*?)</td>", row_html, re.DOTALL)
-        # Strokes is the last numeric cell
-        strokes = None
-        for cell in reversed(cells):
-            txt = re.sub(r"<[^>]+>", "", cell).strip()
-            if txt.isdigit():
-                strokes = int(txt)
-                break
-        if strokes is None:
-            continue
-        players.append((name, strokes))
-
-    return layout_text, players
-
-
-def guess_course_from_layout(text: str) -> str | None:
-    """Map a layout/event string (UDisc or PDGA) to one of our course codes.
-
-    Context-aware: looks for the COURSE name first, then a tee color modifier
-    within the same text. Handles both compact UDisc names ("Almonte Blues")
-    and verbose PDGA strings ("Larrimac Disc Golf Course - YELLOWS; 18 holes").
-    """
-    s = text.lower()
-
-    def has(*tokens):
-        return any(t in s for t in tokens)
-
-    # Larrimac
-    if has("larrimac", "lmac"):
-        if has("yellow"):
-            return "lmy"
-        if has("blue"):
-            return "lmb"
-        return "lmb"
-    # Sandy Row. PDGA uses "ORANGE Sandy Row" / "BLUE Sandy Row"; UDisc
-    # sometimes drops the color ("Sandy Row Golf Club"). User convention in
-    # active2025: sro = ORANGE, sr = BLUE (BLUE is the default when no
-    # color modifier is present).
-    if has("sandy row"):
-        return "sro" if has("orange") else "sr"
-    # Almonte
-    if has("almonte"):
-        if has("yellow"):
-            return "aly"
-        if has("blue"):
-            return "alb"
-        if has("red"):
-            return "alr"
-        return "alm"
-    # Ferguson Forest (Kemptville). UDisc events: "Ferguson Forest Blues",
-    # "Ferguson Forest Wonderbread", etc. User maps all of these to kvb/kvy/kvr
-    # (the Kemptville tee codes), NOT the older `kpv` slot. Check this before
-    # the general "kemptville" rule so Ferguson always lands on the right code.
-    if has("ferguson"):
-        if has("yellow"):
-            return "kvy"
-        if has("red"):
-            return "kvr"
-        return "kvb"
-    # Kemptville (other layouts, if any)
-    if has("kemptville"):
-        if has("yellow"):
-            return "kvy"
-        if has("blue"):
-            return "kvb"
-        if has("red"):
-            return "kvr"
-        return "kvb"
-    # Ettyville Phase MVP. UDisc uses "Ettyville MVP <tee>". Also Pdgy aliases.
-    if has("ettyville mvp", "phase mvp", "pdgy", "mvp tee", "mvp"):
-        if has("white"):
-            return "epw"
-        if has("yellow"):
-            return "epy"
-        if has("blue"):
-            return "epb"
-    # Ettyville Phase Axiom. UDisc uses "Ettyville Axiom [Dunes] <tee>".
-    if has("axiom", "inva"):
-        if has("white"):
-            return "eiw"
-        if has("yellow"):
-            return "eiy"
-        if has("blue"):
-            return "eib"
-    # Single-layout courses
-    if has("the shire", "shire"):
-        return "shr"
-    if has("camp fortune"):
-        return "cf"
-    if has("franktown"):
-        return "rhl"
-    if has("centrepointe", "centerpointe"):
-        return "ctp"
-    # Mountain — UDisc lists this as "Philips Screw Driver" (yes, that
-    # spelling); user catalogs it as Phillips_Screwdriver → mtn.
-    if has("philips screw driver", "phillips screw driver", "phillips screwdriver",
-           "screwdriver", "mountain"):
-        return "mtn"
-    if has("kanata"):
-        return "kan"
-    if has("upi"):
-        return "upi"
-    return None
+    return parse_udisc_leaderboard(page)
 
 
 def _run_gsheet_path(args, pools_to_import):

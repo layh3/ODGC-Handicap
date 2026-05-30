@@ -37,136 +37,35 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 # Reuse the matching + roster machinery from the UDisc importer.
+from hc_matching import (
+    guess_course_from_layout,
+    match_player,
+    to_lastname_first,
+)
 from import_udisc import (
     add_new_player,
     find_duplicate_row,
-    guess_course_from_layout,
     load_roster,
-    match_player,
     next_empty_row,
-    to_lastname_first,
-)
-
-
-PDGA_USER_AGENT = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) "
-    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
 )
 
 
 def fetch_pdga(event_id_or_url: str):
-    """Fetch a PDGA event page and parse it into structured pools.
+    """Fetch a PDGA event page and parse it.
 
-    Returns ``(event_name, pools)`` where each pool is a dict:
-        {
-          'division': 'MPO',
-          'round':    1,
-          'layout_text': 'Larrimac Disc Golf Course - YELLOWS; ...',
-          'players': [(display_name, pdga_num, round_score), ...],
-        }
-    """
+    Thin urllib-backed wrapper around hc_parsing.parse_pdga_event; the
+    Cloudflare Worker replaces the fetch with js.fetch and calls the
+    shared parser directly."""
+    from hc_parsing import parse_pdga_event, PDGA_USER_AGENT
     src = str(event_id_or_url)
     if not src.startswith(("http://", "https://")):
-        # Bare numeric event id
         url = f"https://www.pdga.com/tour/event/{src}"
     else:
         url = src
-
     req = urllib.request.Request(url, headers={"User-Agent": PDGA_USER_AGENT})
     with urllib.request.urlopen(req, timeout=30) as resp:
         page = resp.read().decode("utf-8", errors="replace")
-
-    # Event name from the page title
-    m = re.search(r'<h1 class="title"[^>]*>([^<]+)</h1>', page)
-    event_name = html.unescape(m.group(1).strip()) if m else "PDGA event"
-
-    # Layout-details divs hold each round's course/layout text.
-    #   id="layout-details-{event_id}-{DIVISION}-round-{N}"
-    layouts: dict[tuple[str, int], str] = {}
-    for m in re.finditer(
-        r'<div id="layout-details-\d+-([A-Z0-9]+)-round-(\d+)"[^>]*>(.*?)</div>',
-        page, re.DOTALL,
-    ):
-        div_code = m.group(1)
-        rnd = int(m.group(2))
-        body = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(3))).strip()
-        layouts[(div_code, rnd)] = html.unescape(body)
-
-    # Division codes appear in document order; each division gets one
-    # `<table class="results" id="tournament-stats-N">` in the same order.
-    div_codes = re.findall(r'<h3 class="division" id="([A-Z0-9]+)"', page)
-    tables = list(
-        re.finditer(
-            r'<table class="results[^"]*" id="tournament-stats-\d+".*?</table>',
-            page, re.DOTALL,
-        )
-    )
-
-    pools: list[dict] = []
-    for div_code, table_match in zip(div_codes, tables):
-        table_html = table_match.group(0)
-
-        # Round columns from the table header: <th class="round" ...>Rd<N></th>
-        thead_match = re.search(r"<thead.*?</thead>", table_html, re.DOTALL)
-        if not thead_match:
-            continue
-        round_nums = [
-            int(n) for n in re.findall(
-                r'<th[^>]*class="[^"]*\bround\b[^"]*"[^>]*>Rd(\d+)</th>',
-                thead_match.group(0),
-            )
-        ]
-        if not round_nums:
-            continue
-
-        # Per-round player lists, populated as we walk the tbody.
-        per_round: dict[int, list[tuple[str, str, int]]] = {r: [] for r in round_nums}
-
-        tbody_match = re.search(r"<tbody.*?</tbody>", table_html, re.DOTALL)
-        if not tbody_match:
-            continue
-
-        for row_match in re.finditer(
-            r"<tr[^>]*>(.+?)</tr>", tbody_match.group(0), re.DOTALL
-        ):
-            row_html = row_match.group(1)
-
-            # Name from <td class="player">: may be wrapped in an <a>.
-            name_m = re.search(
-                r'<td class="player"[^>]*>\s*(?:<a[^>]*>)?([^<]+)',
-                row_html,
-            )
-            if not name_m:
-                continue
-            name = html.unescape(name_m.group(1).strip())
-
-            pdga_m = re.search(
-                r'<td class="pdga-number"[^>]*>([^<]*)</td>', row_html
-            )
-            pdga_num = html.unescape(pdga_m.group(1).strip()) if pdga_m else ""
-
-            # Round scores: <td class="round"><a class="score">SCORE</a></td>
-            # Appear in Rd1, Rd2, ... order. If a player DNF'd a round, the
-            # <a class="score"> may be absent; we skip rounds we can't read.
-            score_cells = re.findall(
-                r'<td[^>]*class="[^"]*\bround\b[^"]*"[^>]*>.*?<a[^>]*class="[^"]*\bscore\b[^"]*"[^>]*>([^<]+)</a>',
-                row_html, re.DOTALL,
-            )
-            for r_num, score_text in zip(round_nums, score_cells):
-                try:
-                    per_round[r_num].append((name, pdga_num, int(score_text.strip())))
-                except ValueError:
-                    continue
-
-        for r_num in round_nums:
-            pools.append({
-                "division": div_code,
-                "round": r_num,
-                "layout_text": layouts.get((div_code, r_num), ""),
-                "players": per_round[r_num],
-            })
-
-    return event_name, pools
+    return parse_pdga_event(page)
 
 
 def _run_gsheet_path(args, pools):
