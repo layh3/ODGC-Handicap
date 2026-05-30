@@ -34,3 +34,8 @@ gsheets_url.txt
 
 # Side-by-side comparison scratch dir
 demo_compare/
+
+# Cloudflare Workers cache (account id, oauth state, etc. — kept locally,
+# regenerated automatically on wrangler login).
+worker/.wrangler/
+worker/node_modules/
