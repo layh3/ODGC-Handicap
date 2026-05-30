@@ -17,3 +17,20 @@ RoundData.xlsx.bak
 
 # Apps Script deployment URL — write capability, treat as a secret
 gsheets_url.txt
+
+# Stray HC output files when scripts are run from the repo root.
+# Golden fixtures with these names live under golden/ and stay tracked.
+/alphHC*.txt
+/atosHC*.txt
+/evHC*.txt
+/kvHC*.txt
+/ladiesHC*.txt
+/odgcHC*.txt
+/odgccaCH*.txt
+/player_rounds*.txt
+/rankHC*.txt
+/example.txt
+/debug.txt
+
+# Side-by-side comparison scratch dir
+demo_compare/

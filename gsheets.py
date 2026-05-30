@@ -126,14 +126,21 @@ def add_player(url: str, name: str, after_col: int,
     return result["col"]
 
 
-def replace_sheet(url: str, target_sheet: str, rows: list[list]) -> dict:
+def replace_sheet(url: str, target_sheet: str, rows: list[list],
+                  *, freeze_rows: int = 0, freeze_cols: int = 0) -> dict:
     """Drop and recreate `target_sheet` (a different tab from the data tab
     used by other actions), then fill it with `rows`. Used to publish the
-    current handicap rankings into a dedicated tab."""
+    current handicap rankings into a dedicated tab.
+
+    ``freeze_rows`` / ``freeze_cols`` lock those many leading rows/columns
+    in place so they stay visible when the user scrolls.
+    """
     return _post(url, {
         "action": "replace_sheet",
         "target_sheet": target_sheet,
         "rows": rows,
+        "freeze_rows": freeze_rows,
+        "freeze_cols": freeze_cols,
     })
 
 
@@ -160,46 +167,82 @@ def _parse_rank_file(text: str) -> list[tuple[int, str, str, int]]:
     return out
 
 
+def _parse_odgc_member_names(text: str) -> set[str]:
+    """Pull the set of player names out of odgcHC.txt. Each data row starts
+    with the player name; lines containing 'courses_HC_list' (the header)
+    and blank lines are ignored."""
+    members = set()
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or "courses_HC_list" in line:
+            continue
+        tok = line.split(None, 1)[0]
+        # Player names look like Last_First; skip stray header tokens that
+        # might appear if the file format changes.
+        if "_" in tok or tok[:1].isalpha():
+            members.add(tok)
+    return members
+
+
 def build_hc_summary_rows(out_dir) -> list[list]:
-    """Read rankHC.txt + rankHC_golf.txt from `out_dir` and build a 2D
-    table suitable for replace_sheet().
+    """Read rankHC.txt + rankHC_golf.txt + odgcHC.txt from `out_dir` and
+    build a 2D rankings table suitable for replace_sheet().
 
     Layout:
         row 1: title
         row 2: "Generated <iso timestamp>"
+        row 3: blank
         row 4: header
-        rows 5+: one player per row, joined on name across the two outputs
+        rows 5+: one player per row
+
+    Columns: Rank | ODGC Rank | Player | HC | HC (Golf) | Golf Rank | Rounds
+        Rank        rank across all qualified players, sorted by ODGC HC
+        ODGC Rank   rank within ODGC members only (blank for non-members)
+        Golf Rank   rank across all qualified players, sorted by Golf HC
     """
     from pathlib import Path
     odgc_path = Path(out_dir) / "rankHC.txt"
     golf_path = Path(out_dir) / "rankHC_golf.txt"
-    if not odgc_path.exists() or not golf_path.exists():
-        raise FileNotFoundError(
-            f"need both rankHC.txt and rankHC_golf.txt in {out_dir}"
-        )
+    odgc_members_path = Path(out_dir) / "odgcHC.txt"
+    for p in (odgc_path, golf_path, odgc_members_path):
+        if not p.exists():
+            raise FileNotFoundError(f"missing required output file: {p}")
 
     odgc = _parse_rank_file(odgc_path.read_text(encoding="latin-1"))
     golf = _parse_rank_file(golf_path.read_text(encoding="latin-1"))
     golf_by_name = {name: (rank, hc) for rank, name, hc, _r in golf}
+    members = _parse_odgc_member_names(odgc_members_path.read_text(encoding="latin-1"))
+
+    # Walk the (already-sorted) overall ranking; bump the ODGC-only rank
+    # counter every time we hit an ODGC member.
+    member_rank_by_name: dict[str, int] = {}
+    member_counter = 0
+    for _rank, name, _hc, _rounds in odgc:
+        if name in members:
+            member_counter += 1
+            member_rank_by_name[name] = member_counter
 
     stamp = _dt.datetime.now().isoformat(timespec="minutes")
     rows: list[list] = [
         ["ODGC Handicaps"],
         [f"Generated {stamp} from active2025"],
         [],
-        ["Rank (ODGC)", "Player", "HC (ODGC)", "HC (Golf)", "Rank (Golf)", "Rounds played"],
+        ["Rank", "ODGC Rank", "Player", "HC", "HC (Golf)", "Golf Rank", "Rounds"],
     ]
     for rank, name, hc, rounds in odgc:
         g_rank, g_hc = golf_by_name.get(name, ("", ""))
-        rows.append([rank, name, hc, g_hc, g_rank, rounds])
+        odgc_rank = member_rank_by_name.get(name, "")
+        rows.append([rank, odgc_rank, name, hc, g_hc, g_rank, rounds])
     return rows
 
 
 def push_hc_summary(url: str, out_dir, target_sheet: str = "HC") -> dict:
     """Convenience: build the rankings table from rankHC.txt /
-    rankHC_golf.txt in `out_dir` and push it to a tab named `target_sheet`."""
+    rankHC_golf.txt / odgcHC.txt in `out_dir` and push it to
+    `target_sheet`. The top 4 rows (title, timestamp, blank, header) are
+    frozen so they stay visible while scrolling."""
     rows = build_hc_summary_rows(out_dir)
-    return replace_sheet(url, target_sheet, rows)
+    return replace_sheet(url, target_sheet, rows, freeze_rows=4)
 
 
 # --- helpers used by the import scripts when they operate on cached data ---

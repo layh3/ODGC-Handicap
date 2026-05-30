@@ -154,11 +154,11 @@ function doPost(e) {
           // Drop and recreate `target_sheet` with the given 2D values.
           // Uses target_sheet (not sheet) so the caller can publish to a
           // different tab from the one they're reading from.
+          //
+          // Optional `freeze_rows` / `freeze_cols` lock those leading
+          // rows/columns in place when the user scrolls.
           const targetName = req.target_sheet || 'HC';
           const rows = req.rows || [];
-          // Won't delete the only remaining sheet in a spreadsheet — Apps
-          // Script blocks that — so guard with insertion first when the
-          // target is the only sheet.
           let target = ss.getSheetByName(targetName);
           if (target) {
             if (ss.getSheets().length === 1) {
@@ -171,7 +171,6 @@ function doPost(e) {
           }
           target = ss.insertSheet(targetName);
           if (rows.length > 0) {
-            // Pad ragged rows so setValues accepts the array.
             let width = 0;
             for (let i = 0; i < rows.length; i++) {
               if (rows[i].length > width) width = rows[i].length;
@@ -181,10 +180,18 @@ function doPost(e) {
             }
             target.getRange(1, 1, rows.length, width).setValues(rows);
           }
+          if (req.freeze_rows && req.freeze_rows > 0) {
+            target.setFrozenRows(req.freeze_rows);
+          }
+          if (req.freeze_cols && req.freeze_cols > 0) {
+            target.setFrozenColumns(req.freeze_cols);
+          }
           return jsonResponse({
             ok: true,
             target_sheet: targetName,
             rows: rows.length,
+            frozen_rows: req.freeze_rows || 0,
+            frozen_cols: req.freeze_cols || 0,
           });
         }
 
