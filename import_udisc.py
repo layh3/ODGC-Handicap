@@ -331,10 +331,12 @@ def guess_course_from_layout(text: str) -> str | None:
         if has("blue"):
             return "lmb"
         return "lmb"
-    # Sandy Row (PDGA layouts: "ORANGE Sandy Row" / "BLUE Sandy Row").
-    # User's convention in active2025: sro = ORANGE, sr = BLUE.
+    # Sandy Row. PDGA uses "ORANGE Sandy Row" / "BLUE Sandy Row"; UDisc
+    # sometimes drops the color ("Sandy Row Golf Club"). User convention in
+    # active2025: sro = ORANGE, sr = BLUE (BLUE is the default when no
+    # color modifier is present).
     if has("sandy row"):
-        return "sr" if has("blue") else "sro"
+        return "sro" if has("orange") else "sr"
     # Almonte
     if has("almonte"):
         if has("yellow"):
@@ -344,26 +346,34 @@ def guess_course_from_layout(text: str) -> str | None:
         if has("red"):
             return "alr"
         return "alm"
-    # Kemptville
+    # Ferguson Forest (Kemptville). UDisc events: "Ferguson Forest Blues",
+    # "Ferguson Forest Wonderbread", etc. User maps all of these to kvb/kvy/kvr
+    # (the Kemptville tee codes), NOT the older `kpv` slot. Check this before
+    # the general "kemptville" rule so Ferguson always lands on the right code.
+    if has("ferguson"):
+        if has("yellow"):
+            return "kvy"
+        if has("red"):
+            return "kvr"
+        return "kvb"
+    # Kemptville (other layouts, if any)
     if has("kemptville"):
-        if has("ferguson"):
-            return "kpv"
         if has("yellow"):
             return "kvy"
         if has("blue"):
             return "kvb"
         if has("red"):
             return "kvr"
-        return "kpv"
-    # Ettyville Phase MVP — Pdgy in UDisc parlance
-    if has("ettyville mvp", "phase mvp", "pdgy", "mvp tee"):
+        return "kvb"
+    # Ettyville Phase MVP. UDisc uses "Ettyville MVP <tee>". Also Pdgy aliases.
+    if has("ettyville mvp", "phase mvp", "pdgy", "mvp tee", "mvp"):
         if has("white"):
             return "epw"
         if has("yellow"):
             return "epy"
         if has("blue"):
             return "epb"
-    # Ettyville Phase Axiom — Inva in UDisc parlance
+    # Ettyville Phase Axiom. UDisc uses "Ettyville Axiom [Dunes] <tee>".
     if has("axiom", "inva"):
         if has("white"):
             return "eiw"
@@ -380,12 +390,13 @@ def guess_course_from_layout(text: str) -> str | None:
         return "rhl"
     if has("centrepointe", "centerpointe"):
         return "ctp"
-    if has("mountain"):
+    # Mountain — UDisc lists this as "Philips Screw Driver" (yes, that
+    # spelling); user catalogs it as Phillips_Screwdriver → mtn.
+    if has("philips screw driver", "phillips screw driver", "phillips screwdriver",
+           "screwdriver", "mountain"):
         return "mtn"
     if has("kanata"):
         return "kan"
-    if has("phillips screwdriver"):
-        return "mtn"  # mountain alias
     if has("upi"):
         return "upi"
     return None
