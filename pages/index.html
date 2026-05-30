@@ -76,7 +76,7 @@
     /* ---------- header ---------- */
     header {
       display: flex; align-items: center; gap: 12px;
-      margin-bottom: 32px;
+      margin-bottom: 20px;
     }
     .logo {
       width: 36px; height: 36px;
@@ -97,6 +97,32 @@
     .brand .sub {
       font-size: 12px; color: var(--ink-dim);
       margin-top: 4px;
+    }
+
+    /* ---------- tab nav ---------- */
+    nav.tabs {
+      display: flex; gap: 6px;
+      margin-bottom: 28px;
+      padding: 4px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: fit-content;
+    }
+    nav.tabs a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      color: var(--ink-dim);
+      text-decoration: none;
+      letter-spacing: -0.005em;
+      transition: color .12s ease, background .12s ease;
+    }
+    nav.tabs a:hover { color: var(--ink); }
+    nav.tabs a.active {
+      background: linear-gradient(180deg, rgba(132,225,188,0.15), rgba(132,225,188,0.08));
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(132,225,188,0.22), 0 4px 14px -6px rgba(132,225,188,0.35);
     }
 
     .hero h1 {
@@ -298,118 +324,6 @@
     .log .step::before { content: "→ "; color: var(--accent); }
     .log .empty { color: var(--ink-faint); font-style: italic; }
 
-    /* ---------- player dossier ---------- */
-    .dossier { margin-top: 20px; display: flex; flex-direction: column; gap: 18px; }
-    .dossier.hidden, .dossier[hidden] { display: none; }
-
-    .dossier-head {
-      display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    .dossier-name {
-      font-size: 22px; font-weight: 700; color: var(--ink);
-      letter-spacing: -0.01em;
-    }
-    .dossier-hc-big {
-      font-size: 14px; font-weight: 600;
-      padding: 5px 10px; border-radius: 8px;
-      background: rgba(132,225,188,0.10);
-      color: var(--accent);
-      border: 1px solid rgba(132,225,188,0.28);
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .dossier-hc-big .label { color: var(--ink-faint); font-weight: 500; margin-right: 4px; }
-    .dossier-meta { color: var(--ink-faint); font-size: 13px; }
-
-    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .badge {
-      font-size: 11px; font-weight: 600;
-      padding: 4px 9px; border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-2);
-      color: var(--ink-dim);
-      letter-spacing: 0.03em;
-    }
-    .badge.on {
-      background: rgba(132,225,188,0.10);
-      color: var(--accent);
-      border-color: rgba(132,225,188,0.28);
-    }
-
-    .rank-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-    }
-    .rank-cell {
-      padding: 12px 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-    }
-    .rank-cell .label { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; }
-    .rank-cell .value { font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 2px; }
-    .rank-cell .value small { font-size: 12px; font-weight: 500; color: var(--ink-faint); }
-
-    .section-h {
-      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
-      font-weight: 700; color: var(--ink-faint);
-      margin: 4px 0 8px;
-    }
-    .section-h .note { color: var(--ink-faint); font-weight: 500; text-transform: none; letter-spacing: 0; font-size: 11px; margin-left: 8px; }
-
-    .rounds-table {
-      width: 100%; border-collapse: collapse;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-    }
-    .rounds-table th, .rounds-table td {
-      padding: 7px 10px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    .rounds-table th {
-      color: var(--ink-faint);
-      font-weight: 600;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .rounds-table td.num, .rounds-table th.num { text-align: right; }
-    .rounds-table tr.counted td {
-      background: rgba(132,225,188,0.05);
-      color: var(--ink);
-    }
-    .rounds-table tr.counted td.diff { color: var(--accent); font-weight: 600; }
-    .rounds-table td.diff.pos { color: var(--ink-dim); }
-    .rounds-table td.diff.neg { color: var(--accent-2); }
-
-    .courses-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      gap: 8px;
-    }
-    .course-pill {
-      padding: 9px 10px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-    }
-    .course-pill .code { color: var(--ink-faint); font-weight: 600; }
-    .course-pill .hc { color: var(--ink); font-size: 14px; font-weight: 700; margin-top: 2px; }
-
-    .lookup-empty { color: var(--ink-faint); font-style: italic; padding: 12px 0; }
-    .lookup-err {
-      color: var(--err);
-      background: rgba(248,113,113,0.08);
-      border: 1px solid rgba(248,113,113,0.25);
-      padding: 12px 14px; border-radius: 10px;
-      font-size: 13px;
-    }
-
     /* ---------- recent ---------- */
     .recent { display: flex; flex-direction: column; gap: 8px; }
     .recent .item {
@@ -477,6 +391,11 @@
     </div>
   </header>
 
+  <nav class="tabs reveal">
+    <a href="/" class="active">Ingest</a>
+    <a href="/players">Players</a>
+  </nav>
+
   <div class="hero reveal delay-1">
     <h1>Update <span class="grad">handicaps</span><br>from a single URL.</h1>
     <p class="tag">
@@ -484,32 +403,6 @@
       duplicates are skipped, new players are added, and handicaps are
       recomputed — all in one round-trip.
     </p>
-  </div>
-
-  <div class="card reveal delay-1" id="lookup-card">
-    <div class="card-head">
-      <h2>Player lookup</h2>
-      <span class="right">last 20 rounds · counted diffs · per-course HC</span>
-    </div>
-    <form id="lookup-form" autocomplete="off">
-      <div class="field">
-        <label for="lookup-name">Player name</label>
-        <div class="input-wrap">
-          <input id="lookup-name" type="text" required
-                 placeholder="Last_First (e.g. Lay_Chris)"
-                 list="roster-list">
-          <datalist id="roster-list"></datalist>
-        </div>
-        <p class="hint">Open to everyone. Names match the sheet — typeahead populates after first lookup.</p>
-      </div>
-      <div class="actions">
-        <button type="submit" class="btn btn-primary" id="lookup-btn">
-          <span id="lookup-label">Look up</span>
-        </button>
-      </div>
-    </form>
-
-    <div id="dossier" class="dossier" hidden></div>
   </div>
 
   <form id="form" class="card reveal delay-2" autocomplete="off">
@@ -767,163 +660,6 @@ function formatLogLine(line) {
 }
 
 updateKindBadge();
-
-
-// --- player lookup --------------------------------------------------------
-// Auto-fire when ?player=Name is in the URL — these are shareable links;
-// drop them into Slack / a group chat and the recipient lands on the
-// dossier directly, no manual lookup.
-
-const ROSTER_KEY = "odgc-hc-roster";
-
-function loadCachedRoster() {
-  try { return JSON.parse(localStorage.getItem(ROSTER_KEY) || "[]"); }
-  catch { return []; }
-}
-function saveCachedRoster(names) {
-  try { localStorage.setItem(ROSTER_KEY, JSON.stringify(names)); } catch {}
-}
-function populateRosterDatalist(names) {
-  const dl = $("roster-list");
-  if (!dl) return;
-  dl.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">`).join("");
-}
-populateRosterDatalist(loadCachedRoster());
-
-const lookupForm = $("lookup-form");
-lookupForm.addEventListener("submit", async (ev) => {
-  ev.preventDefault();
-  await runLookup($("lookup-name").value.trim());
-});
-
-async function runLookup(name) {
-  if (!name) return;
-  const dossierEl = $("dossier");
-  const btn = $("lookup-btn");
-  const label = $("lookup-label");
-  btn.disabled = true;
-  label.textContent = "Looking up…";
-  dossierEl.hidden = false;
-  dossierEl.innerHTML = `<div class="lookup-empty">Pulling sheet + recomputing handicaps…</div>`;
-  try {
-    const r = await fetch(CONFIG.workerUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "lookup", name }),
-    });
-    const data = await r.json();
-    if (!data.ok) {
-      dossierEl.innerHTML = `<div class="lookup-err">${escapeHtml(data.error || "lookup failed")}</div>`;
-      return;
-    }
-    renderDossier(data.dossier);
-    // Update the URL to the canonical name so it's shareable. Push state
-    // so the back button still works.
-    const next = new URL(window.location.href);
-    next.searchParams.set("player", data.dossier.name);
-    window.history.replaceState({}, "", next.toString());
-    // Cache this name into the roster autocomplete so it shows next time.
-    const names = new Set(loadCachedRoster());
-    names.add(data.dossier.name);
-    saveCachedRoster([...names].sort());
-    populateRosterDatalist([...names].sort());
-  } catch (e) {
-    dossierEl.innerHTML = `<div class="lookup-err">network error: ${escapeHtml(String(e))}</div>`;
-  } finally {
-    btn.disabled = false;
-    label.textContent = "Look up";
-  }
-}
-
-// Auto-run lookup if the page URL has ?player=Name
-(function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const pre = urlParams.get("player");
-  if (pre) {
-    $("lookup-name").value = pre;
-    runLookup(pre);
-    // Bring the lookup card into view.
-    document.getElementById("lookup-card").scrollIntoView({ behavior: "instant", block: "start" });
-  }
-})();
-
-function renderDossier(d) {
-  const dossierEl = $("dossier");
-  const golfTxt = d.hc_golf < 0 ? `+${(-d.hc_golf).toFixed(2)}` : d.hc_golf.toFixed(2);
-  const memBadges = ["ODGC", "TOSS", "EV", "Ladies"].map(k => {
-    const on = d.memberships[k] === true;
-    return `<span class="badge ${on ? "on" : ""}">${k}${on ? "" : " · no"}</span>`;
-  }).join("");
-
-  const ranks = d.ranks || {};
-  const rankCell = (label, r) => {
-    if (!r) return `<div class="rank-cell"><div class="label">${label}</div><div class="value">—<small> n/a</small></div></div>`;
-    return `<div class="rank-cell"><div class="label">${label}</div><div class="value">#${r.rank}<small> of ${r.of}</small></div></div>`;
-  };
-
-  const rows = (d.last_20 || []).map(p => {
-    const diffStr = p.diff > 0 ? `+${p.diff.toFixed(3)}` : p.diff.toFixed(3);
-    const diffClass = p.diff < 0 ? "neg" : "pos";
-    return `<tr class="${p.counted ? "counted" : ""}">
-      <td class="num">${p.diff_slot}</td>
-      <td>${p.year}</td>
-      <td>${escapeHtml(p.event)}</td>
-      <td>${escapeHtml(p.course)}</td>
-      <td class="num">${p.score}</td>
-      <td class="num diff ${diffClass}">${diffStr}</td>
-    </tr>`;
-  }).join("");
-
-  const hcMath = d.counted_n > 0
-    ? `0.96 × ${d.counted_sum.toFixed(2)} / ${d.counted_n} = ${(0.96 * d.counted_sum / d.counted_n).toFixed(4)}`
-    : "no counting diffs yet";
-
-  const courses = (d.per_course_hc || []).map(c =>
-    `<div class="course-pill"><div class="code">${escapeHtml(c.code)}</div><div class="hc">${c.hc.toFixed(2)}</div></div>`
-  ).join("");
-
-  dossierEl.innerHTML = `
-    <div class="dossier-head">
-      <span class="dossier-name">${escapeHtml(d.name)}</span>
-      <span class="dossier-hc-big"><span class="label">HC</span>${d.hc.toFixed(2)}</span>
-      <span class="dossier-hc-big" style="background:rgba(110,170,255,0.10);color:#9cc6ff;border-color:rgba(110,170,255,0.28)"><span class="label">Golf</span>${golfTxt}</span>
-      <span class="dossier-meta">${d.rnd_count} rounds played</span>
-    </div>
-
-    <div>
-      <div class="section-h">Memberships</div>
-      <div class="badge-row">${memBadges}</div>
-    </div>
-
-    <div>
-      <div class="section-h">Ranks</div>
-      <div class="rank-grid">
-        ${rankCell("Overall", ranks.overall)}
-        ${rankCell("ODGC", ranks.ODGC)}
-        ${rankCell("EV", ranks.EV)}
-        ${rankCell("Ladies", ranks.Ladies)}
-      </div>
-    </div>
-
-    <div>
-      <div class="section-h">Last 20 rounds <span class="note">counted diffs in green · ${hcMath}</span></div>
-      <div style="overflow-x:auto">
-        <table class="rounds-table">
-          <thead><tr>
-            <th class="num">#</th><th>Yr</th><th>Event</th><th>Course</th>
-            <th class="num">Score</th><th class="num">Diff</th>
-          </tr></thead>
-          <tbody>${rows || `<tr><td colspan="6" class="lookup-empty">no rounds yet</td></tr>`}</tbody>
-        </table>
-      </div>
-    </div>
-
-    <div>
-      <div class="section-h">Per-course HC</div>
-      <div class="courses-grid">${courses}</div>
-    </div>
-  `;
-}
 </script>
 
 </body>
