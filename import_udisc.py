@@ -402,6 +402,136 @@ def guess_course_from_layout(text: str) -> str | None:
     return None
 
 
+def _run_gsheet_path(args, pools_to_import):
+    """Apps-Script-backed alternative to the xlsx workflow in main().
+
+    Same matching/dedup logic, but reads/writes the Google Sheet via the
+    primitives in gsheets.py. Round trips:
+        1. one `pull` at the start (reads the entire tab)
+        2. local matching/dedup against the pulled snapshot
+        3. one `add_player` per new roster column (zero in the steady state)
+        4. one `append_rows` containing all surviving round rows
+
+    Total time on a typical import: 3-5 seconds.
+    """
+    import gsheets
+
+    url = args.gsheet
+    if url == "auto":
+        url = gsheets.load_url()
+
+    print(f"Pulling current state from Google Sheet…")
+    data = gsheets.pull(url, args.sheet)
+    roster = gsheets.load_roster_from_data(data)
+    roster_names = [n for _, n in roster]
+    name_to_col = {n: c for c, n in roster}
+
+    print(f"Master roster: {len(roster_names)} players in {args.sheet!r}")
+    print(f"Event: year={args.year}  name={args.event!r}")
+    print(f"Source: {args.source}\n")
+
+    # Same pool-by-pool matching loop as the xlsx path; differences are only
+    # that add_player is recorded for later (not applied to a live ws) and
+    # that find_duplicate_row reads from the pulled `data` array.
+    pending_player_inserts: list[tuple[int, str]] = []
+    appended: list[dict] = []
+    for label, course, pool in pools_to_import:
+        print(f"══ {label}  (→ course {course!r}, {len(pool)} players) ══")
+        scores_by_col: dict[int, int] = {}
+        added: list[tuple] = []
+        for udisc_name, score in pool:
+            roster_name, why = match_player(udisc_name, roster_names)
+            if roster_name is None:
+                if args.no_add_players:
+                    print(f"  ?? {udisc_name:<32}   skipped (score={score}, {why})")
+                    continue
+                roster_name = to_lastname_first(udisc_name)
+                last_col = max(c for c, _ in roster)
+                new_col = last_col + 1
+                pending_player_inserts.append((last_col, roster_name))
+                roster.append((new_col, roster_name))
+                roster_names.append(roster_name)
+                name_to_col[roster_name] = new_col
+                added.append((udisc_name, roster_name, score))
+                col = new_col
+                why = "ADDED to roster"
+            else:
+                col = name_to_col[roster_name]
+            scores_by_col[col] = score
+            mark = "++" if why == "ADDED to roster" else "  "
+            print(f"  {mark}{udisc_name:<32} → {roster_name:<32} (score={score}, {why})")
+        appended.append({
+            "course": course,
+            "scores": scores_by_col,
+            "n_matched": len(scores_by_col) - len(added),
+            "n_added": len(added),
+        })
+        print()
+
+    if not appended:
+        sys.exit("nothing to append")
+
+    # Dedup against the pulled snapshot.
+    print(f"══ Dedup check ══")
+    to_write: list[dict] = []
+    for entry in appended:
+        dup = gsheets.find_duplicate_row_in_data(data, args.year, entry["scores"])
+        if dup is None:
+            to_write.append(entry)
+            continue
+        r_dup, n, total, ev_dup, crs_dup = dup
+        if args.force:
+            print(f"  WARN  pool with {n}/{total} score matches against row {r_dup} "
+                  f"({ev_dup!r}, {crs_dup!r}) — writing anyway because --force")
+            to_write.append(entry)
+        else:
+            print(f"  SKIP  duplicate of row {r_dup} (event {ev_dup!r}, "
+                  f"course {crs_dup!r}, {n}/{total} scores match) — pass --force "
+                  f"to write anyway")
+    print()
+
+    if not to_write and not pending_player_inserts:
+        print("nothing to write (all candidates flagged as duplicates).")
+        return
+
+    print(f"══ Planned writes ══")
+    for after_col, name in pending_player_inserts:
+        print(f"  add_player {name!r:30s}  at col {after_col + 1}")
+    for entry in to_write:
+        print(f"  append row  event={args.event!r:14s}  course={entry['course']!r}  "
+              f"({entry['n_matched']} matched, {entry['n_added']} new)")
+
+    if args.dry_run:
+        print("\n(dry run — Sheet NOT modified)")
+        return
+
+    # Push add_player calls first; each one inserts a column and may shift
+    # the right edge of the roster. Then build round rows with the final
+    # column layout and push them all at once.
+    if pending_player_inserts:
+        print(f"\n══ Adding {len(pending_player_inserts)} new player(s) to roster ══")
+        for after_col, name in pending_player_inserts:
+            new_col = gsheets.add_player(url, name, after_col, args.sheet)
+            print(f"  + {name!r:30s} at col {new_col}")
+
+    if to_write:
+        max_col = max(c for c, _ in roster)
+        rows = []
+        for entry in to_write:
+            row = [0] * max_col
+            row[0] = args.year
+            row[1] = args.event
+            row[2] = entry["course"]
+            for col, score in entry["scores"].items():
+                row[col - 1] = score
+            rows.append(row)
+        print(f"\n══ Appending {len(rows)} round row(s) ══")
+        result = gsheets.append_rows(url, rows, args.sheet)
+        print(f"  written at rows {result['first_row']}-{result['last_row']}")
+
+    print(f"\nNow re-run:  python3 hc24.py --gsheet --sheet {args.sheet}")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -409,6 +539,10 @@ def main(argv=None):
                    help="UDisc xlsx file path OR leaderboard URL")
     p.add_argument("--master", type=Path, default=Path("RoundData.xlsx"),
                    help="Master workbook (default: ./RoundData.xlsx)")
+    p.add_argument("--gsheet", nargs="?", const="auto", default=None, metavar="URL",
+                   help="Write to the Google Sheet via the Apps Script backend "
+                        "instead of the local xlsx. With no value, uses "
+                        "./gsheets_url.txt.")
     p.add_argument("--sheet", default="active2025",
                    help="Master sheet to append to (default: active2025)")
     p.add_argument("--event", required=True,
@@ -461,6 +595,9 @@ def main(argv=None):
                       f"(map with --division-map {division}=<code>)")
                 continue
             pools_to_import.append((f"{sheet_name} [{division}]", course, pool))
+
+    if args.gsheet is not None:
+        return _run_gsheet_path(args, pools_to_import)
 
     master = load_workbook(args.master, data_only=False)
     if args.sheet not in master.sheetnames:

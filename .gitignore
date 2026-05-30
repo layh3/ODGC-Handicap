@@ -14,3 +14,6 @@ xlsx_out/
 __pycache__/
 *.pyc
 RoundData.xlsx.bak
+
+# Apps Script deployment URL — write capability, treat as a secret
+gsheets_url.txt

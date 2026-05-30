@@ -291,6 +291,86 @@ def parse_input_xlsx(path: Path, sheet: str):
     return player, i_pl, tokens
 
 
+def parse_input_gsheet(url: str, sheet: str = "active2025"):
+    """Same shape as parse_input_xlsx but reads from a Google Sheet via the
+    Apps Script backend (see gsheets.py and apps_script.gs)."""
+    from gsheets import pull
+
+    data = pull(url, sheet)
+    if not data:
+        raise ValueError(f"Sheet {sheet!r} is empty")
+
+    HELPER_LABELS = {"count", "total", "sum", "tally", "n", "#"}
+    row1 = data[0]
+    names: list[str] = []
+    for v in row1[3:]:
+        if v in (None, ""):
+            break
+        s = str(v).strip()
+        if s.lower() in HELPER_LABELS:
+            break
+        names.append(s)
+    i_pl = len(names)
+    if i_pl == 0:
+        raise ValueError(f"No player names found in row 1 of sheet {sheet!r}")
+    player = [""] * (i_pl + 2)
+    player[0] = "PLAYER"
+    for idx, name in enumerate(names, 1):
+        player[idx] = name
+
+    def cell_or_none(row_idx: int, col_idx: int):
+        if row_idx >= len(data):
+            return None
+        r = data[row_idx]
+        if col_idx >= len(r):
+            return None
+        v = r[col_idx]
+        return None if v == "" else v
+
+    def cells_row(row_num: int):
+        # 1-indexed row_num → 0-indexed data; cols D..D+i_pl-1
+        return [cell_or_none(row_num - 1, 3 + j) for j in range(i_pl)]
+
+    def as_num(v, default):
+        return v if v is not None else default
+
+    tokens: list[str] = ["end_2020_hc", "HC"]
+    for v in cells_row(2):
+        tokens.append(_fmt_num(as_num(v, -1)))
+
+    for r in range(3, 10):
+        for v in cells_row(r):
+            tokens.append(_fmt_num(as_num(v, 100)))
+
+    label_pairs = [
+        ("ODGCmember", "status"),
+        ("Atos_List", "status"),
+        ("EVmember", "status"),
+        ("LadiesLeague", "status"),
+    ]
+    for r, (lab1, lab2) in zip(range(10, 14), label_pairs):
+        tokens += [lab1, lab2]
+        for v in cells_row(r):
+            tokens.append(str(int(as_num(v, 0))))
+
+    for r in range(14, len(data) + 1):
+        yr = cell_or_none(r - 1, 0)
+        ev = cell_or_none(r - 1, 1)
+        cr = cell_or_none(r - 1, 2)
+        if yr is None or ev is None or cr is None:
+            break
+        ev_str = str(ev).strip()
+        if len(ev_str) < 3:
+            break
+        tokens.append(str(int(yr)))
+        tokens.append(ev_str)
+        tokens.append(str(cr).strip())
+        for v in cells_row(r):
+            tokens.append(str(int(as_num(v, 0))))
+
+    return player, i_pl, tokens
+
+
 def _fmt_num(v):
     """Stringify a numeric cell value the way the .dat file does (e.g. -1 not -1.0)."""
     if isinstance(v, float) and v.is_integer():
@@ -873,8 +953,11 @@ def main(argv=None):
                      help="Path to RoundData.dat input (default: ./RoundData.dat)")
     src.add_argument("--xlsx", type=Path, default=None,
                      help="Path to RoundData.xlsx — read scores from a worksheet")
+    src.add_argument("--gsheet", nargs="?", const="auto", default=None, metavar="URL",
+                     help="Read scores from the Google Sheet via the Apps Script "
+                          "backend. With no value, uses the URL in ./gsheets_url.txt.")
     parser.add_argument("--sheet", default="active2025",
-                        help="Worksheet name when using --xlsx (default: active2025)")
+                        help="Worksheet name when using --xlsx or --gsheet (default: active2025)")
     parser.add_argument("--export-dat", type=Path, default=None,
                         help="Also write the parsed input back out as a .dat file "
                              "(useful for round-trip verification against the C++ tool)")
@@ -886,7 +969,13 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     here = Path.cwd()
-    if args.xlsx is not None:
+    if args.gsheet is not None:
+        url = args.gsheet
+        if url == "auto":
+            from gsheets import load_url
+            url = load_url()
+        player, i_pl, tokens = parse_input_gsheet(url, args.sheet)
+    elif args.xlsx is not None:
         player, i_pl, tokens = parse_input_xlsx(args.xlsx, args.sheet)
     else:
         dat_path = args.dat if args.dat is not None else (here / "RoundData.dat")
