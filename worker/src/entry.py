@@ -216,6 +216,12 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
     await gs.replace_sheet(apps_url, "HC", hc_rows, freeze_rows=4)
     log.append(f"  HC tab: {len(hc_rows)} rows")
 
+    for spec in SUBSET_TABS:
+        log.append(f"pushing {spec['tab_name']} tab…")
+        sub_rows = _build_subset_rows(res_odgc, spec)
+        await gs.replace_sheet(apps_url, spec["tab_name"], sub_rows, freeze_rows=4)
+        log.append(f"  {spec['tab_name']} tab: {len(sub_rows)} rows")
+
     return {
         "kind": kind,
         "pools_seen": len(pools),
@@ -224,6 +230,7 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         "skipped": skipped_dups,
         "hc_pushed": True,
         "hc_rows": len(hc_rows),
+        "subset_tabs": [s["tab_name"] for s in SUBSET_TABS],
     }
 
 
@@ -427,6 +434,126 @@ def _build_hc_rows(res_odgc, res_golf, golf_cap_k=5.0):
             golf_rank_by_idx[j],
             rnd_count[j],
         ])
+    return rows
+
+
+# Club-focused HC tabs. Each tab filters the qualified field down to the
+# relevant membership and shows base HC plus per-course HCs scaled by
+# crs_ref[c] / 54. Course indices match COURSE_ID in hc_algorithm.py.
+SUBSET_TABS = [
+    {
+        "tab_name": "HC - ODGC",
+        "title": "ODGC Members",
+        "filter_key": "ODGCmem_stat",
+        "filter_extra_or": [],
+        "courses": [
+            ("Larrimac Blue", 8),
+            ("Larrimac Yellow", 9),
+            ("Almonte Blue", 22),
+            ("Kanata", 11),
+            ("Mountain", 13),
+            ("Ferguson Yellow", 25),
+            ("Ferguson Blue", 17),
+            ("Ferguson Red", 21),
+            ("Shire", 15),
+            ("Franktown", 18),
+            ("Camp Fortune", 24),
+        ],
+    },
+    {
+        "tab_name": "HC - KV",
+        "title": "Kemptville / Ferguson Forest",
+        "filter_key": None,  # all qualified
+        "filter_extra_or": [],
+        "courses": [
+            ("Ferguson Blue", 17),
+            ("Ferguson Yellow", 25),
+            ("Ferguson Red", 21),
+            ("Mountain", 13),
+        ],
+    },
+    {
+        "tab_name": "HC - EV",
+        "title": "Ettyville (MVP + Axiom)",
+        "filter_key": "EVmem_stat",
+        "filter_extra_or": ["ODGCmem_stat", "TOSSmem_stat"],
+        # EV uses the historical (crs_ref[3]-3.21) / (crs_ref[6]-2.05) offsets
+        # to back out the white-tee differentials from the longer blue tee
+        # reference scores — mirrors hc24.py evHC output.
+        "courses": [
+            ("MVP White", 1, 0.0),
+            ("MVP Blue", 3, -3.21),
+            ("MVP Yellow", 3, 0.0),
+            ("Axiom White", 4, 0.0),
+            ("Axiom Blue", 6, -2.05),
+            ("Axiom Yellow", 6, 0.0),
+        ],
+        "include_base_hc": False,
+    },
+    {
+        "tab_name": "HC - Ladies",
+        "title": "Ladies League (ODGC members)",
+        "filter_key": "LLmem_stat",
+        "filter_extra_and": "ODGCmem_stat",
+        "filter_extra_or": [],
+        "courses": [
+            ("Kanata", 11),
+        ],
+    },
+]
+
+
+def _build_subset_rows(res, spec):
+    """Build a club-focused ranking tab from a compute_handicaps result."""
+    player = res["player"]
+    i_pl = res["i_pl"]
+    hc = res["hc"]
+    rnd_count = res["rnd_count"]
+    crs_ref = res["crs_ref"]
+    include_base = spec.get("include_base_hc", True)
+
+    def member(j):
+        if spec["filter_key"] is None and not spec["filter_extra_or"]:
+            return True
+        flags = []
+        if spec["filter_key"]:
+            flags.append(res[spec["filter_key"]][j] == 1)
+        for k in spec["filter_extra_or"]:
+            flags.append(res[k][j] == 1)
+        ok = any(flags)
+        if "filter_extra_and" in spec:
+            ok = ok and res[spec["filter_extra_and"]][j] == 1
+        return ok
+
+    qualified = [j for j in range(1, i_pl + 1)
+                 if rnd_count[j] > 2 and member(j)]
+    qualified.sort(key=lambda j: hc[j])
+
+    stamp = _dt.datetime.now().isoformat(timespec="minutes")
+    rows: list[list] = [
+        [spec["title"]],
+        [f"Generated {stamp} from active2025 (via worker)"],
+        [],
+    ]
+    header = ["Rank", "Player"]
+    if include_base:
+        header.append("HC (base)")
+    for course in spec["courses"]:
+        header.append(course[0])
+    header.append("Rounds")
+    rows.append(header)
+
+    for rank, j in enumerate(qualified, 1):
+        row = [rank, player[j]]
+        if include_base:
+            row.append(f"{hc[j]:.2f}")
+        for course in spec["courses"]:
+            crs_idx = course[1]
+            offset = course[2] if len(course) > 2 else 0.0
+            ref = crs_ref[crs_idx] + offset
+            row.append(f"{hc[j] * ref / 54.0:.2f}")
+        row.append(rnd_count[j])
+        rows.append(row)
     return rows
 
 
