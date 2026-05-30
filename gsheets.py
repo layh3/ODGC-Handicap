@@ -232,8 +232,25 @@ def build_hc_summary_rows(out_dir) -> list[list]:
     for rank, name, hc, rounds in odgc:
         g_rank, g_hc = golf_by_name.get(name, ("", ""))
         odgc_rank = member_rank_by_name.get(name, "")
-        rows.append([rank, odgc_rank, name, hc, g_hc, g_rank, rounds])
+        rows.append([rank, odgc_rank, name,
+                     _fmt_hc_2dp(hc), _fmt_hc_2dp(g_hc),
+                     g_rank, rounds])
     return rows
+
+
+def _fmt_hc_2dp(s: str) -> str:
+    """Round a stringified HC ('1.23456' or '+4.74481') to 2 decimal places
+    while preserving the golf '+' prefix. Used only for the HC sheet view —
+    .txt outputs keep full precision."""
+    if s in ("", None):
+        return ""
+    plus = s.startswith("+")
+    body = s[1:] if plus else s
+    try:
+        v = float(body)
+    except ValueError:
+        return s
+    return f"+{v:.2f}" if plus else f"{v:.2f}"
 
 
 def push_hc_summary(url: str, out_dir, target_sheet: str = "HC") -> dict:

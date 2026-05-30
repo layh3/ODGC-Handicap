@@ -21,7 +21,7 @@ import json as _json
 
 from workers import Response  # type: ignore[import-not-found]
 
-from hc_algorithm import compute_handicaps, fmt_g, fmt_g_golf
+from hc_algorithm import compute_handicaps, fmt_2f_golf
 from hc_matching import match_player, to_lastname_first, guess_course_from_layout
 from hc_parsing import (
     parse_udisc_leaderboard, parse_pdga_event,
@@ -407,8 +407,8 @@ def _build_hc_rows(res_odgc, res_golf, golf_cap_k=5.0):
         odgc_r = odgc_member_rank.get(j, "")
         rows.append([
             rank, odgc_r, player[j],
-            fmt_g(hc_odgc[j]),
-            fmt_g_golf(hc_golf_disp[j]),
+            f"{hc_odgc[j]:.2f}",
+            fmt_2f_golf(hc_golf_disp[j]),
             golf_rank_by_idx[j],
             rnd_count[j],
         ])
