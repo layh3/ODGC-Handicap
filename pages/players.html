@@ -178,6 +178,51 @@
     }
     .hint { font-size: 12px; color: var(--ink-faint); margin: 2px 2px 0; }
 
+    /* ---------- typeahead dropdown ---------- */
+    .typeahead { display: block; position: relative; }
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      border-radius: 10px;
+      max-height: 320px;
+      overflow-y: auto;
+      z-index: 20;
+      box-shadow: var(--shadow-card);
+    }
+    .dropdown[hidden] { display: none; }
+    .dropdown-item {
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--ink);
+      border-bottom: 1px solid var(--border);
+      transition: background .08s ease, color .08s ease;
+    }
+    .dropdown-item:last-child { border-bottom: 0; }
+    .dropdown-item:hover, .dropdown-item.focused {
+      background: rgba(132,225,188,0.08);
+      color: var(--accent);
+    }
+    .dropdown-item mark {
+      background: transparent;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .dropdown-empty {
+      padding: 10px 14px;
+      color: var(--ink-faint);
+      font-style: italic;
+      font-size: 13px;
+    }
+    .dropdown-status {
+      padding: 10px 14px;
+      color: var(--ink-faint);
+      font-size: 12px;
+      font-style: italic;
+    }
+
     .actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
     .btn {
       font: inherit; font-weight: 600;
@@ -336,13 +381,13 @@
     <form id="lookup-form" autocomplete="off">
       <div class="field">
         <label for="lookup-name">Player name</label>
-        <div class="input-wrap">
-          <input id="lookup-name" type="text" required
-                 placeholder="Last_First (e.g. Lay_Chris)"
-                 list="roster-list">
-          <datalist id="roster-list"></datalist>
+        <div class="input-wrap typeahead">
+          <input id="lookup-name" type="text" required autocomplete="off"
+                 placeholder="Type a name (e.g. chris)"
+                 aria-autocomplete="list" aria-controls="dropdown">
+          <div class="dropdown" id="dropdown" hidden role="listbox"></div>
         </div>
-        <p class="hint">Names match the sheet. Typeahead populates after you've looked someone up.</p>
+        <p class="hint">Substring match — type any part of the name. ↑/↓ to navigate, Enter to look up.</p>
       </div>
       <div class="actions">
         <button type="submit" class="btn btn-primary" id="lookup-btn">
@@ -368,23 +413,139 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 }
 
-const ROSTER_KEY = "odgc-hc-roster";
+// --- roster + typeahead ---
+// Whole roster is fetched once from the worker, cached in localStorage, and
+// substring-matched in-memory as the user types. Cache is refreshed in the
+// background on every page load so new members show up next visit.
+const ROSTER_KEY = "odgc-hc-roster-v2";
+let ROSTER = [];
 function loadCachedRoster() {
   try { return JSON.parse(localStorage.getItem(ROSTER_KEY) || "[]"); } catch { return []; }
 }
 function saveCachedRoster(names) {
   try { localStorage.setItem(ROSTER_KEY, JSON.stringify(names)); } catch {}
 }
-function populateRosterDatalist(names) {
-  const dl = $("roster-list");
-  if (!dl) return;
-  dl.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">`).join("");
+
+ROSTER = loadCachedRoster();
+fetchRoster();  // refresh in background
+
+async function fetchRoster() {
+  try {
+    const r = await fetch(CONFIG.workerUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "roster" }),
+    });
+    const data = await r.json();
+    if (data.ok && Array.isArray(data.names)) {
+      ROSTER = data.names;
+      saveCachedRoster(ROSTER);
+      // If the dropdown is currently open, re-render with the fresh list.
+      if (!$("dropdown").hidden) renderDropdown($("lookup-name").value);
+    }
+  } catch {}
 }
-populateRosterDatalist(loadCachedRoster());
+
+// --- dropdown state ---
+let focusedIdx = -1;
+let currentMatches = [];
+
+const nameInput = $("lookup-name");
+const dropdownEl = $("dropdown");
+
+nameInput.addEventListener("input", () => {
+  focusedIdx = -1;
+  renderDropdown(nameInput.value);
+});
+nameInput.addEventListener("focus", () => {
+  renderDropdown(nameInput.value);
+});
+nameInput.addEventListener("blur", () => {
+  // Slight delay so a click on a dropdown item can fire first.
+  setTimeout(() => { dropdownEl.hidden = true; }, 120);
+});
+nameInput.addEventListener("keydown", (ev) => {
+  if (dropdownEl.hidden) return;
+  if (ev.key === "ArrowDown") {
+    ev.preventDefault();
+    focusedIdx = Math.min(currentMatches.length - 1, focusedIdx + 1);
+    paintFocus();
+  } else if (ev.key === "ArrowUp") {
+    ev.preventDefault();
+    focusedIdx = Math.max(-1, focusedIdx - 1);
+    paintFocus();
+  } else if (ev.key === "Enter") {
+    if (focusedIdx >= 0 && currentMatches[focusedIdx]) {
+      ev.preventDefault();
+      pickName(currentMatches[focusedIdx]);
+    }
+  } else if (ev.key === "Escape") {
+    dropdownEl.hidden = true;
+  }
+});
+
+function renderDropdown(q) {
+  const query = (q || "").trim().toLowerCase();
+  if (!ROSTER.length) {
+    dropdownEl.innerHTML = `<div class="dropdown-status">loading roster…</div>`;
+    dropdownEl.hidden = false;
+    return;
+  }
+  // Substring match. Rank prefix-matches first, then everything else,
+  // then cap at 20 so a blank input doesn't render the entire roster.
+  const prefix = [], rest = [];
+  for (const n of ROSTER) {
+    const lc = n.toLowerCase();
+    if (query && lc.startsWith(query)) prefix.push(n);
+    else if (!query || lc.includes(query)) rest.push(n);
+  }
+  currentMatches = [...prefix, ...rest].slice(0, 20);
+  if (!currentMatches.length) {
+    dropdownEl.innerHTML = `<div class="dropdown-empty">no match for "${escapeHtml(query)}"</div>`;
+    dropdownEl.hidden = false;
+    return;
+  }
+  dropdownEl.innerHTML = currentMatches.map((n, i) =>
+    `<div class="dropdown-item ${i === focusedIdx ? "focused" : ""}"
+          data-idx="${i}" role="option">${highlight(n, query)}</div>`
+  ).join("");
+  dropdownEl.hidden = false;
+}
+
+function highlight(name, query) {
+  if (!query) return escapeHtml(name);
+  const lc = name.toLowerCase();
+  const i = lc.indexOf(query);
+  if (i < 0) return escapeHtml(name);
+  return escapeHtml(name.slice(0, i))
+       + `<mark>${escapeHtml(name.slice(i, i + query.length))}</mark>`
+       + escapeHtml(name.slice(i + query.length));
+}
+
+function paintFocus() {
+  dropdownEl.querySelectorAll(".dropdown-item").forEach((el, i) => {
+    el.classList.toggle("focused", i === focusedIdx);
+    if (i === focusedIdx) el.scrollIntoView({ block: "nearest" });
+  });
+}
+
+dropdownEl.addEventListener("mousedown", (ev) => {
+  // mousedown (not click) so it fires before input blur
+  const item = ev.target.closest(".dropdown-item");
+  if (!item) return;
+  const idx = parseInt(item.dataset.idx, 10);
+  if (currentMatches[idx]) pickName(currentMatches[idx]);
+});
+
+function pickName(name) {
+  nameInput.value = name;
+  dropdownEl.hidden = true;
+  runLookup(name);
+}
 
 $("lookup-form").addEventListener("submit", async (ev) => {
   ev.preventDefault();
-  await runLookup($("lookup-name").value.trim());
+  await runLookup(nameInput.value.trim());
 });
 
 async function runLookup(name) {
@@ -412,10 +573,11 @@ async function runLookup(name) {
     const next = new URL(window.location.href);
     next.searchParams.set("player", data.dossier.name);
     window.history.replaceState({}, "", next.toString());
-    const names = new Set(loadCachedRoster());
-    names.add(data.dossier.name);
-    saveCachedRoster([...names].sort());
-    populateRosterDatalist([...names].sort());
+    // Keep the in-memory roster in sync — useful if the cache was stale.
+    if (!ROSTER.includes(data.dossier.name)) {
+      ROSTER = [...ROSTER, data.dossier.name].sort();
+      saveCachedRoster(ROSTER);
+    }
   } catch (e) {
     dossierEl.innerHTML = `<div class="lookup-err">network error: ${escapeHtml(String(e))}</div>`;
   } finally {

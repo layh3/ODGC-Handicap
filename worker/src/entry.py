@@ -84,6 +84,17 @@ async def on_fetch(request, env):
         except Exception as e:
             return _json_resp({"ok": False, "error": str(e)}, status=500)
 
+    # Roster: just the player name list, for the lookup typeahead.
+    if action == "roster":
+        sheet = body.get("sheet") or "active2025"
+        try:
+            data = await gs.pull(apps_url, sheet)
+            roster = gs.load_roster_from_data(data)
+            names = sorted([n for _, n in roster])
+            return _json_resp({"ok": True, "names": names})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
     # Ingest (default) is password-gated.
     shared = getattr(env, "SHARED_PASSWORD", None) or ""
     if not shared:
