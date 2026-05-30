@@ -2,9 +2,9 @@
 
 Disc-golf handicap calculator for the Ottawa Disc Golf Club. Originally a
 Visual Studio C++ tool by Ken (Jan 2018); now a Python port that reads
-`RoundData.xlsx` directly, produces both the legacy ODGC handicap list and a
-standard golf-style list with soft-capped `+` handicaps, and supports importing
-UDisc league round exports in one command.
+the master Google Sheet directly, produces both the legacy ODGC handicap
+list and a standard golf-style list with soft-capped `+` handicaps, and
+ingests UDisc league rounds or PDGA tournaments straight from a URL.
 
 The original C++ source is preserved under [old/cpp/](old/cpp/) and the
 Python port is verified byte-identical against its output (see
@@ -13,22 +13,53 @@ Python port is verified byte-identical against its output (see
 ## Quick start
 
 ```bash
-# from the current season tab (default behavior)
-python3 hc24.py --xlsx RoundData.xlsx --sheet active2025
+# League night: paste in the UDisc URL, get fresh HC files
+python3 ingest.py "https://udisc.com/events/.../leaderboard?round=1" \
+        --event TOSS05 --year 26
 
-# legacy flat-file input still works
-python3 hc24.py                              # reads ./RoundData.dat
+# PDGA tournament: bare event ID is fine
+python3 ingest.py 101991 --event LarrimacOpen --year 26
 
-# import tonight's UDisc round and recompute
-python3 import_udisc.py imports/lets-larrimac-evening-tags-series-lets-5-2026-06-03.xlsx \
-        --event LETS05 --year 26
-python3 hc24.py --xlsx RoundData.xlsx --sheet active2025
+# Just recompute (no new round to ingest)
+python3 hc24.py --gsheet
 ```
 
+Each `ingest.py` run:
+
+1. Pulls the current Sheet state.
+2. Matches players (handles diacritics, surname shortenings, common
+   nicknames). Auto-adds new players, dedups against rows already in
+   the Sheet.
+3. Pushes new round row(s) into the Sheet.
+4. Runs the handicap algorithm against the freshly-updated Sheet.
+5. Drops the 18 output files into the current directory.
+
+Default backend is the Google Sheet via the Apps Script wiring (see
+[apps_script.gs](apps_script.gs) and the **Google Sheet setup** section
+below). Pass `--xlsx PATH` if you'd rather work against a local
+workbook.
+
+`--dry-run` previews everything without modifying the Sheet or running
+the recompute. `--skip-recompute` does the ingest only.
+
+## Source types `ingest.py` accepts
+
+| Source | Example | Auto-detected as |
+| --- | --- | --- |
+| Bare PDGA event ID | `101991` | PDGA |
+| PDGA event URL | `https://www.pdga.com/tour/event/101991` | PDGA |
+| UDisc leaderboard URL | `https://udisc.com/events/.../leaderboard?round=1` | UDisc |
+| UDisc xlsx export | `imports/odgc-toss-2026-05-27.xlsx` | UDisc |
+
+Force one with `--kind pdga` or `--kind udisc` if auto-detection guesses
+wrong. The matching/dedup/recompute logic doesn't change.
+
+## Output files
+
 A run produces **eighteen** `*.txt` files in the current directory — nine
-under the legacy ODGC convention (lowest HC anchored at 0, no "+" handicaps)
-and the same nine with a `_golf` suffix using standard golf convention
-(handicaps can be negative, displayed as `+X.X`).
+under the legacy ODGC convention (lowest HC anchored at 0, no "+"
+handicaps) and the same nine with a `_golf` suffix using standard golf
+convention (handicaps can be negative, displayed as `+X.X`).
 
 | Output | Audience |
 | --- | --- |
@@ -42,18 +73,76 @@ and the same nine with a `_golf` suffix using standard golf convention
 | `kvHC.txt` / `kvHC_golf.txt` | Kemptville club |
 | `ladiesHC.txt` / `ladiesHC_golf.txt` | Ladies League |
 
-Flags:
-- `--odgc-only` — skip the `_golf` set
-- `--golf-cap K` — tune the tanh soft cap (default `5.0`; `0` disables)
-- `--export-dat PATH` — also write the parsed input out as a `.dat` (round-trip debugging)
+## Google Sheet setup (one time, ~5 minutes)
 
-Requirements: Python 3.9+, `openpyxl` (`pip install openpyxl`) for `--xlsx`
-input. The `.dat` path has no dependencies.
+The Sheet wiring uses Google Apps Script as a thin write API — no Google
+Cloud Console required.
 
-## Input layout
+1. Open the master Sheet → **Extensions → Apps Script**.
+2. Paste in the contents of [apps_script.gs](apps_script.gs) (replaces
+   the default `Code.gs`).
+3. Save (cmd-S). It auto-binds to the parent spreadsheet.
+4. **Deploy → New deployment → Type: Web app.**
+   - Description: `ODGC HC bot`
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+   Click Deploy. Authorize when prompted (you're authorizing your own
+   script to write to your own sheet).
+5. Copy the deployment URL (`https://script.google.com/macros/s/.../exec`).
+6. Paste it into `gsheets_url.txt` next to `hc24.py`.
 
-The `active*` worksheets all follow the same layout. Columns A–C hold row
-metadata; columns D onward are one column per player.
+That file is in `.gitignore` — treat the URL like a write credential
+since anyone with it can write to the sheet.
+
+To verify it's working:
+
+```bash
+python3 gsheets.py ping
+```
+
+You should see the spreadsheet name and current row/column count.
+
+**Re-deploying after Apps Script changes:** Deploy → Manage deployments
+→ pencil edit → Version: New version → Deploy. The URL stays the same.
+
+## Direct script invocation (advanced)
+
+`ingest.py` is just a convenience wrapper. Each underlying script can be
+run on its own when you want finer control.
+
+```bash
+# Import only (no recompute)
+python3 import_udisc.py URL_OR_FILE --event LETS05 --year 26 --gsheet
+python3 import_pdga.py  101991      --event LarrimacOpen --year 26 --gsheet
+
+# Recompute only
+python3 hc24.py --gsheet                       # Google Sheet
+python3 hc24.py --xlsx RoundData.xlsx          # local workbook
+python3 hc24.py                                # legacy ./RoundData.dat
+```
+
+Useful flags:
+
+| Flag | Where | Effect |
+| --- | --- | --- |
+| `--force` | importers | write rows even if they look like duplicates |
+| `--no-add-players` | importers | skip unmatched players instead of auto-adding |
+| `--course CODE` | `import_udisc` (URL mode) | override auto-detected course |
+| `--course-override DIV/Rn=code` | `import_pdga` | force course for one (division, round) |
+| `--division NAME` | `import_pdga` | limit to specific divisions (repeatable) |
+| `--no-merge-same-course` | `import_pdga` | one row per (division × round) instead of merging |
+| `--dry-run` | both importers | print the plan, write nothing |
+| `--odgc-only` | `hc24` | skip the `_golf` set |
+| `--golf-cap K` | `hc24` | tanh asymptote for `+` handicaps (default `5.0`) |
+| `--export-dat PATH` | `hc24` | round-trip-debug helper |
+
+Requirements: Python 3.9+, `openpyxl` (only needed for `--xlsx` or
+UDisc xlsx imports).
+
+## Input layout (active2025 sheet)
+
+The `active*` worksheets all follow the same layout. Columns A–C hold
+row metadata; columns D onward are one column per player.
 
 | Row | Col A | Col B | Col C | Cols D..D+i_pl |
 | --- | --- | --- | --- | --- |
@@ -66,13 +155,13 @@ metadata; columns D onward are one column per player.
 | 13 | — | `LadiesLeague` | `status` | `0`/`1` |
 | 14+ | year (e.g. `26`) | event name | course code | raw scores (`0` = did not play) |
 
-To add a round manually: append a new row, fill in the players who played
-(others stay at 0), save. Helper columns to the right of the roster (e.g.
-a `count` sum column) are detected and skipped.
+To add a round manually: append a new row, fill in the players who
+played (others stay at 0), save. Helper columns to the right of the
+roster (e.g. a `count` sum column) are detected and skipped.
 
-## Course codes
+## Course codes and layout detection
 
-`COURSE_ID` in [hc24.py](hc24.py) — keeps the C++ 0-indexed order exactly:
+`COURSE_ID` in [hc24.py](hc24.py) — keeps the C++ 0-indexed order:
 
 ```
 epw epb epy   eiw eib eiy   unq
@@ -81,11 +170,21 @@ shr   upi   kvb kvy kvr   ffw rhl
 alb aly alr   cf   ctp   sr sro
 ```
 
-If a round uses a code that isn't in this list, the script prints a
-`WARNING: unknown course codes` block to stderr and treats those rounds as
-par-54 reference (`c_fac = 1.0`). The original C++ tool would silently
-divide by zero on `crs_ref[0]` and corrupt every later round, so the
-warning matters — unknown codes need a real fix.
+The importers map human-readable layout names from UDisc/PDGA to these
+codes via [`guess_course_from_layout()`](import_udisc.py). 22 layout
+strings observed in the wild are tested round-trip; common patterns:
+
+| Layout text | Code |
+| --- | --- |
+| `Almonte Blues`, `Larrimac Blues`, `Ettyville MVP Blue` | `alb`, `lmb`, `epb` |
+| `Ferguson Forest Blues`, `Ferguson Forest Wonderbread` | `kvb` |
+| `ORANGE Sandy Row`, `Sandy Row Blue`, `Sandy Row Golf Club` | `sro`, `sr`, `sr` |
+| `Larrimac Disc Golf Course - YELLOWS` (PDGA verbose) | `lmy` |
+| `Philips Screw Driver DGC` (your `Phillips_Screwdriver`) | `mtn` |
+
+A code that isn't in `COURSE_ID` triggers a stderr warning and falls
+back to par-54 reference (`c_fac = 1.0`). The C++ silently divides by
+zero on that case, so the warning matters.
 
 ## How the algorithm works
 
@@ -93,43 +192,48 @@ A custom variant of the USGA handicap formula. For each round, in
 chronological order:
 
 1. **Course difficulty.** `crs_ref[course]` is a rolling average of the
-   top-5 raw scores ever shot on that layout. `c_fac = crs_ref/54` is the
-   per-course difficulty multiplier. Events prefixed with `x` (B-tier)
-   don't contribute to the course reference. The `unq` slot (index 7)
-   uses just the current round's value.
+   top-5 raw scores ever shot on that layout. `c_fac = crs_ref/54` is
+   the per-course difficulty multiplier. Events prefixed with `x`
+   (B-tier) don't contribute to the course reference. The `unq` slot
+   (index 7) uses just the current round's value.
 2. **Stale-HC reset.** At a year boundary, any player whose last round
-   was more than two years ago is reset to three pseudo-differentials at
-   their current HC.
-3. **Scratch + slope.** Adjusted score per player is `raw - hc * c_fac`.
-   Outliers ≥ 1.4σ above the mean are dropped. The surviving mean is the
-   round's scratch score. Slope comes from a least-squares regression of
-   `(score - scratch)` vs HC, normalized to 113 and clamped to `[95, 165]`.
+   was more than two years ago is reset to three pseudo-differentials
+   at their current HC.
+3. **Scratch + slope.** Adjusted score per player is
+   `raw - hc * c_fac`. Outliers ≥ 1.4σ above the mean are dropped. The
+   surviving mean is the round's scratch score. Slope comes from a
+   least-squares regression of `(score - scratch)` vs HC, normalized
+   to 113 and clamped to `[95, 165]`.
 4. **Differential.** `diff = (raw - scratch) × 113 / slope / c_fac`.
-5. **Updated HC.** Sort the player's most recent ≤20 differentials, take
-   the lowest *N* (sliding scale: 1 for 3 rounds, up to 10 for 20+ rounds),
-   average, multiply by 0.96, cap at 36.
-6. **Sub-zero correction (ODGC mode only).** If any HC goes negative, the
-   lowest is anchored at 0 and every player's HC + diffs shift up by the
-   same amount. The `_golf` outputs skip this step entirely.
+5. **Updated HC.** Sort the player's most recent ≤20 differentials,
+   take the lowest *N* (sliding scale: 1 for 3 rounds, up to 10 for
+   20+ rounds), average, multiply by 0.96, cap at 36.
+6. **Sub-zero correction (ODGC mode only).** If any HC goes negative,
+   the lowest is anchored at 0 and every player's HC + diffs shift up
+   by the same amount. The `_golf` outputs skip this step entirely.
+
+Rounds with fewer than two players holding established HCs are skipped
+(the round-scratch and stddev calc need at least two samples).
 
 Course-scaled outputs are `base_HC × crs_ref[N] / 54` for each tee.
 
 ## ODGC vs. golf — two output sets
 
-Both sets come out of one run. They differ only in the post-processing of HC.
+Both sets come out of one run. They differ only in the post-processing
+of HC.
 
 | | ODGC (`*.txt`) | Golf (`*_golf.txt`) |
 | --- | --- | --- |
 | Sub-zero behavior | Anchor lowest HC at 0, shift others up | Allow negative HCs |
-| Display | `0.00`, `1.23`, ..., `36.00` | `+4.71`, `0.83`, `5.45`, ..., `36.00` |
+| Display | `0.00`, `1.23`, …, `36.00` | `+4.71`, `0.83`, `5.45`, …, `36.00` |
 | `+` handicap compression | n/a | tanh soft-cap at `+K` (default `K=5`) |
-| Use case | What the league has used for years | Standard golf convention; matches what new players expect |
+| Use case | What the league has used for years | Standard golf convention; what new players expect |
 
 ### Why the golf side has compression
 
-Disc-golf scoring volatility (one bad hole can be a +4) makes the natural
-handicap formula produce eye-catching `+9` and `+10` numbers for top
-players. That overstates the actual consistent skill gap.
+Disc-golf scoring volatility (one bad hole can be a +4) makes the
+natural handicap formula produce eye-catching `+9` and `+10` numbers
+for top players. That overstates the actual consistent skill gap.
 
 The compression applies only to negative HCs:
 
@@ -140,113 +244,134 @@ hc_display = hc                          if hc >= 0
 
 With `K=5`:
 - `+1` natural → `+0.99` displayed (untouched)
-- `+4` natural → `+3.32` displayed (mild compression)
-- `+8` natural → `+4.61` displayed
+- `+4` natural → `+3.32` displayed (mild)
+- `+8` natural → `+4.61` displayed (strong)
 - `+12` natural → `+4.92` displayed (asymptotic; never reaches +5)
 
-No hard ceiling: the function approaches `+K` but never reaches it.
+No hard ceiling — the function approaches `+K` but never reaches it.
 High-handicap players are never affected.
 
-`--golf-cap 0` disables compression. `--golf-cap 4` tightens it to `+4`
-asymptote. `--golf-cap 6` loosens it. Compression is purely a display
-layer; round-to-round HC calculation always uses the natural value, so
-fairness and dynamics aren't touched.
+Compression is a display layer; round-to-round HC calculation always
+uses the natural value, so fairness and dynamics aren't touched.
+`--golf-cap 0` disables. `--golf-cap 4` tightens to `+4`. `--golf-cap 6`
+loosens.
 
 ### Why the two modes can rank players differently
 
 The ODGC anchoring isn't a flat shift. Each time a player drops below
-zero, the algorithm zeroes out their `numcz` most-recent diffs and adjusts
-every other player's stored diffs. That permanently bakes the shift into
-all subsequent rounds — even after old rounds roll off the 20-round
-window, the system stays in the shifted state because each round's
-scratch is computed from currently-anchored HCs.
+zero, the algorithm zeroes out their `numcz` most-recent diffs and
+adjusts every other player's stored diffs. That permanently bakes the
+shift into all subsequent rounds — even after old rounds roll off the
+20-round window, the system stays in the shifted state because each
+round's scratch is computed from currently-anchored HCs.
 
-In practice, the rank orderings differ by at most a couple of swaps near
-the top. Within each list, ranks are stable across runs.
+In practice, the rank orderings differ by at most a couple of swaps
+near the top. Within each list, ranks are stable across runs.
 
-## UDisc import workflow
+## Import details
 
-[import_udisc.py](import_udisc.py) reads a UDisc per-round xlsx export and
-appends the round(s) directly into `RoundData.xlsx`:
+### Player matching cascade
 
-```bash
-python3 import_udisc.py imports/<udisc_file>.xlsx --event LETS04 --year 26
-```
+Each imported name is mapped to a roster entry through:
 
-Matching cascade for each player name:
-
-1. Exact match after Last_First flip
+1. Exact match after `Last_First` flip
 2. Same with diacritics stripped (`Melançon` → `Melancon`)
 3. Case-insensitive
-4. Unique-surname match (one `Last_*` in roster)
-5. First-name shortening (`Christopher` → `Chris`)
+4. Unique-surname **and** first-name initial match (so `Amber Correia`
+   doesn't get auto-mapped to a roster `Correia_Justin`)
+5. First-name shortening (`Christopher` → `Chris`, `Maxime` → `Max`)
 6. Fuzzy match (`difflib`, ≥0.75 similarity)
 
-Players that don't match are skipped (the round still imports, that
-player's score stays `0` = did not play) and printed at the end so you
-can decide whether to add them as new roster columns later.
+Players that don't match are added to the roster automatically as new
+columns (with `-1` seed HC, `100` seed-diff sentinels, all membership
+flags `0`). Pass `--no-add-players` to skip them and warn instead.
 
-Default UDisc division → course code mapping:
+### Dedup
 
-```
-GOLD → lmy   (Larrimac Yellow tees, "shorter")
-BLUE → lmb   (Larrimac Blue tees, "longer")
-```
+Before writing any new round row, the importer scans existing rows
+with the same year for matching player-score overlap. **3+ identical
+(player_column, score) pairs** → flagged as a duplicate, skipped. This
+catches re-imports even when event names diverge (manual `LariOpenR1y`
+vs scripted `LarrimacOpen_R1`) or course codes disagree (`sro` vs `sr`).
+`--force` overrides.
 
-Override on a per-run basis with `--division-map NAME=code`.
+### PDGA merge-same-course
 
-Run `python3 import_udisc.py --dry-run ...` first to preview the matches.
-A `RoundData.xlsx.bak` is created on the first real run.
+Two PDGA divisions playing the same round on the same layout get
+merged into one row in the active sheet — keeps single-player
+divisions from hitting the round-size guard in `hc24.py`. Disable
+with `--no-merge-same-course` if you want one row per division
+× round.
+
+## Backends side-by-side
+
+| | Google Sheet (`--gsheet`) | Local xlsx (`--xlsx PATH`) | Legacy .dat |
+| --- | --- | --- | --- |
+| Source of truth | yes (default) | optional | regression fixture only |
+| Setup needed | Apps Script web app once | none | none |
+| Reads from | Sheets API via Apps Script | openpyxl | text parser |
+| Writes back | yes (via append_rows / add_player) | yes (saves the workbook) | n/a |
+| Speed per round-trip | 3–5 sec | ~1 sec | ~1 sec |
+| Offline | no | yes | yes |
+
+The Google Sheet workflow is preferred because it eliminates the
+manual "export xlsx → run script → re-upload" loop and gives everyone
+collaborating on the Sheet the same view of current data.
 
 ## Differences from the C++ source
 
 The Python port is **byte-identical** to the C++ output on the same
-`.dat` input (proven by [verify.sh](verify.sh) against [golden/](golden/),
-captured fresh from the latest C++ binary). Differences below are extras
-the Python adds to support workflows the C++ doesn't have (xlsx input,
-golf mode, UDisc import), not changes to the core algorithm.
+`.dat` input (proven by [verify.sh](verify.sh) against
+[golden/](golden/), captured from the latest C++ binary). Differences
+below are extras the Python adds to support workflows the C++ doesn't
+have, not changes to the core algorithm.
 
 ### Extras on top of the original algorithm
 
-1. **xlsx input.** `--xlsx RoundData.xlsx --sheet active2025` reads the
-   spreadsheet directly, no manual export to `.dat` needed.
-2. **Golf-style output set.** Every legacy output also produced with
+1. **Google Sheet I/O.** `--gsheet` reads and writes the master Sheet
+   directly via Apps Script. No manual xlsx export step.
+2. **xlsx I/O.** `--xlsx RoundData.xlsx` reads the spreadsheet
+   directly. Older workflow, still supported.
+3. **Golf-style output set.** Every legacy output also produced with
    `_golf` suffix using standard golf "+" handicap conventions
    (sub-zero correction skipped; HCs can be negative).
-3. **Tanh `+` handicap compression.** Soft-caps the golf side at `+K`
-   (default `5`) to handle disc-golf's score volatility without imposing
-   a hard ceiling. Applied display-only — the round-by-round algorithm
-   uses natural HCs.
-4. **UDisc league import.** `import_udisc.py` matches player names,
-   detects division→tee, appends rounds to the xlsx in one command.
-5. **`--export-dat`.** Parse xlsx → write `.dat` round-trip; useful for
-   verifying the xlsx parser produces an equivalent token stream.
+4. **Tanh `+` handicap compression.** Soft-caps the golf side at `+K`
+   (default 5) to handle disc-golf's score volatility without a hard
+   ceiling. Display-only.
+5. **UDisc league import** (`import_udisc.py`). xlsx download or
+   leaderboard URL. Matches names, detects division → tee, dedups,
+   appends round rows.
+6. **PDGA tournament import** (`import_pdga.py`). Event ID or URL.
+   Per-(division, round) parsing with same-course merging and a
+   layout → code lookup that handles both UDisc's compact phrasing and
+   PDGA's verbose strings.
+7. **One-command flow** (`ingest.py`). URL → import → recompute in a
+   single invocation with auto-detection of the source kind.
 
 ### Implementation notes worth flagging
 
-- **Helper-column detection** — xlsx-only thing. The parser stops at the
-  first roster column whose row-1 label is `count`/`total`/`sum`/etc.,
-  so right-edge sum columns don't get parsed as fake players. No
-  equivalent in the C++ since it doesn't read xlsx.
-- **`has_hc[j]` flag** — golf-mode-only thing. The C++ uses `hc[j] > -0.9`
-  as the "has an established HC" check, which works perfectly in ODGC
-  mode (HCs ≥ 0) but excludes scratch players in golf mode (a real HC of
-  `-1.5` fails the check). The Python tracks an explicit `has_hc[j]`
-  flag so golf mode doesn't drop top players from the round pool. ODGC
-  mode is unaffected.
+- **Helper-column detection.** The parser stops at the first roster
+  column whose row-1 label is `count`/`total`/`sum`/etc., so right-edge
+  sum columns don't get parsed as fake players.
+- **`has_hc[j]` flag.** The C++ uses `hc[j] > -0.9` as the "has an
+  established HC" check, which works in ODGC mode (HCs ≥ 0) but
+  excludes scratch players in golf mode (real HC of `-1.5` fails the
+  check). The Python tracks `has_hc[j]` explicitly so golf mode
+  doesn't drop top players from the round pool. ODGC mode is
+  unaffected.
 
 ### Robustness note (still relevant to the new C++)
 
 When a round uses a course code not in `COURSE_ID`, the C++ sets
-`i_c = 0`, computes `c_fac = crs_ref[0] / 54 = 0`, then divides by it →
-every subsequent round inherits `±inf`/`NaN` and the algorithm cascades
-to garbage (final HCs all cap at 36). Adding `sr` and `sro` to the new
-C++ fixed the immediate symptom on the current data, but the same trap
-fires whenever a new course code appears before it's added.
+`i_c = 0`, computes `c_fac = crs_ref[0] / 54 = 0`, then divides by it
+→ every subsequent round inherits `±inf`/`NaN` and the algorithm
+cascades to garbage (final HCs all cap at 36). Adding `sr` and `sro`
+to the new C++ fixed the immediate symptom on the current data, but
+the same trap fires whenever a new course code appears before it's
+added.
 
 The Python guards `c_fac = 1.0` when no course matches and prints a
-stderr warning so the operator notices. Worth considering a similar
-guard in the C++ — small change, prevents silent corruption next time.
+stderr warning so the operator notices.
 
 ### Upstream changes synced in May 2026
 
@@ -256,19 +381,19 @@ changes brought into the Python:
 - Added `sr` (Sandy Row) at course index 28, `sro` (alt layout) at 29.
 - `num_crs` bumped 28 → 30.
 - `atosHC.txt` gained a `Sandy_Row` column (`crs_ref[28]`).
-- `evHC.txt` qualification widened from `EV || ODGC` to `EV || ODGC || TOSS`.
-- Course-catalog `cnm[]` gained `"Sandy_Row"` but `nnm` wasn't bumped to
-  match — Python matches the C++ exactly (entry sits unused in the array;
-  no new row in `odgccaCH.txt` catalog). One-line fix on either side if
-  intent was to display it.
+- `evHC.txt` qualification widened from `EV || ODGC` to
+  `EV || ODGC || TOSS`.
+- Course-catalog `cnm[]` gained `"Sandy_Row"` but `nnm` wasn't bumped
+  to match — Python matches the C++ exactly (entry sits unused in the
+  array; no new row in `odgccaCH.txt` catalog). One-line fix on either
+  side if intent was to display it.
 
 ### Other observations from the read-through
 
-- The `i_zfc > 55` branch in the sub-zero handler ([hc24.cpp](old/cpp/hc24.cpp))
-  appears to never fire — `i_zfc` is per-round and bounded by the
-  `ss_id[10]` array size. The Python omits it on the assumption it was
-  dead code; if it was intended to handle a real case, the port would
-  need to be revisited.
+- The `i_zfc > 55` branch in the sub-zero handler
+  ([hc24.cpp](old/cpp/hc24.cpp)) appears to never fire — `i_zfc` is
+  per-round and bounded by the `ss_id[10]` array size. The Python
+  omits it on the assumption it was dead code.
 - The `r == 204` multi-subzero special case is hard-coded to that one
   round number; effectively dead on any dataset that didn't go through
   that exact sequence. Also omitted.
@@ -284,21 +409,27 @@ the latest C++ binary. The Python output must remain byte-identical:
 
 passes nine `PASS  <file>` lines if nothing has drifted.
 
-The golf-mode outputs (`*_golf.txt`) don't have golden fixtures — they're
-new behavior with no C++ reference to compare against. Their correctness
-is implicit: the algorithm in golf mode is the same one minus the
-sub-zero shift block, and `verify.sh` proves the rest of the pipeline.
+The `_golf` and `--gsheet`/`--xlsx` paths don't have golden fixtures —
+they're new behavior with no C++ reference. Their correctness is
+implicit: `verify.sh` proves the algorithm core; the Sheet/xlsx parsers
+produce the same token stream as the .dat parser (`hc24 --export-dat`
+proves this round-trip).
 
 ## Project layout
 
 ```
-hc24.py                 the calculator (read .dat or .xlsx; write 18 files)
-import_udisc.py         UDisc league xlsx → append rounds → RoundData.xlsx
-RoundData.xlsx          canonical input (current season + history)
-RoundData.dat           legacy flat-file export (regression fixture)
+ingest.py               URL → import → recompute, one command
+hc24.py                 the calculator (read .dat, .xlsx, or Google Sheet; write 18 files)
+import_udisc.py         UDisc xlsx or leaderboard URL → append rounds
+import_pdga.py          PDGA event ID or URL → append rounds
+gsheets.py              Python client for the Apps Script web app
+apps_script.gs          paste into the Sheet's Apps Script editor (one-time setup)
+gsheets_url.txt         deployment URL (gitignored; write credential)
 verify.sh               regression runner (Python output vs golden/)
 README.md               this file
 
+RoundData.dat           legacy flat-file export (regression fixture)
+RoundData.xlsx          optional local workbook (no longer source of truth)
 golden/                 C++ reference outputs from RoundData.dat
 imports/                source UDisc/PDGA files retained for audit
 out/                    generated outputs (gitignored)
@@ -311,9 +442,21 @@ old/
 
 ## History
 
-January 2018 — Ken writes the original VS C++ tool, manually fed a
-tab-separated `RoundData.dat` exported from the spreadsheet each time.
+**January 2018** — Ken writes the original Visual Studio C++ tool,
+manually fed a tab-separated `RoundData.dat` exported from the
+spreadsheet each time.
 
-May 2026 — Port to Python. `verify.sh` proves byte-identical reproduction.
-Added direct xlsx reading, golf-style output set, tanh compression,
-UDisc league import. Synced upstream changes from Ken's latest C++.
+**May 2026** — Port to Python. `verify.sh` proves byte-identical
+reproduction. Added direct xlsx reading, golf-style output set, tanh
+compression, UDisc league import. Synced upstream changes from Ken's
+latest C++.
+
+**May 2026, week 2** — Added PDGA tournament ingestion, dedup
+protection, the same-course merge for multi-division events. Updated
+the UDisc layout lookup against every event in the 2025–26 ODGC TOSS
+schedule so course codes round-trip cleanly.
+
+**May 2026, week 3** — Google Sheet integration via Apps Script web
+app. The Sheet becomes the source of truth; the manual xlsx export
+loop goes away. `ingest.py` collapses the URL → import → recompute
+sequence into one command.
