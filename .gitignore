@@ -41,3 +41,10 @@ worker/.wrangler/
 worker/node_modules/
 pages/.wrangler/
 pages/node_modules/
+
+# Shared modules synced from repo root by `make deploy` (the worker's
+# Makefile copies these so wrangler can bundle them). Source of truth
+# lives at the repo root — these are byproducts, not edited in place.
+worker/src/hc_algorithm.py
+worker/src/hc_matching.py
+worker/src/hc_parsing.py
