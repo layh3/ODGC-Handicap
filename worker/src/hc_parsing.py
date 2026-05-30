@@ -7,7 +7,9 @@ caller's job (urllib in the CLI, js.fetch in the Cloudflare Worker).
 from __future__ import annotations
 
 import html
+import json
 import re
+import unicodedata
 
 
 UDISC_USER_AGENT = (
@@ -18,15 +20,23 @@ UDISC_USER_AGENT = (
 PDGA_USER_AGENT = UDISC_USER_AGENT
 
 
-def parse_udisc_leaderboard(page: str) -> tuple[str, list[tuple[str, int]]]:
-    """Extract (layout_text, [(player_name, round_total_score), ...]) from
-    a UDisc leaderboard page's HTML.
+def parse_udisc_leaderboard(page: str) -> list[dict]:
+    """Parse a UDisc leaderboard page into one or more pools.
+
+    Returns ``[{'layout_text': str, 'players': [(name, score), ...]}, ...]``.
+
+    Most events are single-layout → one pool. League nights like LETS that
+    let players pick Blue vs Yellow tees on the same round produce one pool
+    per layout. The React Router stream payload embedded in the page maps
+    each registrant to a ``courseLayoutId``; we decode that and partition
+    the HTML-table players by it.
 
     UDisc 403s on requests without a desktop User-Agent — set one upstream
-    when fetching (see UDISC_USER_AGENT)."""
+    when fetching (see UDISC_USER_AGENT).
+    """
     m_title = re.search(r"<title[^>]*>([^<]+)</title>", page)
     m_h1 = re.search(r"<h1[^>]*>([^<]+)</h1>", page)
-    layout_text = " | ".join(
+    base_layout_text = " | ".join(
         s.group(1).strip()
         for s in (m_h1, m_title)
         if s and "UDisc" not in s.group(1).split("|", 1)[0]
@@ -57,7 +67,131 @@ def parse_udisc_leaderboard(page: str) -> tuple[str, list[tuple[str, int]]]:
             continue
         players.append((name, strokes))
 
-    return layout_text, players
+    name_to_layout = _extract_udisc_layouts(page)
+    distinct_layouts = {lab for lab in name_to_layout.values() if lab}
+    if len(distinct_layouts) <= 1:
+        # Single layout (or stream unparseable) → preserve old behavior.
+        return [{"layout_text": base_layout_text, "players": players}]
+
+    # Multi-layout: partition by per-player tee assignment.
+    groups: dict[str, list[tuple[str, int]]] = {}
+    unmatched: list[tuple[str, int]] = []
+    for name, score in players:
+        label = name_to_layout.get(_norm_name(name))
+        if label:
+            groups.setdefault(label, []).append((name, score))
+        else:
+            unmatched.append((name, score))
+
+    pools: list[dict] = []
+    for label, group_players in groups.items():
+        pool_layout = f"{base_layout_text} | {label}" if base_layout_text else label
+        pools.append({"layout_text": pool_layout, "players": group_players})
+    if unmatched:
+        # Surface the gap loudly — better to fail than misattribute.
+        pools.append({
+            "layout_text": base_layout_text,
+            "players": unmatched,
+            "unmatched": True,
+        })
+    return pools
+
+
+def _norm_name(name: str) -> str:
+    """Casefold + strip diacritics so HTML-table and stream-payload spellings
+    of the same player match (e.g., 'François' vs 'Francois')."""
+    nfkd = unicodedata.normalize("NFKD", name)
+    return "".join(c for c in nfkd if not unicodedata.combining(c)).casefold().strip()
+
+
+def _extract_udisc_layouts(page: str) -> dict[str, str]:
+    """Return ``{normalized_player_name: layout_label}`` extracted from the
+    React Router stream payload embedded in a UDisc leaderboard page.
+
+    Returns ``{}`` if the payload is missing or can't be decoded — callers
+    treat that as "single layout, use the page-level title".
+
+    The payload is a devalue-style flat array: ``[v0, v1, v2, ...]`` where
+    objects encode ``{"_K": V}`` meaning ``{flat[K]: deref(V)}`` and integer
+    values reference other indices. Player ("registrant") objects expose
+    ``name`` (string) and ``courseLayoutId`` (UUID string); layout objects
+    expose ``_id`` (UUID string) and ``name`` (label like 'Yellow Tees').
+    """
+    try:
+        m = re.search(
+            r"streamController\.enqueue\((\".+?\")\)",
+            page, re.DOTALL,
+        )
+        if not m:
+            return {}
+        # The captured group is itself a JSON string literal whose payload
+        # is another JSON document. Two json.loads peel both layers.
+        inner = json.loads(m.group(1))
+        flat = json.loads(inner)
+        if not isinstance(flat, list):
+            return {}
+    except (json.JSONDecodeError, ValueError):
+        return {}
+
+    def resolve_key(k: str) -> str | None:
+        if not k.startswith("_"):
+            return k
+        try:
+            idx = int(k[1:])
+        except ValueError:
+            return None
+        if 0 <= idx < len(flat) and isinstance(flat[idx], str):
+            return flat[idx]
+        return None
+
+    def resolve_val(v):
+        if isinstance(v, int) and 0 <= v < len(flat):
+            return flat[v]
+        return v
+
+    # Pass 1: layout objects. A layout has _id pointing to a UUID-ish string
+    # AND a `name` field resolving to a string label (e.g., 'Yellow Tees').
+    # We also require `courseId` or `layoutId` to avoid matching unrelated
+    # objects that happen to have those two fields.
+    layout_label_by_uuid: dict[str, str] = {}
+    for obj in flat:
+        if not isinstance(obj, dict):
+            continue
+        named: dict[str, object] = {}
+        for k, v in obj.items():
+            key = resolve_key(k)
+            if key is not None:
+                named[key] = v
+        if "_id" not in named or "name" not in named:
+            continue
+        if "courseId" not in named and "layoutId" not in named:
+            continue
+        uuid = resolve_val(named["_id"])
+        label = resolve_val(named["name"])
+        if isinstance(uuid, str) and isinstance(label, str):
+            layout_label_by_uuid[uuid] = label
+
+    # Pass 2: registrant objects. Each has `name` (player display name) and
+    # `courseLayoutId` (UUID matching a layout's _id).
+    name_to_layout: dict[str, str] = {}
+    for obj in flat:
+        if not isinstance(obj, dict):
+            continue
+        named = {}
+        for k, v in obj.items():
+            key = resolve_key(k)
+            if key is not None:
+                named[key] = v
+        if "name" not in named or "courseLayoutId" not in named:
+            continue
+        player_name = resolve_val(named["name"])
+        layout_uuid = resolve_val(named["courseLayoutId"])
+        if not isinstance(player_name, str) or not isinstance(layout_uuid, str):
+            continue
+        label = layout_label_by_uuid.get(layout_uuid)
+        if label:
+            name_to_layout[_norm_name(player_name)] = label
+    return name_to_layout
 
 
 def parse_pdga_event(page: str) -> tuple[str, list[dict]]:
