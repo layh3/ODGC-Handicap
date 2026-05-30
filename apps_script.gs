@@ -150,6 +150,45 @@ function doPost(e) {
           return jsonResponse({ok: true, name: name, col: newCol});
         }
 
+        case 'set_membership': {
+          // Toggle a player's club-membership flags (rows 10-13).
+          // body: {sheet, name, flags: {ODGC?, TOSS?, EV?, Ladies?}}
+          //   flag keys are optional — only those provided are written.
+          const targetName = req.name;
+          if (!targetName) return jsonResponse({ok: false, error: 'name required'});
+          const flags = req.flags || {};
+          const playerCol = findPlayerCol_(sheet, targetName);
+          if (playerCol < 0) {
+            return jsonResponse({ok: false, error: 'player not found: ' + targetName});
+          }
+          const rowMap = { ODGC: 10, TOSS: 11, EV: 12, Ladies: 13 };
+          const applied = {};
+          for (const key in rowMap) {
+            if (Object.prototype.hasOwnProperty.call(flags, key)) {
+              const v = flags[key] ? 1 : 0;
+              sheet.getRange(rowMap[key], playerCol).setValue(v);
+              applied[key] = v;
+            }
+          }
+          return jsonResponse({ok: true, name: targetName, col: playerCol, applied: applied});
+        }
+
+        case 'rename_player': {
+          // Change a player's name in row 1 (the roster header for their column).
+          // body: {sheet, old_name, new_name}
+          const oldN = req.old_name;
+          const newN = req.new_name;
+          if (!oldN || !newN) {
+            return jsonResponse({ok: false, error: 'old_name and new_name required'});
+          }
+          const playerCol = findPlayerCol_(sheet, oldN);
+          if (playerCol < 0) {
+            return jsonResponse({ok: false, error: 'player not found: ' + oldN});
+          }
+          sheet.getRange(1, playerCol).setValue(newN);
+          return jsonResponse({ok: true, old_name: oldN, new_name: newN, col: playerCol});
+        }
+
         case 'replace_sheet': {
           // Drop and recreate `target_sheet` with the given 2D values.
           // Uses target_sheet (not sheet) so the caller can publish to a
@@ -224,4 +263,23 @@ function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Find a player's 1-indexed sheet column by exact name match in row 1.
+// Roster starts at column D (4); stops scanning at the first blank cell
+// or at one of the helper labels (count, total, …) that may follow.
+function findPlayerCol_(sheet, name) {
+  const lastCol = sheet.getLastColumn();
+  if (lastCol < 4) return -1;
+  const row1 = sheet.getRange(1, 4, 1, lastCol - 3).getValues()[0];
+  const target = String(name).trim();
+  const helpers = {count:1, total:1, sum:1, tally:1, n:1, '#':1};
+  for (let i = 0; i < row1.length; i++) {
+    const v = row1[i];
+    if (v === '' || v === null) break;
+    const s = String(v).trim();
+    if (helpers[s.toLowerCase()]) break;
+    if (s === target) return i + 4;
+  }
+  return -1;
 }

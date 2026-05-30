@@ -55,6 +55,28 @@ async def replace_sheet(url: str, target_sheet: str, rows: list[list],
     })
 
 
+async def set_membership(url: str, name: str, flags: dict,
+                         sheet: str = "active2025") -> dict:
+    """Set a player's club-membership flags (rows 10-13). `flags` may include
+    any subset of {ODGC, TOSS, EV, Ladies} — only provided keys are written."""
+    return await _call(url, {
+        "action": "set_membership",
+        "sheet": sheet,
+        "name": name,
+        "flags": flags,
+    })
+
+
+async def rename_player(url: str, old_name: str, new_name: str,
+                        sheet: str = "active2025") -> dict:
+    return await _call(url, {
+        "action": "rename_player",
+        "sheet": sheet,
+        "old_name": old_name,
+        "new_name": new_name,
+    })
+
+
 async def _call(url: str, body: dict) -> dict:
     result = await post_json(url, body)
     if not result.get("ok"):

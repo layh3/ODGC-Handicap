@@ -95,7 +95,7 @@ async def on_fetch(request, env):
         except Exception as e:
             return _json_resp({"ok": False, "error": str(e)}, status=500)
 
-    # Ingest (default) is password-gated.
+    # Ingest + admin actions are password-gated.
     shared = getattr(env, "SHARED_PASSWORD", None) or ""
     if not shared:
         return _json_resp(
@@ -105,10 +105,63 @@ async def on_fetch(request, env):
     if body.get("password") != shared:
         return _json_resp({"ok": False, "error": "wrong password"}, status=401)
 
+    sheet = body.get("sheet") or "active2025"
+
+    # Admin: edit a player's club-membership flags.
+    if action == "set_membership":
+        name = (body.get("name") or "").strip()
+        flags = body.get("flags") or {}
+        if not name:
+            return _json_resp({"ok": False, "error": "name required"}, status=400)
+        try:
+            result = await gs.set_membership(apps_url, name, flags, sheet)
+            return _json_resp({"ok": True, "result": result})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
+    # Admin: rename a player (fix a typo in their roster entry).
+    if action == "rename_player":
+        old_name = (body.get("old_name") or "").strip()
+        new_name = (body.get("new_name") or "").strip()
+        if not old_name or not new_name:
+            return _json_resp(
+                {"ok": False, "error": "old_name and new_name required"},
+                status=400,
+            )
+        try:
+            result = await gs.rename_player(apps_url, old_name, new_name, sheet)
+            return _json_resp({"ok": True, "result": result})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
+    # Admin: append a brand-new player to the roster.
+    if action == "add_player_to_roster":
+        name = (body.get("name") or "").strip()
+        if not name:
+            return _json_resp({"ok": False, "error": "name required"}, status=400)
+        try:
+            data = await gs.pull(apps_url, sheet)
+            roster = gs.load_roster_from_data(data)
+            if not roster:
+                return _json_resp(
+                    {"ok": False, "error": "couldn't locate the roster in the sheet"},
+                    status=500,
+                )
+            existing = {n for _, n in roster}
+            if name in existing:
+                return _json_resp(
+                    {"ok": False, "error": f"player {name!r} already on the roster"},
+                    status=409,
+                )
+            after_col = max(c for c, _ in roster)
+            new_col = await gs.add_player(apps_url, name, after_col, sheet)
+            return _json_resp({"ok": True, "name": name, "col": new_col})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
     url = (body.get("url") or "").strip()
     event = (body.get("event") or "").strip()
     year = body.get("year")
-    sheet = body.get("sheet") or "active2025"
 
     if not url:
         return _json_resp({"ok": False, "error": "url required"}, status=400)
