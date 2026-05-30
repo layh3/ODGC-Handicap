@@ -106,7 +106,14 @@
       padding: 22px;
       box-shadow: var(--shadow-card);
       margin-top: 20px;
+      position: relative;
+      z-index: 1;
     }
+    /* Cards create their own stacking context via backdrop-filter, so a
+       dropdown's z-index can't escape its card to overlap the next one.
+       Bumping the parent card's z-index when its typeahead is open lets
+       the dropdown render above subsequent cards. */
+    .card.dropdown-active { z-index: 50; }
     .card-head {
       display: flex; align-items: center; justify-content: space-between;
       gap: 12px; margin-bottom: 16px;
@@ -417,12 +424,21 @@ async function fetchRoster() {
 function wireTypeahead(inputEl, dropdownEl, onPick) {
   let focusedIdx = -1;
   let currentMatches = [];
+  const cardEl = inputEl.closest(".card");
+  function show() {
+    dropdownEl.hidden = false;
+    if (cardEl) cardEl.classList.add("dropdown-active");
+  }
+  function hide() {
+    dropdownEl.hidden = true;
+    if (cardEl) cardEl.classList.remove("dropdown-active");
+  }
 
   function render(q) {
     const query = (q || "").trim().toLowerCase();
     if (!ROSTER.length) {
       dropdownEl.innerHTML = `<div class="dropdown-status">loading roster…</div>`;
-      dropdownEl.hidden = false; return;
+      show(); return;
     }
     const prefix = [], rest = [];
     for (const n of ROSTER) {
@@ -433,12 +449,12 @@ function wireTypeahead(inputEl, dropdownEl, onPick) {
     currentMatches = [...prefix, ...rest].slice(0, 20);
     if (!currentMatches.length) {
       dropdownEl.innerHTML = `<div class="dropdown-empty">no match for "${escapeHtml(query)}"</div>`;
-      dropdownEl.hidden = false; return;
+      show(); return;
     }
     dropdownEl.innerHTML = currentMatches.map((n, i) =>
       `<div class="dropdown-item ${i === focusedIdx ? "focused" : ""}" data-idx="${i}" role="option">${highlight(n, query)}</div>`
     ).join("");
-    dropdownEl.hidden = false;
+    show();
   }
   function paintFocus() {
     dropdownEl.querySelectorAll(".dropdown-item").forEach((el, i) => {
@@ -449,7 +465,7 @@ function wireTypeahead(inputEl, dropdownEl, onPick) {
 
   inputEl.addEventListener("input", () => { focusedIdx = -1; render(inputEl.value); });
   inputEl.addEventListener("focus", () => render(inputEl.value));
-  inputEl.addEventListener("blur", () => { setTimeout(() => { dropdownEl.hidden = true; }, 120); });
+  inputEl.addEventListener("blur", () => { setTimeout(hide, 120); });
   inputEl.addEventListener("keydown", (ev) => {
     if (dropdownEl.hidden) return;
     if (ev.key === "ArrowDown") { ev.preventDefault(); focusedIdx = Math.min(currentMatches.length - 1, focusedIdx + 1); paintFocus(); }
@@ -458,11 +474,11 @@ function wireTypeahead(inputEl, dropdownEl, onPick) {
       if (focusedIdx >= 0 && currentMatches[focusedIdx]) {
         ev.preventDefault();
         inputEl.value = currentMatches[focusedIdx];
-        dropdownEl.hidden = true;
+        hide();
         if (onPick) onPick(currentMatches[focusedIdx]);
       }
     }
-    else if (ev.key === "Escape") { dropdownEl.hidden = true; }
+    else if (ev.key === "Escape") { hide(); }
   });
   dropdownEl.addEventListener("mousedown", (ev) => {
     const item = ev.target.closest(".dropdown-item");
@@ -470,7 +486,7 @@ function wireTypeahead(inputEl, dropdownEl, onPick) {
     const idx = parseInt(item.dataset.idx, 10);
     if (currentMatches[idx]) {
       inputEl.value = currentMatches[idx];
-      dropdownEl.hidden = true;
+      hide();
       if (onPick) onPick(currentMatches[idx]);
     }
   });
