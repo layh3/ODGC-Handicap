@@ -39,6 +39,7 @@ from openpyxl import load_workbook
 # Reuse the matching + roster machinery from the UDisc importer.
 from import_udisc import (
     add_new_player,
+    find_duplicate_row,
     guess_course_from_layout,
     load_roster,
     match_player,
@@ -192,6 +193,8 @@ def main(argv=None):
                    help="Disable merging divisions playing the same (round, course) "
                         "into one row. Off by default — merging keeps single-player "
                         "divisions from being skipped by the round-size guard.")
+    p.add_argument("--force", action="store_true",
+                   help="Write rows even if they look like duplicates of existing ones")
     args = p.parse_args(argv)
 
     # Parse --course-override entries.
@@ -325,10 +328,38 @@ def main(argv=None):
     if not appended:
         sys.exit("nothing to append")
 
+    # Dedup check: skip any candidate pool that looks like a re-import of an
+    # existing row. Matches purely on (year, per-player-score overlap), so it
+    # catches duplicates even when event names or course codes diverge.
+    print("══ Dedup check ══")
+    to_write: list[dict] = []
+    for entry in appended:
+        dup = find_duplicate_row(ms, args.year, entry["scores"])
+        if dup is not None:
+            r_dup, n, total, ev_dup, crs_dup = dup
+            if args.force:
+                print(f"  WARN  {entry['event_name']:30s} matches row {r_dup} "
+                      f"({n}/{total} scores; event {ev_dup!r}, course {crs_dup!r}) "
+                      f"— writing anyway because --force")
+                to_write.append(entry)
+            else:
+                print(f"  SKIP  {entry['event_name']:30s} duplicate of row {r_dup} "
+                      f"(event {ev_dup!r}, course {crs_dup!r}, {n}/{total} scores match)")
+        else:
+            to_write.append(entry)
+    print()
+
+    if not to_write:
+        print("nothing to write (all candidate pools flagged as duplicates).")
+        if not args.dry_run:
+            return
+        # fall through so dry-run still finishes cleanly
+        to_write = []
+
     # Write the new round rows.
     target_row = next_empty_row(ms)
     print("══ Writes ══")
-    for i, entry in enumerate(appended):
+    for i, entry in enumerate(to_write):
         r = target_row + i
         n_total = len(entry["scores"])
         n_matched = n_total - entry["n_added"]

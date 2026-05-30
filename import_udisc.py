@@ -172,6 +172,53 @@ def next_empty_row(ws, start_row: int = 14) -> int:
     return r
 
 
+def find_duplicate_row(ws, year: int, candidate_scores: dict, *,
+                       min_matches: int = 3) -> tuple | None:
+    """Look for an existing row in `ws` that already records this round.
+
+    Two rows represent the same round when, for the same year, enough of
+    the per-player scores match exactly. We require ≥ ``min_matches``
+    identical (player_column, score) pairs — this catches re-imports even
+    when event names and course codes diverge (manual `LariOpenR1y` /
+    `lmy` vs scripted `LarrimacOpen_R1` / `lmy`, or `sro` vs `sr`).
+
+    Returns ``(row_num, n_matches, n_in_candidate, event, course)`` for
+    the best-matching existing row, or ``None`` if no row hits the
+    threshold.
+    """
+    if not candidate_scores:
+        return None
+
+    best: tuple | None = None
+    for r in range(14, ws.max_row + 1):
+        existing_year = ws.cell(row=r, column=1).value
+        if existing_year is None:
+            break
+        try:
+            if int(existing_year) != year:
+                continue
+        except (TypeError, ValueError):
+            continue
+
+        n_matches = 0
+        for col, score in candidate_scores.items():
+            existing = ws.cell(row=r, column=col).value
+            if existing in (None, 0, "0"):
+                continue
+            try:
+                if int(existing) == score:
+                    n_matches += 1
+            except (TypeError, ValueError):
+                continue
+
+        if n_matches >= min_matches and (best is None or n_matches > best[1]):
+            event = ws.cell(row=r, column=2).value
+            course = ws.cell(row=r, column=3).value
+            best = (r, n_matches, len(candidate_scores), event, course)
+
+    return best
+
+
 def add_new_player(ws, name: str, last_player_col: int):
     """Append a new player column right after the existing roster.
 
@@ -284,9 +331,10 @@ def guess_course_from_layout(text: str) -> str | None:
         if has("blue"):
             return "lmb"
         return "lmb"
-    # Sandy Row (PDGA layouts: "ORANGE Sandy Row" / "BLUE Sandy Row")
+    # Sandy Row (PDGA layouts: "ORANGE Sandy Row" / "BLUE Sandy Row").
+    # User's convention in active2025: sro = ORANGE, sr = BLUE.
     if has("sandy row"):
-        return "sro" if has("blue") else "sr"
+        return "sr" if has("blue") else "sro"
     # Almonte
     if has("almonte"):
         if has("yellow"):
@@ -364,6 +412,8 @@ def main(argv=None):
                    help="Print what would be written; do not save the workbook")
     p.add_argument("--no-add-players", action="store_true",
                    help="Skip unmatched players instead of adding them to the roster")
+    p.add_argument("--force", action="store_true",
+                   help="Write rows even if they look like duplicates of existing ones")
     args = p.parse_args(argv)
 
     div_map = dict(DIVISION_TO_COURSE)
@@ -456,9 +506,33 @@ def main(argv=None):
     if not appended:
         sys.exit("nothing to append")
 
+    # Dedup check: skip any candidate that looks like a re-import of an
+    # existing row. Honors --force to write anyway.
+    to_write = []
+    for entry in appended:
+        dup = find_duplicate_row(ms, args.year, entry["scores"])
+        if dup is not None:
+            r_dup, n, total, ev_dup, crs_dup = dup
+            if args.force:
+                print(f"  WARN  pool with {n}/{total} score matches against existing "
+                      f"row {r_dup} ({ev_dup!r}, course {crs_dup!r}) — writing anyway "
+                      f"because of --force")
+                to_write.append(entry)
+            else:
+                print(f"  SKIP duplicate of row {r_dup} "
+                      f"(event {ev_dup!r}, course {crs_dup!r}, "
+                      f"{n}/{total} scores match) — pass --force to write anyway")
+                continue
+        else:
+            to_write.append(entry)
+
+    if not to_write:
+        print("\nnothing to write (all candidates flagged as duplicates).")
+        return
+
     target_row = next_empty_row(ms)
     print(f"══ Writes ══")
-    for i, entry in enumerate(appended):
+    for i, entry in enumerate(to_write):
         r = target_row + i
         print(f"  row {r}: year={args.year}  event={args.event!r}  course={entry['course']!r}"
               f"  ({entry['n_matched']} matched, {entry['n_added']} new players added)")
