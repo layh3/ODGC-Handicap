@@ -1,8 +1,0 @@
-
-LL_courses_HC_list   base54HC  Kanata 
-Chyzyk_Kasia   20.04   17.83
-Clavel_Stephanie   20.25   18.02
-Cox_Brenda   17.98   15.99
-Dotto_Karen   27.87   24.79
-MacGillivary_Marie   28.37   25.24
-Sivyer_Stacie   23.18   20.63

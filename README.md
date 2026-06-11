@@ -493,10 +493,7 @@ golden/                 C++ reference outputs from RoundData.dat
 imports/                source UDisc/PDGA files retained for audit (gitignored)
 out/                    generated txt outputs (gitignored)
 
-old/
-  cpp/                  original C++ source + Visual Studio project
-  sample_inputs/        per-event xlsx exports kept for historical reference
-  sample_outputs/       outputs from old C++ runs
+old/cpp/               original C++ source + Visual Studio project
 ```
 
 ## History
