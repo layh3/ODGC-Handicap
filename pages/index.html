@@ -351,6 +351,28 @@
       padding: 16px 0;
     }
 
+    /* ---------- net results table ---------- */
+    .pool-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--accent);
+      margin: 0 0 8px;
+    }
+    .pool-block + .pool-block { margin-top: 20px; }
+    .rounds-table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+    .rounds-table th, .rounds-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    .rounds-table th { color: var(--ink-faint); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .rounds-table td.num, .rounds-table th.num { text-align: right; }
+    .rounds-table tr.winner td { background: rgba(132,225,188,0.07); }
+    .rounds-table tr.winner td.net-val { color: var(--accent); font-weight: 700; }
+    .rounds-table tr.new-player td { color: var(--ink-faint); }
+    .new-badge {
+      display: inline-block; padding: 1px 6px; border-radius: 999px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      background: rgba(245,180,84,0.12); color: var(--warn);
+      border: 1px solid rgba(245,180,84,0.28);
+      vertical-align: middle; margin-left: 6px;
+    }
+
     footer {
       margin-top: 36px;
       text-align: center;
@@ -471,6 +493,14 @@
       <span class="status-summary" id="status-summary"></span>
     </div>
     <pre id="log" class="log" aria-live="polite"><span class="empty">— waiting for submission —</span></pre>
+  </div>
+
+  <div class="card reveal delay-3" id="results-panel" style="display:none">
+    <div class="card-head">
+      <h2>Net Results</h2>
+      <span class="right" id="results-stamp"></span>
+    </div>
+    <div id="results-content"></div>
   </div>
 
   <div class="card reveal delay-3">
@@ -638,8 +668,10 @@ function renderResult(httpStatus, result, secs) {
     } else {
       setStatus("warn", "nothing new to write (all candidates were duplicates)");
     }
+    renderNetResults(r.net_results || []);
   } else {
     setStatus("err", `${httpStatus} — ${result && result.error ? result.error : "unknown error"}`);
+    renderNetResults([]);
   }
 }
 
@@ -658,6 +690,42 @@ function formatLogLine(line) {
   if (/^  rows /.test(s) || /^  HC tab/.test(s) || /^  \+ /.test(s)) return `<span class="ok">${s}</span>`;
   if (/^  /.test(s))                return `<span class="dim">${s}</span>`;
   return `<span class="step">${s}</span>`;
+}
+
+function renderNetResults(netResults) {
+  const panel = $("results-panel");
+  if (!netResults || netResults.length === 0) {
+    panel.style.display = "none";
+    return;
+  }
+  panel.style.display = "";
+  $("results-stamp").textContent = `${netResults.length} pool(s)`;
+  $("results-content").innerHTML = netResults.map(pool => {
+    const rows = pool.players.map(p => {
+      const rankCell = p.rank !== null ? p.rank : "—";
+      const hcCell   = p.hc  !== null ? p.hc.toFixed(1) : "—";
+      const netCell  = p.net !== null ? p.net.toFixed(1) : "—";
+      const rowCls   = p.rank === 1 ? "winner" : p.is_new ? "new-player" : "";
+      const newBadge = p.is_new ? '<span class="new-badge">NEW</span>' : "";
+      return `<tr class="${rowCls}">
+        <td class="num">${rankCell}</td>
+        <td>${escapeHtml(p.name)}${newBadge}</td>
+        <td class="num">${p.gross}</td>
+        <td class="num">${hcCell}</td>
+        <td class="num net-val">${netCell}</td>
+      </tr>`;
+    }).join("");
+    return `<div class="pool-block">
+      <p class="pool-label">${escapeHtml(pool.event)} @ ${escapeHtml(pool.course)}</p>
+      <table class="rounds-table">
+        <thead><tr>
+          <th class="num">Rank</th><th>Player</th>
+          <th class="num">Gross</th><th class="num">HC</th><th class="num">Net</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join("");
 }
 
 updateKindBadge();

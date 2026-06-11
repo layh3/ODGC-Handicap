@@ -84,6 +84,51 @@ async def on_fetch(request, env):
         except Exception as e:
             return _json_resp({"ok": False, "error": str(e)}, status=500)
 
+    # Net results for a specific past event (public, read-only).
+    if action == "event_results":
+        ev_name = (body.get("event") or "").strip()
+        yr_filter = body.get("year")
+        sheet = body.get("sheet") or "active2025"
+        if not ev_name:
+            return _json_resp({"ok": False, "error": "event required"}, status=400)
+        try:
+            yr_filter = int(yr_filter) if yr_filter is not None else None
+        except (TypeError, ValueError):
+            yr_filter = None
+        try:
+            _, res_odgc, _ = await _pull_and_compute(apps_url, sheet)
+            ev_arr  = res_odgc["event"]
+            crs_arr = res_odgc["course"]
+            ry_arr  = res_odgc["ry"]
+            i_rc    = res_odgc["i_rc"]
+            # Collect all matching round indices (deduplicated by event+course+year).
+            seen = set()
+            results = []
+            for r in range(1, i_rc + 1):
+                if ev_arr[r] != ev_name:
+                    continue
+                if yr_filter is not None and ry_arr[r] != yr_filter:
+                    continue
+                key = (ev_arr[r], crs_arr[r], ry_arr[r])
+                if key in seen:
+                    continue
+                seen.add(key)
+                players = _build_net_results(res_odgc, r)
+                results.append({
+                    "event": ev_arr[r],
+                    "course": crs_arr[r],
+                    "year": ry_arr[r],
+                    "players": players,
+                })
+            if not results:
+                return _json_resp(
+                    {"ok": False, "error": f"no rounds found for event {ev_name!r}"},
+                    status=404,
+                )
+            return _json_resp({"ok": True, "results": results})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
     # Roster: just the player name list, for the lookup typeahead.
     if action == "roster":
         sheet = body.get("sheet") or "active2025"
@@ -302,6 +347,35 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         await gs.replace_sheet(apps_url, spec["tab_name"], sub_rows, freeze_rows=4)
         log.append(f"  {spec['tab_name']} tab: {len(sub_rows)} rows")
 
+    # ---- net results ----
+    net_results = []
+    for entry in to_write:
+        round_idx = _find_round_idx(res_odgc, entry["event_name"], entry["course"], year)
+        if round_idx is None:
+            log.append(f"  WARNING: round index not found for {entry['event_name']}/{entry['course']}")
+            continue
+        players = _build_net_results(res_odgc, round_idx)
+        if not players:
+            log.append(f"  net results unavailable for {entry['event_name']}/{entry['course']}")
+            continue
+        net_results.append({
+            "event": entry["event_name"],
+            "course": entry["course"],
+            "players": players,
+        })
+        log.append(f"net results — {entry['event_name']} @ {entry['course']}:")
+        for p in players:
+            if p["is_new"]:
+                log.append(f"  NEW (no HC yet): {p['name']} {p['gross']}")
+            else:
+                log.append(f"  {p['rank']}. {p['name']}  net {p['net']}  ({p['gross']} − {p['hc']})")
+
+    if net_results:
+        log.append("pushing Results tab…")
+        results_rows = _build_results_tab_rows(net_results)
+        await gs.replace_sheet(apps_url, "Results", results_rows, freeze_rows=2)
+        log.append(f"  Results tab: {len(results_rows)} rows")
+
     return {
         "kind": kind,
         "pools_seen": len(pools),
@@ -311,7 +385,21 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         "hc_pushed": True,
         "hc_rows": len(hc_rows),
         "subset_tabs": [s["tab_name"] for s in SUBSET_TABS],
+        "net_results": net_results,
     }
+
+
+# --- shared pull + compute ------------------------------------------------
+
+async def _pull_and_compute(apps_url, sheet):
+    """Pull the sheet once and run both HC computes. Returns (data, res_odgc, res_golf)."""
+    data = await gs.pull(apps_url, sheet)
+    player_arr, i_pl, tokens = _data_to_tokens(data)
+    res_odgc = compute_handicaps(player_arr, i_pl, tokens,
+                                 anchor_at_zero=True, verbose=False)
+    res_golf = compute_handicaps(player_arr, i_pl, tokens,
+                                 anchor_at_zero=False, verbose=False)
+    return data, res_odgc, res_golf
 
 
 # --- player lookup --------------------------------------------------------
@@ -321,12 +409,7 @@ async def _run_lookup(apps_url, name, sheet):
 
     Raises LookupError if the name doesn't match any roster entry.
     """
-    data = await gs.pull(apps_url, sheet)
-    player_arr, i_pl, tokens = _data_to_tokens(data)
-    res_odgc = compute_handicaps(player_arr, i_pl, tokens,
-                                 anchor_at_zero=True, verbose=False)
-    res_golf = compute_handicaps(player_arr, i_pl, tokens,
-                                 anchor_at_zero=False, verbose=False)
+    _, res_odgc, res_golf = await _pull_and_compute(apps_url, sheet)
     return _build_dossier(name, res_odgc, res_golf)
 
 
@@ -777,6 +860,99 @@ def _build_subset_rows(res, spec):
             row.append(f"{hc[j] * ref / 54.0:.2f}")
         row.append(rnd_count[j])
         rows.append(row)
+    return rows
+
+
+def _build_net_results(res, round_idx):
+    """Net leaderboard for one round: [{rank, name, gross, hc, net, is_new}, ...]
+
+    Returns [] if the round was skipped by the <2-established-players gate.
+    """
+    player       = res["player"]
+    i_pl         = res["i_pl"]
+    score        = res["score"]
+    rnd_count    = res["rnd_count"]
+    played_at    = res["played_at"]
+    hc_entering  = res["hc_entering"]
+    est_entering = res["est_entering"]
+    round_c_fac  = res["round_c_fac"]
+
+    c_fac = round_c_fac[round_idx]
+
+    entries = []
+    for j in range(1, i_pl + 1):
+        sc = score[round_idx][j]
+        if sc <= 0:
+            continue
+        # Walk slots from the end — the slot for this round is near the top.
+        slot = None
+        for k in range(rnd_count[j], 0, -1):
+            if played_at[j][k] == round_idx:
+                slot = k
+                break
+        if slot is None:
+            # Round was skipped (< 2 established players)
+            return []
+        gross = int(sc)
+        hc_in = hc_entering[j][slot]
+        est   = est_entering[j][slot]
+        if est:
+            net = gross - hc_in * c_fac
+            entries.append({
+                "name": player[j], "gross": gross,
+                "hc": round(hc_in, 1), "net": round(net, 1), "is_new": False,
+            })
+        else:
+            entries.append({
+                "name": player[j], "gross": gross,
+                "hc": None, "net": None, "is_new": True,
+            })
+
+    established = sorted([e for e in entries if not e["is_new"]], key=lambda e: e["net"])
+    new_players  = [e for e in entries if e["is_new"]]
+
+    prev_net = None
+    display_rank = 1
+    for i, e in enumerate(established):
+        if prev_net is not None and e["net"] == prev_net:
+            e["rank"] = established[i - 1]["rank"]
+        else:
+            e["rank"] = display_rank
+        prev_net = e["net"]
+        display_rank += 1
+    for e in new_players:
+        e["rank"] = None
+
+    return established + new_players
+
+
+def _find_round_idx(res, event_name, course_code, year):
+    """Return the most recent round index matching event/course/year, or None."""
+    ev  = res["event"]
+    crs = res["course"]
+    ry  = res["ry"]
+    i_rc = res["i_rc"]
+    for r in range(i_rc, 0, -1):
+        if ev[r] == event_name and crs[r] == course_code and ry[r] == year:
+            return r
+    return None
+
+
+def _build_results_tab_rows(net_results_list):
+    stamp = _dt.datetime.now().isoformat(timespec="minutes")
+    rows = [
+        [f"Latest results — generated {stamp}"],
+        [],
+    ]
+    for pool in net_results_list:
+        rows.append([f"{pool['event']} @ {pool['course']}"])
+        rows.append(["Rank", "Player", "Gross", "HC", "Net"])
+        for p in pool["players"]:
+            rank_str = str(p["rank"]) if p["rank"] is not None else "—"
+            hc_str   = f"{p['hc']:.1f}" if p["hc"] is not None else "NEW"
+            net_str  = f"{p['net']:.1f}" if p["net"] is not None else "—"
+            rows.append([rank_str, p["name"], p["gross"], hc_str, net_str])
+        rows.append([])
     return rows
 
 

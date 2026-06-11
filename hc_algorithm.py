@@ -205,6 +205,12 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
     # Lookup-only; the algorithm doesn't read this. 0 = synthetic (seed or
     # year-reset). r > 0 = the actual round_index from the round loop below.
     played_at = [[0] * 600 for _ in range(i_pl + 2)]
+    # HC the player carried into each round (frozen before the round loop).
+    # Used by net-results; never read by the algorithm itself.
+    hc_entering  = [[0.0]   * 600 for _ in range(i_pl + 2)]
+    est_entering = [[False] * 600 for _ in range(i_pl + 2)]
+    # c_fac that was in effect for each round index.
+    round_c_fac = [0.0] * 600
     for k in range(1, 8):
         for j in range(1, i_pl + 1):
             dum = float(take())
@@ -363,6 +369,7 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
         oc_fac = prevcrs_ref[i_c] / 54.0 if i_c else c_fac
         if i_c and prevcrs_ref[i_c] == 0:
             oc_fac = c_fac
+        round_c_fac[r] = c_fac
 
         for j in range(1, i_pl + 1):
             hc0[j] = hc[j]
@@ -371,6 +378,8 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
             sc = score[r][j]
             if sc > 0:
                 rnd_count[j] += 1
+                hc_entering[j][rnd_count[j]]  = hc0[j]
+                est_entering[j][rnd_count[j]] = has_hc[j]
                 rnd_size += 1
                 player_pt[rnd_size] = j
                 rnd_scores[rnd_size] = sc
@@ -486,4 +495,8 @@ def compute_handicaps(player, i_pl, tokens, *, anchor_at_zero=True, verbose=True
         "diff": diff,
         "d_ry": d_ry,
         "played_at": played_at,
+        # Net-results only — never read by the algorithm itself.
+        "hc_entering": hc_entering,
+        "est_entering": est_entering,
+        "round_c_fac": round_c_fac,
     }
