@@ -12,6 +12,40 @@ import unicodedata
 from difflib import get_close_matches
 
 
+# Display name for every course code used in the sheet.
+COURSE_NAMES: dict[str, str] = {
+    "epw":  "Ettyville MVP White",
+    "epb":  "Ettyville MVP Blue",
+    "epy":  "Ettyville MVP Yellow",
+    "eiw":  "Ettyville Axiom White",
+    "eib":  "Ettyville Axiom Blue",
+    "eiy":  "Ettyville Axiom Yellow",
+    "lmb":  "Larrimac Blue",
+    "lmy":  "Larrimac Yellow",
+    "alm":  "Almonte",
+    "alb":  "Almonte Blue",
+    "aly":  "Almonte Yellow",
+    "alr":  "Almonte Red",
+    "alm0": "Almonte (old)",
+    "kan":  "Kanata",
+    "mtn":  "Mountain",
+    "cur":  "Currie",
+    "shr":  "The Shire",
+    "upi":  "UPI",
+    "ffw":  "Franktown",
+    "kvb":  "Ferguson Blue",
+    "kvy":  "Ferguson Yellow",
+    "kvr":  "Ferguson Red",
+    "kpv":  "Kemptville (old)",
+    "cf":   "Camp Fortune",
+    "rhl":  "Rockhill",
+    "ctp":  "Centrepointe",
+    "sr":   "Sandy Row Blue",
+    "sro":  "Sandy Row Orange",
+    "unq":  "One-off layout",
+    "jeu":  "(unused)",
+}
+
 # Common first-name shortenings the master sheet uses.
 FIRST_NAME_ALIASES = {
     "Christopher": "Chris", "Matthew": "Matt", "Jonathan": "Jon",

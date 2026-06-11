@@ -22,7 +22,7 @@ import json as _json
 from workers import Response  # type: ignore[import-not-found]
 
 from hc_algorithm import compute_handicaps, fmt_2f_golf
-from hc_matching import match_player, to_lastname_first, guess_course_from_layout
+from hc_matching import match_player, to_lastname_first, guess_course_from_layout, COURSE_NAMES
 from hc_parsing import (
     parse_udisc_leaderboard, parse_pdga_event,
     UDISC_USER_AGENT, PDGA_USER_AGENT,
@@ -126,6 +126,69 @@ async def on_fetch(request, env):
                     status=404,
                 )
             return _json_resp({"ok": True, "results": results})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
+    # All-time top scores per course (public, read-only).
+    if action == "course_records":
+        sheet = body.get("sheet") or "active2025"
+        try:
+            data = await gs.pull(apps_url, sheet)
+            roster = gs.load_roster_from_data(data)
+            col_to_name = {c: n for c, n in roster}
+
+            course_entries: dict[str, list] = {}
+            for row in data[13:]:
+                if len(row) < 3:
+                    continue
+                yr, ev, crs = row[0], row[1], row[2]
+                if yr in (None, "") or ev in (None, "") or crs in (None, ""):
+                    break
+                ev_str = str(ev).strip()
+                if len(ev_str) < 3:
+                    break
+                crs_str = str(crs).strip()
+                if ev_str.startswith("x") or crs_str == "unq":
+                    continue
+                try:
+                    yr_int = int(yr)
+                except (TypeError, ValueError):
+                    continue
+                for col, name in col_to_name.items():
+                    if col - 1 >= len(row):
+                        continue
+                    v = row[col - 1]
+                    if v in (None, "", 0, "0"):
+                        continue
+                    try:
+                        sc = int(v)
+                        if sc > 0:
+                            if crs_str not in course_entries:
+                                course_entries[crs_str] = []
+                            course_entries[crs_str].append((sc, name, ev_str, yr_int))
+                    except (TypeError, ValueError):
+                        continue
+
+            records = {}
+            for crs, entries in course_entries.items():
+                entries.sort(key=lambda e: e[0])
+                top = entries[:10]
+                if len(entries) > 10:
+                    cut = top[-1][0]
+                    for e in entries[10:]:
+                        if e[0] == cut:
+                            top.append(e)
+                        else:
+                            break
+                records[crs] = {
+                    "name": COURSE_NAMES.get(crs, crs),
+                    "top": [
+                        {"player": e[1], "gross": e[0], "event": e[2], "year": e[3]}
+                        for e in top
+                    ],
+                }
+            sorted_recs = dict(sorted(records.items(), key=lambda kv: kv[1]["name"]))
+            return _json_resp({"ok": True, "records": sorted_recs})
         except Exception as e:
             return _json_resp({"ok": False, "error": str(e)}, status=500)
 
@@ -496,6 +559,16 @@ def _build_dossier(name, res_odgc, res_golf):
 
     for p in last20:
         p["counted"] = p["diff_slot"] in counted_slots
+
+    # PB: best gross per course across ALL of the player's rounds.
+    best_per_course: dict[str, int] = {}
+    for p in played:
+        if p["score"] > 0:
+            crs = p["course"]
+            if crs not in best_per_course or p["score"] < best_per_course[crs]:
+                best_per_course[crs] = p["score"]
+    for p in last20:
+        p["pb"] = p["score"] > 0 and p["score"] == best_per_course.get(p["course"])
 
     # Per-course HC for every course the algorithm has a reference for.
     from hc_algorithm import COURSE_ID

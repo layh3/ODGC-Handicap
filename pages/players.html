@@ -305,6 +305,14 @@
     .rounds-table tr.counted td.diff { color: var(--accent); font-weight: 600; }
     .rounds-table td.diff.pos { color: var(--ink-dim); }
     .rounds-table td.diff.neg { color: var(--accent-2); }
+    .pb-chip {
+      display: inline-block; padding: 1px 5px; border-radius: 4px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
+      background: rgba(132,225,188,0.15); color: var(--accent);
+      border: 1px solid rgba(132,225,188,0.35);
+      vertical-align: middle; margin-left: 5px;
+      font-family: 'Inter', sans-serif; line-height: 1.6;
+    }
 
     .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
     .course-pill {
@@ -362,6 +370,7 @@
   <nav class="tabs reveal">
     <a href="/">Ingest</a>
     <a href="/players" class="active">Players</a>
+    <a href="/courses">Courses</a>
     <a href="/admin">Admin</a>
   </nav>
 
@@ -614,12 +623,13 @@ function renderDossier(d) {
   const rows = (d.last_20 || []).map(p => {
     const diffStr = p.diff > 0 ? `+${p.diff.toFixed(3)}` : p.diff.toFixed(3);
     const diffClass = p.diff < 0 ? "neg" : "pos";
+    const pbChip = p.pb ? `<span class="pb-chip">PB</span>` : "";
     return `<tr class="${p.counted ? "counted" : ""}">
       <td class="num">${p.diff_slot}</td>
       <td>${p.year}</td>
       <td>${escapeHtml(p.event)}</td>
       <td>${escapeHtml(p.course)}</td>
-      <td class="num">${p.score}</td>
+      <td class="num">${p.score}${pbChip}</td>
       <td class="num diff ${diffClass}">${diffStr}</td>
     </tr>`;
   }).join("");
