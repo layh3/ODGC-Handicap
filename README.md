@@ -1,14 +1,53 @@
 # ODGC Handicap
 
 Disc-golf handicap calculator for the Ottawa Disc Golf Club. Originally a
-Visual Studio C++ tool by Ken (Jan 2018); now a Python port that reads
-the master Google Sheet directly, produces both the legacy ODGC handicap
-list and a standard golf-style list with soft-capped `+` handicaps, and
-ingests UDisc league rounds or PDGA tournaments straight from a URL.
+Visual Studio C++ tool by Ken (Jan 2018); now a Python port backed by a
+Cloudflare Worker + Google Apps Script web app.
 
 The original C++ source is preserved under [old/cpp/](old/cpp/) and the
 Python port is verified byte-identical against its output (see
 [golden/](golden/) and [verify.sh](verify.sh)).
+
+## Live system
+
+| | URL |
+| --- | --- |
+| Web app (players, courses, doubles) | https://odgc-hc-page.pages.dev |
+| Admin / manual ingest | https://odgc-hc-page.pages.dev/admin |
+| Worker API | https://odgc-hc.chris-lay9.workers.dev |
+
+### Deploying
+
+```bash
+# Worker (Python + wrangler)
+cd worker && npx wrangler deploy
+
+# Pages (static HTML — auto-deployed on push to main via CF Pages git integration)
+# Or manually:
+cd pages && npx wrangler pages deploy . --project-name odgc-hc-page
+```
+
+### Auto-ingest
+
+A Cloudflare cron fires daily at **06:00 UTC** (02:00 EDT / 01:00 EST).
+It reads the `AutoIngest` tab in the Google Sheet to find configured leagues,
+fetches each league's `/schedule` page on UDisc, and ingests any events that
+haven't been recorded yet. The tab is bootstrapped automatically on first run.
+
+To trigger manually:
+
+```bash
+curl -X POST https://odgc-hc.chris-lay9.workers.dev \
+  -H "Content-Type: application/json" \
+  -d '{"action":"run_auto_ingest","password":"<shared_password>"}'
+```
+
+### Apps Script
+
+`apps_script.gs` in the repo is the source of truth for the Apps Script
+deployed to the Google Sheet. After editing, redeploy manually:
+**Extensions → Apps Script → Deploy → Manage deployments → pencil → New version → Deploy.**
+The deployment URL stays the same; paste it into `gsheets_url.txt` locally.
 
 ## Quick start
 
@@ -418,26 +457,46 @@ proves this round-trip).
 ## Project layout
 
 ```
-ingest.py               URL → import → recompute, one command
-hc24.py                 the calculator (read .dat, .xlsx, or Google Sheet; write 18 files)
-import_udisc.py         UDisc xlsx or leaderboard URL → append rounds
-import_pdga.py          PDGA event ID or URL → append rounds
-gsheets.py              Python client for the Apps Script web app
-apps_script.gs          paste into the Sheet's Apps Script editor (one-time setup)
-gsheets_url.txt         deployment URL (gitignored; write credential)
-verify.sh               regression runner (Python output vs golden/)
-README.md               this file
+worker/                 Cloudflare Worker (Python, Pyodide runtime)
+  src/entry.py          request handler — all actions, ingest flow, auto-ingest
+  src/hc_algorithm.py   handicap algorithm (synced from repo root)
+  src/hc_matching.py    player-name matching + course code lookup (synced)
+  src/hc_parsing.py     UDisc/PDGA HTML parsers (synced)
+  src/gsheets_worker.py Apps Script client (worker-side, uses js.fetch)
+  src/worker_io.py      fetch_text / post_json shims for Pyodide
+  wrangler.toml         worker config + cron trigger
 
-RoundData.dat           legacy flat-file export (regression fixture)
+pages/                  Cloudflare Pages (static HTML)
+  index.html            HC leaderboard + player lookup
+  players.html          player detail (round history, dossier)
+  courses.html          all-time top scores per course
+  doubles.html          HC-balanced doubles team generator
+  admin.html            manual ingest + roster management
+
+hc_algorithm.py         handicap algorithm (source of truth; synced to worker/src/)
+hc_matching.py          player-name matching + course code lookup (source of truth)
+hc_parsing.py           UDisc/PDGA HTML parsers (source of truth)
+hc24.py                 CLI calculator (read .dat, .xlsx, or Sheet; write 18 txt files)
+ingest.py               CLI: URL → import → recompute, one command
+import_udisc.py         CLI: UDisc xlsx or leaderboard URL → append rounds
+import_pdga.py          CLI: PDGA event ID or URL → append rounds
+gsheets.py              CLI: Python client for the Apps Script web app
+
+apps_script.gs          Google Apps Script source (deploy manually to the Sheet)
+gsheets_url.txt         Apps Script deployment URL (gitignored — write credential)
+verify.sh               regression runner: Python output vs golden/ fixtures
+tests/                  pytest unit tests for parsers and dedup logic
+
+RoundData.dat           legacy flat-file export (regression fixture only)
 RoundData.xlsx          optional local workbook (no longer source of truth)
 golden/                 C++ reference outputs from RoundData.dat
-imports/                source UDisc/PDGA files retained for audit
-out/                    generated outputs (gitignored)
+imports/                source UDisc/PDGA files retained for audit (gitignored)
+out/                    generated txt outputs (gitignored)
 
 old/
   cpp/                  original C++ source + Visual Studio project
-  sample_inputs/        per-event xlsx exports the C++ author kept
-  sample_outputs/       outputs from old C++ runs (kept for reference)
+  sample_inputs/        per-event xlsx exports kept for historical reference
+  sample_outputs/       outputs from old C++ runs
 ```
 
 ## History
@@ -460,3 +519,8 @@ schedule so course codes round-trip cleanly.
 app. The Sheet becomes the source of truth; the manual xlsx export
 loop goes away. `ingest.py` collapses the URL → import → recompute
 sequence into one command.
+
+**June 2026** — Cloudflare Worker + Pages web app. Player lookup,
+course leaderboards, doubles team generator, admin ingest UI. Daily
+cron auto-ingests new UDisc league events (LETS, Almonte, TOSS, KDGC Tags)
+from configured league schedule URLs without manual intervention.

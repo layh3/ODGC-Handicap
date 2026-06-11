@@ -35,6 +35,9 @@ gsheets_url.txt
 # Side-by-side comparison scratch dir
 demo_compare/
 
+# Downloaded UDisc/PDGA source files — kept locally for audit but not versioned
+imports/
+
 # Cloudflare Workers + Pages cache (account id, oauth state, etc. — kept
 # locally, regenerated automatically on wrangler login).
 worker/.wrangler/
