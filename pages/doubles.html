@@ -178,7 +178,7 @@
 
     /* ---------- method options ---------- */
     .method-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
       margin-bottom: 18px;
     }
     @media (max-width: 560px) { .method-grid { grid-template-columns: 1fr; } }
@@ -358,17 +358,22 @@
       <label class="method-opt">
         <input type="radio" name="method" value="highlow" checked>
         <span class="method-name">High–low</span>
-        <span class="method-desc">Best paired with worst, working inward.</span>
+        <span class="method-desc">Sort by HC, then pair best with worst, 2nd-best with 2nd-worst, and so on inward. Always the same result for a given field. For teams of 2 this is identical to Snake.</span>
       </label>
       <label class="method-opt">
         <input type="radio" name="method" value="snake">
         <span class="method-name">Snake draft</span>
-        <span class="method-desc">Classic alternating snake picks across rounds.</span>
+        <span class="method-desc">Teams pick in order 1→N, then reverse N→1, then 1→N again. Same as High–low for pairs — the difference only shows with 3-player teams, where the third-round picks are distributed differently.</span>
       </label>
       <label class="method-opt">
         <input type="radio" name="method" value="balanced">
         <span class="method-name">Balanced shuffle</span>
-        <span class="method-desc">200 random restarts — minimises HC spread.</span>
+        <span class="method-desc">Tries 200 random arrangements and keeps the one where the gap between the highest and lowest team HC total is smallest. Result varies each click — good when the field has an awkward HC distribution that fools simple patterns.</span>
+      </label>
+      <label class="method-opt">
+        <input type="radio" name="method" value="random">
+        <span class="method-name">True random</span>
+        <span class="method-desc">Pure shuffle — no HC logic at all. Teams are whoever ends up next to each other. Completely unpredictable; fairness is down to luck.</span>
       </label>
     </div>
     <div class="options-row">
@@ -624,6 +629,22 @@ function makeTeamsBalanced(players, teamSize) {
   return best;
 }
 
+// Pure random: shuffle players with no HC logic at all.
+function makeTeamsRandom(players, teamSize) {
+  const n = players.length;
+  const nTeams = Math.max(1, Math.floor(n / teamSize));
+  const shuffled = [...players];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const teams = Array.from({length: nTeams}, () => []);
+  const nMain = nTeams * teamSize;
+  for (let i = 0; i < Math.min(nMain, n); i++) teams[i % nTeams].push(shuffled[i]);
+  for (let i = nMain; i < n; i++) teams[nTeams - 1].push(shuffled[i]);
+  return teams;
+}
+
 // ---- Generate & render ----------------------------------------------------
 $("generate-btn").addEventListener("click", () => {
   if (FIELD.length < 2) return;
@@ -632,6 +653,7 @@ $("generate-btn").addEventListener("click", () => {
   const teams =
     method === "snake"    ? makeTeamsSnake(FIELD, teamSize) :
     method === "balanced" ? makeTeamsBalanced(FIELD, teamSize) :
+    method === "random"   ? makeTeamsRandom(FIELD, teamSize) :
                             makeTeamsHighLow(FIELD, teamSize);
   renderTeams(teams, method, teamSize);
 });
@@ -639,7 +661,7 @@ $("generate-btn").addEventListener("click", () => {
 function renderTeams(teams, method, teamSize) {
   const sums = teams.map(t => t.reduce((s, p) => s + p.hc, 0));
   const minSum = Math.min(...sums);
-  const labels = {highlow: "High–low", snake: "Snake draft", balanced: "Balanced shuffle"};
+  const labels = {highlow: "High–low", snake: "Snake draft", balanced: "Balanced shuffle", random: "True random"};
   const methodLabel = labels[method] || method;
 
   $("results-title").textContent = `${methodLabel} · ${FIELD.length} players`;
