@@ -329,7 +329,7 @@ async def on_fetch(request, env):
 
 # --- the ingest flow ------------------------------------------------------
 
-async def _run_ingest(apps_url, url, event, year, sheet, log):
+async def _run_ingest(apps_url, url, event, year, sheet, log, *, push_tabs=True):
     kind = _detect_kind(url)
     log.append(f"detected {kind} source")
 
@@ -421,6 +421,14 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         ar = await gs.append_rows(apps_url, rows, sheet)
         rows_added = ar.get("rows_appended", 0)
         log.append(f"  rows {ar.get('first_row')}–{ar.get('last_row')}")
+
+    if not push_tabs:
+        return {
+            "kind": kind, "pools_seen": len(pools),
+            "new_players": len(pending_player_inserts),
+            "rows_added": rows_added, "skipped": skipped_dups,
+            "hc_pushed": False,
+        }
 
     # ---- recompute HCs against the freshly-updated sheet ----
     log.append("pulling updated sheet for recompute…")
@@ -1259,11 +1267,20 @@ async def _auto_ingest_all(apps_url: str, log: list) -> dict:
         try:
             sched_page = await fetch_text(cfg["url"], user_agent=UDISC_USER_AGENT)
             all_events = parse_udisc_league_schedule(sched_page)
-            # Most recent past event only — keeps subrequest budget low with multiple leagues.
             year_events = [
                 e for e in all_events
                 if e["date"].startswith(yr_str) and e["date"] <= today
             ][:1]
+            # If page 1 has no past events for this year, try page 2 (leagues whose
+            # schedule shows future events first push past events to later pages).
+            if not year_events and "page=" not in cfg["url"]:
+                sep = "&" if "?" in cfg["url"] else "?"
+                p2_page = await fetch_text(cfg["url"] + sep + "page=2", user_agent=UDISC_USER_AGENT)
+                all_events = parse_udisc_league_schedule(p2_page)
+                year_events = [
+                    e for e in all_events
+                    if e["date"].startswith(yr_str) and e["date"] <= today
+                ][:1]
             log.append(
                 f"{prefix}: {len(year_events)} past event(s) in {yr_str}"
                 + (f" (latest {year_events[0]['date']})" if year_events else "")
@@ -1280,7 +1297,8 @@ async def _auto_ingest_all(apps_url: str, log: list) -> dict:
             inner_log: list[str] = []
             try:
                 result = await _run_ingest(
-                    apps_url, ev["url"], ev_name, yr, sheet, inner_log
+                    apps_url, ev["url"], ev_name, yr, sheet, inner_log,
+                    push_tabs=False,
                 )
                 log.extend(f"  {l}" for l in inner_log)
                 rows = result.get("rows_added", 0)

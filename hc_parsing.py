@@ -71,7 +71,22 @@ def parse_udisc_leaderboard(page: str) -> list[dict]:
     name_to_layout = _extract_udisc_layouts(page)
     distinct_layouts = {lab for lab in name_to_layout.values() if lab}
     if len(distinct_layouts) <= 1:
-        # Single layout (or stream unparseable) → preserve old behavior.
+        # Single layout — enrich base_layout_text with course name + layout label
+        # from the stream payload, but ONLY when the base text alone can't identify
+        # the course (e.g. "KDGC Tags 2026" has no course info).  Skip enrichment
+        # when the base text already resolves so we don't alter working matches.
+        from hc_matching import guess_course_from_layout as _gcfl
+        if _gcfl(base_layout_text) is None:
+            extras = []
+            if distinct_layouts:
+                label = next(iter(distinct_layouts))
+                if label.lower() not in base_layout_text.lower():
+                    extras.append(label)
+            course_name = _extract_course_name(page)
+            if course_name and course_name.lower() not in base_layout_text.lower():
+                extras.append(course_name)
+            if extras:
+                base_layout_text = base_layout_text + " | " + " | ".join(extras) if base_layout_text else " | ".join(extras)
         return [{"layout_text": base_layout_text, "players": players}]
 
     # Multi-layout: partition by per-player tee assignment.
@@ -193,6 +208,43 @@ def _extract_udisc_layouts(page: str) -> dict[str, str]:
         if label:
             name_to_layout[_norm_name(player_name)] = label
     return name_to_layout
+
+
+def _extract_course_name(page: str) -> str:
+    """Return the course name from the UDisc devalue stream payload, or ''."""
+    try:
+        m = re.search(r"streamController\.enqueue\((\".+?\")\)", page, re.DOTALL)
+        if not m:
+            return ""
+        flat = json.loads(json.loads(m.group(1)))
+        if not isinstance(flat, list):
+            return ""
+    except (json.JSONDecodeError, ValueError):
+        return ""
+
+    def rk(k):
+        if not k.startswith("_"):
+            return k
+        try:
+            idx = int(k[1:])
+            if 0 <= idx < len(flat) and isinstance(flat[idx], str):
+                return flat[idx]
+        except ValueError:
+            pass
+        return None
+
+    for obj in flat:
+        if not isinstance(obj, dict):
+            continue
+        named = {rk(k): v for k, v in obj.items() if rk(k)}
+        if "courseId" not in named or "name" not in named:
+            continue
+        n = named["name"]
+        if isinstance(n, int) and 0 <= n < len(flat):
+            n = flat[n]
+        if isinstance(n, str) and len(n) > 3:
+            return n
+    return ""
 
 
 def parse_pdga_event(page: str) -> tuple[str, list[dict]]:
