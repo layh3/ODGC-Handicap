@@ -6,6 +6,7 @@ caller's job (urllib in the CLI, js.fetch in the Cloudflare Worker).
 
 from __future__ import annotations
 
+import datetime as _dt
 import html
 import json
 import re
@@ -290,3 +291,72 @@ def parse_pdga_event(page: str) -> tuple[str, list[dict]]:
             })
 
     return event_name, pools
+
+
+def parse_udisc_league_schedule(page: str) -> list[dict]:
+    """Parse a UDisc league /schedule page.
+
+    Returns ``[{'title', 'shortId', 'date', 'url'}]`` sorted newest-first.
+    Uses the same devalue flat-array decoding as _extract_udisc_layouts.
+    """
+    seen: set[str] = set()
+    events: list[dict] = []
+
+    for raw in re.finditer(
+        r"streamController\.enqueue\((\".+?\")\)", page, re.DOTALL
+    ):
+        try:
+            flat = json.loads(json.loads(raw.group(1)))
+        except (json.JSONDecodeError, ValueError):
+            continue
+        if not isinstance(flat, list):
+            continue
+
+        def rk(k, _f=flat):
+            if not k.startswith("_"):
+                return k
+            try:
+                idx = int(k[1:])
+                if 0 <= idx < len(_f) and isinstance(_f[idx], str):
+                    return _f[idx]
+            except ValueError:
+                pass
+            return None
+
+        def dr(v, _f=flat, d=0):
+            if d > 8:
+                return v
+            if isinstance(v, int) and 0 <= v < len(_f):
+                return dr(_f[v], _f, d + 1)
+            if isinstance(v, list) and len(v) == 2 and v[0] == "D" and isinstance(v[1], int):
+                return _dt.datetime.utcfromtimestamp(v[1] / 1000).strftime("%Y-%m-%d")
+            if isinstance(v, dict):
+                return {rk(k, _f) or k: dr(rv, _f, d + 1) for k, rv in v.items()}
+            if isinstance(v, list):
+                return [dr(x, _f, d + 1) for x in v]
+            return v
+
+        for obj in flat:
+            if not isinstance(obj, dict):
+                continue
+            if not any(rk(k) == "startDate" for k in obj) or not any(rk(k) == "shortId" for k in obj):
+                continue
+            decoded = dr(obj)
+            sid = decoded.get("shortId")
+            sd = decoded.get("startDate")
+            nm = decoded.get("name") or ""
+            if not isinstance(sid, str) or len(sid) < 4:
+                continue
+            if not isinstance(sd, str) or not re.match(r"\d{4}-\d{2}-\d{2}", sd):
+                continue
+            if sid not in seen:
+                seen.add(sid)
+                events.append({
+                    "title": nm,
+                    "shortId": sid,
+                    "date": sd,
+                    "url": f"https://udisc.com/events/{sid}/leaderboard?round=1",
+                })
+
+    events.sort(key=lambda e: e["date"], reverse=True)
+    return events

@@ -18,13 +18,14 @@ Endpoints:
 
 import datetime as _dt
 import json as _json
+import re as _re
 
 from workers import Response  # type: ignore[import-not-found]
 
 from hc_algorithm import compute_handicaps, fmt_2f_golf
 from hc_matching import match_player, to_lastname_first, guess_course_from_layout, COURSE_NAMES
 from hc_parsing import (
-    parse_udisc_leaderboard, parse_pdga_event,
+    parse_udisc_leaderboard, parse_pdga_event, parse_udisc_league_schedule,
     UDISC_USER_AGENT, PDGA_USER_AGENT,
 )
 import gsheets_worker as gs
@@ -291,6 +292,16 @@ async def on_fetch(request, env):
             return _json_resp({"ok": True, "name": name, "col": new_col})
         except Exception as e:
             return _json_resp({"ok": False, "error": str(e)}, status=500)
+
+    # Manual trigger for auto-ingest (for testing and ad-hoc runs).
+    if action == "run_auto_ingest":
+        log: list[str] = []
+        try:
+            result = await _auto_ingest_all(apps_url, log)
+            return _json_resp({"ok": True, "log": log, "result": result})
+        except Exception as e:
+            log.append(f"ERROR: {e}")
+            return _json_resp({"ok": False, "error": str(e), "log": log}, status=500)
 
     url = (body.get("url") or "").strip()
     event = (body.get("event") or "").strip()
@@ -1162,6 +1173,161 @@ def _build_results_tab_rows(net_results_list):
             rows.append([rank_str, p["name"], p["gross"], hc_str, net_str])
         rows.append([])
     return rows
+
+
+def _derive_event_name(title: str, prefix: str, existing_events: list) -> str:
+    """Derive an ingest event name from a UDisc event title.
+
+    "LETS Larrimac Evening Tags Series - LETS #6" + "LETS" → "LETS06"
+    "Monday Night Tags @Almonte - ..." (no #N) → count-based "Alm01", "Alm02" …
+    """
+    m = _re.search(r"#\s*(\d+)", title)
+    if m:
+        return f"{prefix}{int(m.group(1)):02d}"
+    n = sum(1 for ev in existing_events if str(ev).startswith(prefix))
+    return f"{prefix}{n + 1:02d}"
+
+
+_AUTOINGEST_TAB = "AutoIngest"
+_LOG_TAB = "Log"
+_AUTOINGEST_TEMPLATE = [
+    ["schedule_url", "event_prefix", "year", "enabled"],
+    [
+        "https://udisc.com/leagues/lets-larrimac-evening-tags-series-UCtqMO/schedule",
+        "LETS", 26, 1,
+    ],
+    [
+        "https://udisc.com/leagues/monday-night-tags-almonte-3un343/schedule",
+        "Alm", 26, 1,
+    ],
+]
+
+
+async def _auto_ingest_all(apps_url: str, log: list) -> dict:
+    """Fetch each configured league schedule and ingest any new events."""
+    sheet = "active2025"
+
+    # Pull (or bootstrap) the AutoIngest config tab.
+    try:
+        ai_data = await gs.pull(apps_url, _AUTOINGEST_TAB)
+        if not ai_data:
+            raise ValueError("empty")
+    except Exception:
+        log.append("AutoIngest tab missing — creating template")
+        await gs.replace_sheet(
+            apps_url, _AUTOINGEST_TAB, _AUTOINGEST_TEMPLATE, freeze_rows=1
+        )
+        return {"ok": False, "bootstrapped": True,
+                "error": "AutoIngest tab created — re-run to ingest"}
+
+    configs = []
+    for row in ai_data[1:]:
+        if len(row) < 4:
+            continue
+        sched_url = str(row[0]).strip()
+        prefix    = str(row[1]).strip()
+        enabled   = str(row[3]).strip()
+        if enabled not in ("1", "true", "True"):
+            continue
+        try:
+            year = int(row[2])
+        except (TypeError, ValueError):
+            continue
+        if sched_url and prefix:
+            configs.append({"url": sched_url, "prefix": prefix, "year": year})
+
+    if not configs:
+        log.append("no enabled rows in AutoIngest tab")
+        return {"ok": True, "ingested_rows": 0}
+
+    log.append(f"AutoIngest: {len(configs)} league(s)")
+    today = _dt.datetime.now().strftime("%Y-%m-%d")
+
+    data = await gs.pull(apps_url, sheet)
+    existing_events = [
+        str(r[1]).strip() for r in data[13:] if len(r) > 1 and r[1] not in (None, "")
+    ]
+
+    log_rows = []
+    stamp = _dt.datetime.now().isoformat(timespec="seconds")
+    total_rows_added = 0
+
+    for cfg in configs:
+        prefix = cfg["prefix"]
+        yr = cfg["year"]
+        yr_str = f"20{yr:02d}" if yr < 100 else str(yr)
+        try:
+            sched_page = await fetch_text(cfg["url"], user_agent=UDISC_USER_AGENT)
+            all_events = parse_udisc_league_schedule(sched_page)
+            # Past events for this year only, 2 most recent (keeps subrequest budget low).
+            year_events = [
+                e for e in all_events
+                if e["date"].startswith(yr_str) and e["date"] <= today
+            ][:2]
+            log.append(
+                f"{prefix}: {len(year_events)} past event(s) in {yr_str}"
+                + (f" (latest {year_events[0]['date']})" if year_events else "")
+            )
+        except Exception as e:
+            log.append(f"ERROR fetching schedule for {prefix}: {e}")
+            log_rows.append([stamp, prefix, 0, f"schedule_error: {e}", "auto"])
+            continue
+
+        for ev in year_events:
+            ev_name = _derive_event_name(ev["title"], prefix, existing_events)
+            # Always advance the counter so subsequent events get unique names.
+            existing_events.append(ev_name)
+            inner_log: list[str] = []
+            try:
+                result = await _run_ingest(
+                    apps_url, ev["url"], ev_name, yr, sheet, inner_log
+                )
+                log.extend(f"  {l}" for l in inner_log)
+                rows = result.get("rows_added", 0)
+                total_rows_added += rows
+                if rows > 0:
+                    log.append(f"  ingested {ev_name}: {rows} row(s)")
+                    log_rows.append([stamp, ev_name, rows, "ok", "auto"])
+                    data = await gs.pull(apps_url, sheet)
+                    existing_events = [
+                        str(r[1]).strip() for r in data[13:]
+                        if len(r) > 1 and r[1] not in (None, "")
+                    ]
+                else:
+                    log.append(f"  {ev_name}: already ingested or no data")
+            except Exception as e:
+                log.append(f"  ERROR ingesting {ev_name}: {e}")
+                log_rows.append([stamp, ev_name, 0, f"ingest_error: {e}", "auto"])
+
+    if log_rows:
+        try:
+            await gs.pull(apps_url, _LOG_TAB)
+        except Exception:
+            log.append("creating Log tab")
+            await gs.replace_sheet(
+                apps_url, _LOG_TAB,
+                [["timestamp", "event", "rows_added", "status", "source"]],
+                freeze_rows=1,
+            )
+        try:
+            await gs.append_rows(apps_url, log_rows, _LOG_TAB)
+            log.append(f"wrote {len(log_rows)} row(s) to Log tab")
+        except Exception as e:
+            log.append(f"WARNING: Log tab write failed: {e}")
+
+    return {"ok": True, "ingested_rows": total_rows_added}
+
+
+async def on_scheduled(event, env, ctx):
+    """Cloudflare cron — runs daily at 06:00 UTC."""
+    apps_url = getattr(env, "APPS_SCRIPT_URL", None) or ""
+    if not apps_url:
+        return
+    log: list[str] = []
+    try:
+        await _auto_ingest_all(apps_url, log)
+    except Exception:
+        pass
 
 
 def _json_resp(obj, status=200):
