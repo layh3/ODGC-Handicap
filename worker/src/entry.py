@@ -192,6 +192,31 @@ async def on_fetch(request, env):
         except Exception as e:
             return _json_resp({"ok": False, "error": str(e)}, status=500)
 
+    # HC list for the doubles team generator (public, read-only).
+    if action == "hc_list":
+        sheet = body.get("sheet") or "active2025"
+        try:
+            _, res_odgc, res_golf = await _pull_and_compute(apps_url, sheet)
+            from hc_algorithm import compress_plus_hc
+            i_pl = res_odgc["i_pl"]
+            players = []
+            for j in range(1, i_pl + 1):
+                if res_odgc["rnd_count"][j] <= 2:
+                    continue
+                hc = res_odgc["hc"][j]
+                hc_g_raw = res_golf["hc"][j]
+                hc_golf_disp = compress_plus_hc(hc_g_raw, 5.0)
+                players.append({
+                    "name": res_odgc["player"][j],
+                    "hc": round(hc, 2),
+                    "hc_golf": fmt_2f_golf(hc_golf_disp),
+                    "rounds": res_odgc["rnd_count"][j],
+                })
+            players.sort(key=lambda p: p["hc"])
+            return _json_resp({"ok": True, "players": players})
+        except Exception as e:
+            return _json_resp({"ok": False, "error": str(e)}, status=500)
+
     # Roster: just the player name list, for the lookup typeahead.
     if action == "roster":
         sheet = body.get("sheet") or "active2025"
