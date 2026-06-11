@@ -347,8 +347,13 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         await gs.replace_sheet(apps_url, spec["tab_name"], sub_rows, freeze_rows=4)
         log.append(f"  {spec['tab_name']} tab: {len(sub_rows)} rows")
 
-    # ---- net results ----
+    # ---- net results + recap ----
+    # Pre-state HC compute (uses the PRE-append data so movers reflect delta).
+    _par, _ipl, _tok = _data_to_tokens(data)
+    res_before = compute_handicaps(_par, _ipl, _tok, anchor_at_zero=True, verbose=False)
+
     net_results = []
+    recap_blocks = []
     for entry in to_write:
         round_idx = _find_round_idx(res_odgc, entry["event_name"], entry["course"], year)
         if round_idx is None:
@@ -370,11 +375,23 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
             else:
                 log.append(f"  {p['rank']}. {p['name']}  net {p['net']}  ({p['gross']} − {p['hc']})")
 
+        movers = _build_movers(res_before, res_odgc, entry["scores"])
+        pbs = _find_pbs(data, entry["course"], entry["scores"], player_arr, i_pl)
+        new_player_names = [p["name"] for p in players if p["is_new"]]
+        recap_blocks.append(
+            _build_recap_block(
+                entry["event_name"], entry["course"],
+                players, movers, pbs, new_player_names,
+            )
+        )
+
     if net_results:
         log.append("pushing Results tab…")
         results_rows = _build_results_tab_rows(net_results)
         await gs.replace_sheet(apps_url, "Results", results_rows, freeze_rows=2)
         log.append(f"  Results tab: {len(results_rows)} rows")
+
+    recap = "\n\n".join(recap_blocks)
 
     return {
         "kind": kind,
@@ -386,6 +403,7 @@ async def _run_ingest(apps_url, url, event, year, sheet, log):
         "hc_rows": len(hc_rows),
         "subset_tabs": [s["tab_name"] for s in SUBSET_TABS],
         "net_results": net_results,
+        "recap": recap,
     }
 
 
@@ -936,6 +954,98 @@ def _find_round_idx(res, event_name, course_code, year):
         if ev[r] == event_name and crs[r] == course_code and ry[r] == year:
             return r
     return None
+
+
+def _build_movers(res_before, res_after, scores_by_col):
+    """HC movers for the ingested pool — players whose HC changed by ≥0.05."""
+    before_hc = {
+        res_before["player"][j]: res_before["hc"][j]
+        for j in range(1, res_before["i_pl"] + 1)
+        if res_before["rnd_count"][j] > 2
+    }
+    after_hc = {
+        res_after["player"][j]: res_after["hc"][j]
+        for j in range(1, res_after["i_pl"] + 1)
+        if res_after["rnd_count"][j] > 2
+    }
+    movers = []
+    for col in scores_by_col:
+        j = col - 3
+        if j < 1 or j > res_after["i_pl"]:
+            continue
+        name = res_after["player"][j]
+        if name not in before_hc or name not in after_hc:
+            continue
+        delta = after_hc[name] - before_hc[name]
+        if abs(delta) >= 0.05:
+            movers.append({
+                "name": name,
+                "before": round(before_hc[name], 2),
+                "after": round(after_hc[name], 2),
+                "delta": round(delta, 2),
+            })
+    movers.sort(key=lambda m: -abs(m["delta"]))
+    return movers[:5]
+
+
+def _find_pbs(data, pool_course, scores_by_col, player_arr, i_pl):
+    """Personal bests: players whose new gross beats their previous best at this course."""
+    pbs = []
+    for col, new_gross in scores_by_col.items():
+        j = col - 3
+        if j < 1 or j > i_pl:
+            continue
+        prev_scores = []
+        for row in data[13:]:
+            if len(row) < 3:
+                continue
+            crs = str(row[2]).strip() if row[2] is not None else ""
+            if crs != pool_course:
+                continue
+            if len(row) <= col - 1:
+                continue
+            v = row[col - 1]
+            if v in (None, "", 0, "0"):
+                continue
+            try:
+                sc = int(v)
+                if sc > 0:
+                    prev_scores.append(sc)
+            except (TypeError, ValueError):
+                continue
+        if not prev_scores:
+            continue
+        prev_best = min(prev_scores)
+        if new_gross < prev_best:
+            pbs.append({"name": player_arr[j], "new": new_gross, "prev": prev_best})
+    return pbs
+
+
+def _build_recap_block(event_name, course_code, net_players, movers, pbs, new_player_names):
+    """One plain-text recap block for a single pool."""
+    n = len(net_players)
+    lines = [f"\U0001f94f {event_name} @ {course_code} — {n} player{'s' if n != 1 else ''}"]
+
+    podium = [p for p in net_players if not p["is_new"]][:3]
+    if podium:
+        pts = " · ".join(f"{p['rank']}. {p['name']} {p['net']:.1f}" for p in podium)
+        lines.append(f"\U0001f3c6 Net: {pts}")
+
+    if movers:
+        def _mstr(m):
+            arrow = "▼" if m["delta"] < 0 else "▲"
+            return f"{m['name']} {m['before']:.2f}→{m['after']:.2f} ({arrow}{abs(m['delta']):.2f})"
+        lines.append(f"\U0001f4c8 HC movers: {' · '.join(_mstr(m) for m in movers)}")
+
+    if pbs:
+        pb_parts = [f"{p['name']} {p['new']} at {course_code} (prev {p['prev']})" for p in pbs]
+        lines.append(f"\U0001f525 PBs: {', '.join(pb_parts)}")
+
+    if new_player_names:
+        lines.append(f"\U0001f44b First tracked round: {', '.join(new_player_names)}")
+
+    lines.append("Full standings: https://odgc-hc-page.pages.dev/players")
+    return "\n".join(lines)
 
 
 def _build_results_tab_rows(net_results_list):
