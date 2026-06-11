@@ -1259,11 +1259,11 @@ async def _auto_ingest_all(apps_url: str, log: list) -> dict:
         try:
             sched_page = await fetch_text(cfg["url"], user_agent=UDISC_USER_AGENT)
             all_events = parse_udisc_league_schedule(sched_page)
-            # Past events for this year only, 2 most recent (keeps subrequest budget low).
+            # Most recent past event only — keeps subrequest budget low with multiple leagues.
             year_events = [
                 e for e in all_events
                 if e["date"].startswith(yr_str) and e["date"] <= today
-            ][:2]
+            ][:1]
             log.append(
                 f"{prefix}: {len(year_events)} past event(s) in {yr_str}"
                 + (f" (latest {year_events[0]['date']})" if year_events else "")
